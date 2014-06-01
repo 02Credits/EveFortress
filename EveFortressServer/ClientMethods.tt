@@ -1,0 +1,207 @@
+﻿<#@ template debug="true" hostSpecific="true" #>
+<#@ output extension=".cs" #>
+<#@ Assembly Name="System.Core" #>
+<#@ Assembly Name="System.Runtime" #>
+<#@ assembly name="$(SolutionDir)\packages\Microsoft.CodeAnalysis.Common.0.6.4033103-beta\lib\net45\Microsoft.CodeAnalysis.dll" #>
+<#@ assembly name="$(SolutionDir)\packages\Microsoft.CodeAnalysis.CSharp.0.6.4033103-beta\lib\net45\Microsoft.CodeAnalysis.CSharp.dll" #>
+<#@ assembly name="$(SolutionDir)\packages\Microsoft.Bcl.Immutable.1.1.20-beta\lib\portable-net45+win8\System.Collections.Immutable.dll" #>
+<#@ import namespace="Microsoft.CodeAnalysis" #>
+<#@ import namespace="Microsoft.CodeAnalysis.CSharp" #>
+<#@ import namespace="Microsoft.CodeAnalysis.CSharp.Syntax" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Diagnostics" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Collections" #>
+<#@ import namespace="System.Collections.Generic" #> 
+<#
+string solutionPath = Host.ResolveAssemblyReference("$(SolutionDir)");
+SyntaxTree tree = CSharpSyntaxTree.ParseFile(solutionPath + "/EveFortressOpenGL/ClientMethods.cs");
+var root = (CompilationUnitSyntax)tree.GetRoot();
+var methods = root.DescendantNodes()
+                    .OfType<MethodDeclarationSyntax>();
+#>
+// GENERATED FILE! CHANGES WILL BE OVERWRITTEN
+
+using EveFortressModel;
+using Lidgren.Network;
+using ProtoBuf;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EveFortressServer
+{
+    public class ClientMethods
+    {
+        public long CurrentConversationID { get; set; }
+		public long CurrentCallbackID { get; set; }
+        public Dictionary<long, Action<NetIncomingMessage>> TaskCompletionSources { get; set; }
+		public Dictionary<long, Action<NetIncomingMessage>> CallbackActions { get; set; }
+
+        public ClientMethods()
+        {
+            TaskCompletionSources = new Dictionary<long, Action<NetIncomingMessage>>();
+			CallbackActions = new Dictionary<long, Action<NetIncomingMessage>>();
+        }
+
+        public long GetNextConversationID()
+        {
+            var id = CurrentConversationID;
+            CurrentConversationID++;
+            return id;
+        }
+
+		public long GetNextCallbackID()
+		{
+			var id = CurrentCallbackID;
+			CurrentCallbackID++;
+			return id;
+		}
+<#
+foreach (var method in methods)
+{
+	string returnTypeText;
+	if (method.ReturnType.ToString() != "void")
+	{
+		returnTypeText = "Task<" + method.ReturnType.ToString() + ">";
+	}
+	else
+	{
+		returnTypeText = "Task<object>";
+	}
+	
+    var parameters = method.ParameterList.Parameters;
+    var parameterText = "";
+    foreach (var param in parameters)
+    {
+        if (parameterText != "")
+            parameterText += ", ";
+        parameterText += param.ToString();
+    }
+	
+    if (parameterText != "")
+        parameterText += ", ";
+	parameterText += "NetConnection connection";
+#>
+
+        public <#=returnTypeText#> <#= method.Identifier.ToString() #>(<#= parameterText #>)
+        {
+            var completionSource = new TaskCompletionSource<<#= method.ReturnType.ToString() == "void" ? "object": method.ReturnType.ToString() #>>();
+            var conversationID = GetNextConversationID();
+
+            var message = Program.ServerNetworkManager.Clients.CreateMessage();
+            message.Write("<#= method.Identifier.ToString() #>");
+            message.Write(conversationID);
+
+<#
+	foreach (var param in parameters)
+    {
+		var localIdentifier = param.Identifier.ToString();
+		if (param.Type.ChildTokens().First().ToString() == "Action")
+        {
+#>
+			var <#= localIdentifier #>ID = GetNextCallbackID();
+<#
+			if (param.Type.ChildNodes().Any())
+            {
+				var genericTypeText = param.Type.ChildNodes().First();
+#>
+			CallbackActions[<#= localIdentifier #>ID] = (msg) =>
+			{
+				var byteLength = msg.ReadInt32();
+				var bytes = msg.ReadBytes(byteLength);
+				var param = Game.ClientNetworkManager.Deserialize<#= genericTypeText #>(bytes);
+				<#= localIdentifier #>(param);
+			};
+<#
+			}
+			else
+            {
+#>
+			CallbackActions[<#= localIdentifier #>ID] = (msg) =>
+			{
+				<#= localIdentifier #>();
+			};
+<#
+            }
+        }
+		else
+        {
+#>
+            byte[] <#= localIdentifier #>Data = Program.ServerNetworkManager.Serialize(<#= localIdentifier #>);
+            message.Write(<#= localIdentifier #>Data.Length);
+            message.Write(<#= localIdentifier #>Data);
+<#
+		}
+    }
+#>
+
+            TaskCompletionSources[conversationID] = (msg) =>
+            {
+<#
+	if (returnTypeText == "Task<object>")
+    {
+#>
+				completionSource.SetResult(null);
+<#
+	}
+	else if (returnTypeText.StartsWith("Task<Action"))
+    {
+#>
+				var returnCallbackID = msg.ReadInt64();
+				var sender = msg.SenderConnection;
+<#
+		if (method.ReturnType.ChildNodes().Any())
+        {
+			var genericTypeText = method.ReturnType.ChildNodes().First();
+#>
+				Action<#= genericTypeText #> returnParam = (obj) =>
+				{
+					var callbackMessage = Program.ServerNetworkManager.Clients.CreateMessage();
+					byte[] callbackParamData = Program.ServerNetworkManager.Serialize(obj);
+					callbackMessage.Write("callback");
+					callbackMessage.Write(returnCallbackID);
+					callbackMessage.Write(callbackParamData.Length);
+					callbackMessage.Write(callbackParamData);
+					Program.ServerNetworkManager.Clients.SendMessage(callbackMessage, sender, NetDeliveryMethod.ReliableUnordered);
+				};
+				completionSource.SetResult(returnParam);
+<#
+        }
+		else
+        {
+#>
+				Action returnParam = () =>
+				{
+					var callbackMessage = Program.ServerNetworkManager.Clients.CreateMessage();
+					callbackMessage.Write("callback");
+					callbackMessage.Write(returnCallbackID);
+					Program.ServerNetworkManager.Clients.SendMessage(callbackMessage, NetDeliveryMethod.ReliableUnordered);
+				};
+				completionSource.SetResult(returnParam);
+<#
+        }
+    }
+	else
+    {
+#>
+                var dataLength = msg.ReadInt32();
+                var bytes = msg.ReadBytes(dataLength);
+				completionSource.SetResult(Program.ServerNetworkManager.Deserialize<<#= method.ReturnType.ToString() #>>(bytes);
+<#
+	}
+#>
+            };
+
+            Program.ServerNetworkManager.Clients.SendMessage(message, connection, NetDeliveryMethod.ReliableUnordered);
+            return completionSource.Task;
+        }
+<#
+}
+#>
+    }
+}
