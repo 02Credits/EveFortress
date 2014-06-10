@@ -2,11 +2,13 @@
 using Lidgren.Network;
 using ProtoBuf;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace EveFortressServer
@@ -14,6 +16,8 @@ namespace EveFortressServer
     public class ServerNetworkManager : IUpdateNeeded, IDisposeNeeded
     {
         public NetServer Clients { get; set; }
+
+        ConcurrentQueue<NetIncomingMessage> Messages = new ConcurrentQueue<NetIncomingMessage>();
 
         public ServerNetworkManager()
         {
@@ -23,6 +27,19 @@ namespace EveFortressServer
             Clients.Start();
             Program.Updateables.Add(this);
             Program.Disposables.Add(this);
+            Task.Run(() =>
+            {
+                while (true)
+                {
+                    NetIncomingMessage msg = Clients.ReadMessage();
+                    if (msg != null)
+                    {
+                        Messages.Enqueue(msg);
+                        continue;
+                    }
+                    Thread.Sleep(20);
+                }
+            });
         }
 
         public void Update()
@@ -67,25 +84,6 @@ namespace EveFortressServer
                         break;
                 }
                 Clients.Recycle(msg);
-            }
-        }
-
-        public byte[] Serialize<T>(T itemToSerialize)
-        {
-            byte[] returnArray;
-            using (var stream = new MemoryStream())
-            {
-                Serializer.Serialize(stream, itemToSerialize);
-                returnArray = stream.ToArray();
-            }
-            return returnArray;
-        }
-
-        public T Deserialize<T>(byte[] data)
-        {
-            using (var stream = new MemoryStream(data))
-            {
-                return Serializer.Deserialize<T>(stream);
             }
         }
 

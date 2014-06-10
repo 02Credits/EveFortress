@@ -28,6 +28,7 @@ namespace EveFortressServer
         public static List<IUpdateNeeded> Updateables = new List<IUpdateNeeded>();
         public static List<IDisposeNeeded> Disposables = new List<IDisposeNeeded>();
 
+        public static WorldManager WorldManager;
         public static ServerMethods ServerMethods;
         public static ClientMethods ClientMethods;
         public static MessageParser MessageParser;
@@ -36,6 +37,7 @@ namespace EveFortressServer
 
         static void Main(string[] args)
         {
+            WorldManager = new WorldManager();
             ServerMethods = new ServerMethods();
             ClientMethods = new ClientMethods();
             MessageParser = new MessageParser();

@@ -22,23 +22,31 @@ namespace EveFortressClient
 
         public int TileSize { get; set; }
 
-        public TileManager(ContentManager content)
+        public TileManager()
         {
-            TerrainSheet = content.Load<Texture2D>("TerrainTiles.png");
-            EntitySheet = content.Load<Texture2D>("EntityTiles.png");
-            ItemSheet = content.Load<Texture2D>("ItemTiles.png");
-            UISheet = content.Load<Texture2D>("UITiles.png");
+            TerrainSheet = Game.ContentManager.Load<Texture2D>("TerrainTiles.png");
+            EntitySheet = Game.ContentManager.Load<Texture2D>("EntityTiles.png");
+            ItemSheet = Game.ContentManager.Load<Texture2D>("ItemTiles.png");
+            UISheet = Game.ContentManager.Load<Texture2D>("UITiles.png");
 
             DefaultColor = Color.White;
             TileSize = 16;
+        }
+
+        public void DrawTile(List<TileDisplayInformation> tilesToDraw, int TilePositionX, int TilePositionY, IUIElementContainer parent = null)
+        {
+            foreach (var tile in tilesToDraw)
+            {
+                DrawTile(tile, TilePositionX, TilePositionY, parent);
+            }
         }
 
         public void DrawTile(TileDisplayInformation tileToDraw, int TilePositionX, int TilePositionY, IUIElementContainer parent = null)
         {
             if (parent != null)
             {
-                if (TilePositionX < 0 || TilePositionX > parent.X + parent.Width ||
-                    TilePositionY < 0 || TilePositionY > parent.Y + parent.Height)
+                if (TilePositionX < 0 || TilePositionX >= parent.X + parent.Width ||
+                    TilePositionY < 0 || TilePositionY >= parent.Y + parent.Height)
                 {
                     return;
                 }

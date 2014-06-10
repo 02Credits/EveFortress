@@ -1,13 +1,20 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30324.0
+VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EveFortressOpenGL", "EveFortressOpenGL\EveFortressOpenGL.csproj", "{CC13EF4D-E300-4FBF-9277-31C239873045}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EveFortressServer", "EveFortressServer\EveFortressServer.csproj", "{0E682D3E-9946-4900-8DF7-086DC643E72A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EveFortressModel", "EveFortressModel\EveFortressModel.csproj", "{470ADBC3-7015-4755-B1EC-A9F84B008538}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utils", "Utils\Utils.csproj", "{429AE3FA-574B-4225-9A00-190A484ADF6D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5127F01D-952A-450F-B35C-A886CABB38DC}"
+	ProjectSection(SolutionItems) = preProject
+		Performance4.psess = Performance4.psess
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,11 +56,18 @@ Global
 		{470ADBC3-7015-4755-B1EC-A9F84B008538}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{470ADBC3-7015-4755-B1EC-A9F84B008538}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{470ADBC3-7015-4755-B1EC-A9F84B008538}.Release|x86.ActiveCfg = Release|Any CPU
+		{429AE3FA-574B-4225-9A00-190A484ADF6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{429AE3FA-574B-4225-9A00-190A484ADF6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{429AE3FA-574B-4225-9A00-190A484ADF6D}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{429AE3FA-574B-4225-9A00-190A484ADF6D}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{429AE3FA-574B-4225-9A00-190A484ADF6D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{429AE3FA-574B-4225-9A00-190A484ADF6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{429AE3FA-574B-4225-9A00-190A484ADF6D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{429AE3FA-574B-4225-9A00-190A484ADF6D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{429AE3FA-574B-4225-9A00-190A484ADF6D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{429AE3FA-574B-4225-9A00-190A484ADF6D}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal

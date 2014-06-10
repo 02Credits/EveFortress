@@ -20,7 +20,10 @@ namespace EveFortressClient
         public static List<IUpdateNeeded> Updateables = new List<IUpdateNeeded>();
         public static List<IDrawNeeded> Drawables = new List<IDrawNeeded>();
         public static List<IDisposeNeeded> Disposables = new List<IDisposeNeeded>();
+        public static List<IResetNeeded> Resetables = new List<IResetNeeded>();
 
+        public static ChatManager ChatManager;
+        public static ChunkManager ChunkManager;
         public static ClientNetworkManager ClientNetworkManager;
         public static ClientMethods ClientMethods;
         public static ServerMethods ServerMethods;
@@ -30,6 +33,9 @@ namespace EveFortressClient
         public static TabManager TabManager;
         public static TileManager TileManager;
         public static WindowManager WindowManager;
+
+        public static ContentManager ContentManager;
+        public static GameWindow GameWindow;
 
         public static Random Random { get; set; }
         public static long Time { get; set; }
@@ -48,19 +54,34 @@ namespace EveFortressClient
             SpriteBatch = new SpriteBatch(GraphicsDevice);
             BasicEffect = new BasicEffect(GraphicsDevice);
 
+            ContentManager = Content;
+            GameWindow = Window;
+
+            ChatManager = new ChatManager();
+            ChunkManager = new ChunkManager();
             ClientNetworkManager = new ClientNetworkManager();
             ClientMethods = new ClientMethods();
             ServerMethods = new ServerMethods();
             MessageParser = new MessageParser();
-            TileManager = new TileManager(Content);
-            WindowManager = new WindowManager(Window);
+            TileManager = new TileManager();
+            WindowManager = new WindowManager();
             TabManager = new TabManager();
             SpriteManager = new SpriteManager();
             InputManager = new InputManager();
         }
 
+        static bool resetNextFrame;
         protected override void Update(GameTime gameTime)
         {
+            if (resetNextFrame)
+            {
+                resetNextFrame = false;
+                foreach (var resetable in Resetables)
+                {
+                    resetable.Reset();
+                }
+            }
+
             foreach (var updatable in Updateables)
             {
                 updatable.Update();
@@ -83,6 +104,11 @@ namespace EveFortressClient
             {
                 disposable.Dispose();
             }
+        }
+
+        public static void QueueReset()
+        {
+            resetNextFrame = true;
         }
     }
 }

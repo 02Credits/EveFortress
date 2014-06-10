@@ -14,9 +14,15 @@ namespace EveFortressModel
         [ProtoMember(2)]
         public string Password { get; set; }
 
-        public Player() { }
+        public List<Tuple<long, long>> SubscribedChunks { get; set; }
+
+        public Player() 
+        {
+            SubscribedChunks = new List<Tuple<long, long>>();
+        }
 
         public Player(string username, string password)
+            : this()
         {
             UserName = username;
             Password = password;

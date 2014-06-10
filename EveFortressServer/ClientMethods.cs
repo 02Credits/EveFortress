@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Utils;
 
 namespace EveFortressServer
 {
@@ -40,23 +41,54 @@ namespace EveFortressServer
 			return id;
 		}
 
-        public Task<object> ConnectionEstablished(NetConnection connection)
+        public Task<object> ChatMessage(string message, NetConnection connection)
         {
-            var completionSource = new TaskCompletionSource<object>();
-            var conversationID = GetNextConversationID();
+            var _completionSource = new TaskCompletionSource<object>();
+            var _conversationID = GetNextConversationID();
 
-            var message = Program.ServerNetworkManager.Clients.CreateMessage();
-            message.Write("ConnectionEstablished");
-            message.Write(conversationID);
+            var _message = Program.ServerNetworkManager.Clients.CreateMessage();
+            _message.Write("ChatMessage");
+            _message.Write(_conversationID);
 
+            byte[] _messageData = SerializationUtils.Serialize(message);
+            _message.Write(_messageData.Length);
+            _message.Write(_messageData);
 
-            TaskCompletionSources[conversationID] = (msg) =>
+            TaskCompletionSources[_conversationID] = (msg) =>
             {
-				completionSource.SetResult(null);
+				_completionSource.SetResult(null);
             };
 
-            Program.ServerNetworkManager.Clients.SendMessage(message, connection, NetDeliveryMethod.ReliableUnordered);
-            return completionSource.Task;
+            Program.ServerNetworkManager.Clients.SendMessage(_message, connection, NetDeliveryMethod.ReliableUnordered);
+            return _completionSource.Task;
+        }
+
+        public Task<object> UpdateChunk(long x, long y, List<Voxel> patch, NetConnection connection)
+        {
+            var _completionSource = new TaskCompletionSource<object>();
+            var _conversationID = GetNextConversationID();
+
+            var _message = Program.ServerNetworkManager.Clients.CreateMessage();
+            _message.Write("UpdateChunk");
+            _message.Write(_conversationID);
+
+            byte[] _xData = SerializationUtils.Serialize(x);
+            _message.Write(_xData.Length);
+            _message.Write(_xData);
+            byte[] _yData = SerializationUtils.Serialize(y);
+            _message.Write(_yData.Length);
+            _message.Write(_yData);
+            byte[] _patchData = SerializationUtils.Serialize(patch);
+            _message.Write(_patchData.Length);
+            _message.Write(_patchData);
+
+            TaskCompletionSources[_conversationID] = (msg) =>
+            {
+				_completionSource.SetResult(null);
+            };
+
+            Program.ServerNetworkManager.Clients.SendMessage(_message, connection, NetDeliveryMethod.ReliableUnordered);
+            return _completionSource.Task;
         }
     }
 }

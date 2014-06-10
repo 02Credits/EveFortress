@@ -8,11 +8,18 @@ namespace EveFortressClient
 {
     public class ClientMethods
     {
-        public bool Connected { get; set; }
-
-        public void ConnectionEstablished()
+        public void ChatMessage(string message)
         {
-            Connected = true;
+            Game.ChatManager.AddMessage(message);
+        }
+
+        public void UpdateChunk(long x, long y, List<Voxel> patch)
+        {
+            var chunk = Game.ChunkManager.GetChunk(x, y);
+            if (chunk != null)
+            {
+                chunk.ApplyPatch(patch);
+            }
         }
     }
 }

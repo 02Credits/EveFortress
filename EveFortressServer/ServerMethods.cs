@@ -20,39 +20,29 @@ namespace EveFortressServer
             return Program.PlayerManager.RegisterUser(info, connection);
         }
 
-        List<Action<string>> chatSubscriptions = new List<Action<string>>();
-        List<string> chatMessages = new List<string>();
         public void Chat(string text, NetConnection connection)
         {
             var message = Program.PlayerManager.ConnectionNames[connection] + ": " + text;
-            chatMessages.Add(message);
-            foreach (var chatSub in chatSubscriptions)
-            {
-                chatSub(message);
-            } 
 
-            if (chatMessages.Count > 50)
+            foreach (var c in Program.PlayerManager.Connections.Values)
             {
-                chatMessages = chatMessages.Skip(chatMessages.Count - 50).ToList();
+                Program.ClientMethods.ChatMessage(message, c);
             }
         }
 
-        public Action SubscribeToChatEvents(Action<string> callback)
+        public Chunk SubscribeToChunk(long x, long y, NetConnection connection)
         {
-            chatSubscriptions.Add(callback);
-            foreach (var chatMessage in chatMessages)
-            {
-                callback(chatMessage);
-            }
-            return () =>
-            {
-                chatSubscriptions.Remove(callback);
-            };
+            var player = Program.PlayerManager.Players[
+                            Program.PlayerManager.ConnectionNames[connection]];
+            player.SubscribedChunks.Add(Tuple.Create(x, y));
+            return Program.WorldManager.GetChunk(x, y);
         }
 
-        public List<TileDisplayInformation> GetDisplayTiles(int left, int top, int right, int bottom, int z)
+        public void UnsubscribeToChunk(long x, long y, NetConnection connection)
         {
-            throw new NotImplementedException();
+            var player = Program.PlayerManager.Players[
+                            Program.PlayerManager.ConnectionNames[connection]];
+            player.SubscribedChunks.Remove(Tuple.Create(x, y));
         }
     }
 }

@@ -21,10 +21,8 @@ namespace EveFortressClient
 
         public NewTab()
         {
-            AddOption("Assets", () => { });
             AddOption("Chat", () => { ParentSection.ReplaceTab(new ChatTab()); });
-            AddOption("Friends", () => { });
-            AddOption("Map", () => { });
+            AddOption("Map", () => { ParentSection.ReplaceTab(new MapTab()); });
         }
 
         public void AddOption(string title, Action action)

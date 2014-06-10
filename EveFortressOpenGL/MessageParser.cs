@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Utils;
 
 namespace EveFortressClient
 {
@@ -60,9 +61,26 @@ namespace EveFortressClient
 
         private void PopulateParsers()
         {
-            Parsers["ConnectionEstablished"] = (msg, id) =>
+            Parsers["ChatMessage"] = (msg, id) =>
             {
-				Game.ClientMethods.ConnectionEstablished();
+                var messageByteCount = msg.ReadInt32();
+                var messageBytes = msg.ReadBytes(messageByteCount);
+				var message = SerializationUtils.Deserialize<string>(messageBytes);
+				Game.ClientMethods.ChatMessage(message);
+				SendResponse(id, new byte[]{});
+            };
+            Parsers["UpdateChunk"] = (msg, id) =>
+            {
+                var xByteCount = msg.ReadInt32();
+                var xBytes = msg.ReadBytes(xByteCount);
+				var x = SerializationUtils.Deserialize<long>(xBytes);
+                var yByteCount = msg.ReadInt32();
+                var yBytes = msg.ReadBytes(yByteCount);
+				var y = SerializationUtils.Deserialize<long>(yBytes);
+                var patchByteCount = msg.ReadInt32();
+                var patchBytes = msg.ReadBytes(patchByteCount);
+				var patch = SerializationUtils.Deserialize<List<Voxel>>(patchBytes);
+				Game.ClientMethods.UpdateChunk(x, y, patch);
 				SendResponse(id, new byte[]{});
             };
         }

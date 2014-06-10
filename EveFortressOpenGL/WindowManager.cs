@@ -34,9 +34,9 @@ namespace EveFortressClient
             set { TargetHeight = value * Game.TileManager.TileSize; }
         }
 
-        public WindowManager(GameWindow window)
+        public WindowManager()
         {
-            Window = window;
+            Window = Game.GameWindow;
             Window.AllowUserResizing = true;
             Window.ClientSizeChanged += WindowSizeChanged;
             WindowSizeChanged(null, null);

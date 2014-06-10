@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Utils;
 
 namespace EveFortressClient
 {
@@ -48,7 +49,7 @@ namespace EveFortressClient
             message.Write("Login");
             message.Write(conversationID);
 
-            byte[] infoData = Game.ClientNetworkManager.Serialize(info);
+            byte[] infoData = SerializationUtils.Serialize(info);
             message.Write(infoData.Length);
             message.Write(infoData);
 
@@ -56,7 +57,8 @@ namespace EveFortressClient
             {
                 var dataLength = msg.ReadInt32();
                 var bytes = msg.ReadBytes(dataLength);
-				completionSource.SetResult(Game.ClientNetworkManager.Deserialize<LoginInformation>(bytes));
+				completionSource.SetResult(SerializationUtils.Deserialize<LoginInformation>(bytes));
+                TaskCompletionSources.Remove(conversationID);
             };
 
             Game.ClientNetworkManager.Connection.SendMessage(message, NetDeliveryMethod.ReliableUnordered);
@@ -71,7 +73,7 @@ namespace EveFortressClient
             message.Write("RegisterUser");
             message.Write(conversationID);
 
-            byte[] infoData = Game.ClientNetworkManager.Serialize(info);
+            byte[] infoData = SerializationUtils.Serialize(info);
             message.Write(infoData.Length);
             message.Write(infoData);
 
@@ -79,7 +81,8 @@ namespace EveFortressClient
             {
                 var dataLength = msg.ReadInt32();
                 var bytes = msg.ReadBytes(dataLength);
-				completionSource.SetResult(Game.ClientNetworkManager.Deserialize<LoginInformation>(bytes));
+				completionSource.SetResult(SerializationUtils.Deserialize<LoginInformation>(bytes));
+                TaskCompletionSources.Remove(conversationID);
             };
 
             Game.ClientNetworkManager.Connection.SendMessage(message, NetDeliveryMethod.ReliableUnordered);
@@ -94,48 +97,66 @@ namespace EveFortressClient
             message.Write("Chat");
             message.Write(conversationID);
 
-            byte[] textData = Game.ClientNetworkManager.Serialize(text);
+            byte[] textData = SerializationUtils.Serialize(text);
             message.Write(textData.Length);
             message.Write(textData);
 
             TaskCompletionSources[conversationID] = (msg) =>
             {
 				completionSource.SetResult(null);
+                TaskCompletionSources.Remove(conversationID);
             };
 
             Game.ClientNetworkManager.Connection.SendMessage(message, NetDeliveryMethod.ReliableUnordered);
             return completionSource.Task;
         }
 
-        public Task<Action> SubscribeToChatEvents(Action<string> callback)
+        public Task<Chunk> SubscribeToChunk(long x, long y)
         {
-            var completionSource = new TaskCompletionSource<Action>();
+            var completionSource = new TaskCompletionSource<Chunk>();
             var conversationID = GetNextConversationID();
             var message = Game.ClientNetworkManager.Connection.CreateMessage();
-            message.Write("SubscribeToChatEvents");
+            message.Write("SubscribeToChunk");
             message.Write(conversationID);
 
-			var callbackID = GetNextCallbackID();
-			CallbackActions[callbackID] = (msg) =>
-			{
-				var byteLength = msg.ReadInt32();
-				var bytes = msg.ReadBytes(byteLength);
-				var param = Game.ClientNetworkManager.Deserialize<string>(bytes);
-				callback(param);
-			};
-			message.Write(callbackID);
+            byte[] xData = SerializationUtils.Serialize(x);
+            message.Write(xData.Length);
+            message.Write(xData);
+            byte[] yData = SerializationUtils.Serialize(y);
+            message.Write(yData.Length);
+            message.Write(yData);
 
             TaskCompletionSources[conversationID] = (msg) =>
             {
-				var returnCallbackID = msg.ReadInt64();
-				Action returnParam = () =>
-				{
-					var callbackMessage = Game.ClientNetworkManager.Connection.CreateMessage();
-					callbackMessage.Write("callback");
-					callbackMessage.Write(returnCallbackID);
-					Game.ClientNetworkManager.Connection.SendMessage(callbackMessage, NetDeliveryMethod.ReliableUnordered);
-				};
-				completionSource.SetResult(returnParam);
+                var dataLength = msg.ReadInt32();
+                var bytes = msg.ReadBytes(dataLength);
+				completionSource.SetResult(SerializationUtils.Deserialize<Chunk>(bytes));
+                TaskCompletionSources.Remove(conversationID);
+            };
+
+            Game.ClientNetworkManager.Connection.SendMessage(message, NetDeliveryMethod.ReliableUnordered);
+            return completionSource.Task;
+        }
+
+        public Task<object> UnsubscribeToChunk(long x, long y)
+        {
+            var completionSource = new TaskCompletionSource<object>();
+            var conversationID = GetNextConversationID();
+            var message = Game.ClientNetworkManager.Connection.CreateMessage();
+            message.Write("UnsubscribeToChunk");
+            message.Write(conversationID);
+
+            byte[] xData = SerializationUtils.Serialize(x);
+            message.Write(xData.Length);
+            message.Write(xData);
+            byte[] yData = SerializationUtils.Serialize(y);
+            message.Write(yData.Length);
+            message.Write(yData);
+
+            TaskCompletionSources[conversationID] = (msg) =>
+            {
+				completionSource.SetResult(null);
+                TaskCompletionSources.Remove(conversationID);
             };
 
             Game.ClientNetworkManager.Connection.SendMessage(message, NetDeliveryMethod.ReliableUnordered);

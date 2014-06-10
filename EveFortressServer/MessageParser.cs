@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Utils;
 
 namespace EveFortressServer
 {
@@ -66,53 +67,50 @@ namespace EveFortressServer
             {
                 var infoByteCount = msg.ReadInt32();
                 var infoBytes = msg.ReadBytes(infoByteCount);
-                var info = Program.ServerNetworkManager.Deserialize<LoginInformation>(infoBytes);
+                var info = SerializationUtils.Deserialize<LoginInformation>(infoBytes);
                 var result = Program.ServerMethods.Login(info, msg.SenderConnection);
-                byte[] resultData = Program.ServerNetworkManager.Serialize(result);
+                byte[] resultData = SerializationUtils.Serialize(result);
                 SendResponse(id, msg.SenderConnection, resultData);
             };
             Parsers["RegisterUser"] = (msg, id) =>
             {
                 var infoByteCount = msg.ReadInt32();
                 var infoBytes = msg.ReadBytes(infoByteCount);
-                var info = Program.ServerNetworkManager.Deserialize<LoginInformation>(infoBytes);
+                var info = SerializationUtils.Deserialize<LoginInformation>(infoBytes);
                 var result = Program.ServerMethods.RegisterUser(info, msg.SenderConnection);
-                byte[] resultData = Program.ServerNetworkManager.Serialize(result);
+                byte[] resultData = SerializationUtils.Serialize(result);
                 SendResponse(id, msg.SenderConnection, resultData);
             };
             Parsers["Chat"] = (msg, id) =>
             {
                 var textByteCount = msg.ReadInt32();
                 var textBytes = msg.ReadBytes(textByteCount);
-                var text = Program.ServerNetworkManager.Deserialize<string>(textBytes);
+                var text = SerializationUtils.Deserialize<string>(textBytes);
 				Program.ServerMethods.Chat(text, msg.SenderConnection);
 				SendResponse(id, msg.SenderConnection, new byte[]{});
             };
-            Parsers["SubscribeToChatEvents"] = (msg, id) =>
+            Parsers["SubscribeToChunk"] = (msg, id) =>
             {
-				var callbackID = msg.ReadInt64();
-				var sender = msg.SenderConnection;
-				Action<string> callback = (obj) => 
-				{
-					var callbackMessage = Program.ServerNetworkManager.Clients.CreateMessage();
-					byte[] callbackParamData = Program.ServerNetworkManager.Serialize(obj);
-					callbackMessage.Write("callback");
-					callbackMessage.Write(callbackID);
-					callbackMessage.Write(callbackParamData.Length);
-					callbackMessage.Write(callbackParamData);
-					Program.ServerNetworkManager.Clients.SendMessage(callbackMessage, sender, NetDeliveryMethod.ReliableUnordered);
-				};
-				var returnCallbackID = Program.ClientMethods.GetNextCallbackID();
-				var returnAction = Program.ServerMethods.SubscribeToChatEvents(callback);
-				Program.ClientMethods.CallbackActions[returnCallbackID] = (returnMsg) =>
-				{
-					returnAction();
-				};
-				var message = Program.ServerNetworkManager.Clients.CreateMessage();
-				message.Write("response");
-				message.Write(id);
-				message.Write(returnCallbackID);
-				Program.ServerNetworkManager.Clients.SendMessage(message, sender, NetDeliveryMethod.ReliableUnordered);
+                var xByteCount = msg.ReadInt32();
+                var xBytes = msg.ReadBytes(xByteCount);
+                var x = SerializationUtils.Deserialize<long>(xBytes);
+                var yByteCount = msg.ReadInt32();
+                var yBytes = msg.ReadBytes(yByteCount);
+                var y = SerializationUtils.Deserialize<long>(yBytes);
+                var result = Program.ServerMethods.SubscribeToChunk(x, y, msg.SenderConnection);
+                byte[] resultData = SerializationUtils.Serialize(result);
+                SendResponse(id, msg.SenderConnection, resultData);
+            };
+            Parsers["UnsubscribeToChunk"] = (msg, id) =>
+            {
+                var xByteCount = msg.ReadInt32();
+                var xBytes = msg.ReadBytes(xByteCount);
+                var x = SerializationUtils.Deserialize<long>(xBytes);
+                var yByteCount = msg.ReadInt32();
+                var yBytes = msg.ReadBytes(yByteCount);
+                var y = SerializationUtils.Deserialize<long>(yBytes);
+				Program.ServerMethods.UnsubscribeToChunk(x, y, msg.SenderConnection);
+				SendResponse(id, msg.SenderConnection, new byte[]{});
             };
         }
     }

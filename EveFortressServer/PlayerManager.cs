@@ -18,17 +18,7 @@ namespace EveFortressServer
 
         public PlayerManager()
         {
-            if (File.Exists("Players.bin"))
-            {
-                using (var stream = File.OpenRead("Players.bin"))
-                {
-                    Players = Serializer.Deserialize<Dictionary<string, Player>>(stream);
-                }
-            }
-            else
-            {
-                Players = new Dictionary<string, Player>();
-            }
+            Players = Utils.SerializationUtils.DeserializeFileOrValue("Players.bin", new Dictionary<string,Player>());
             Connections = new Dictionary<string, NetConnection>();
             ConnectionNames = new Dictionary<NetConnection, string>();
 
@@ -58,7 +48,6 @@ namespace EveFortressServer
                             Connections.Add(loginInfo.UserName, connection);
                             ConnectionNames.Add(connection, loginInfo.UserName);
                             loginInfo.LoginResponse = LoginResponse.Success;
-                            Program.ClientMethods.ConnectionEstablished(connection);
                         }
                         else
                         {
@@ -113,10 +102,7 @@ namespace EveFortressServer
 
         public void Dispose()
         {
-            using (var stream = File.OpenWrite("Players.bin"))
-            {
-                Serializer.Serialize(stream, Players);
-            }
+            Utils.SerializationUtils.SerializeToFile("Players.bin", Players);
         }
     }
 }

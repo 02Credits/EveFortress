@@ -32,6 +32,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Utils;
 
 namespace EveFortressClient
 {
@@ -112,7 +113,7 @@ foreach (var method in methods)
 			{
 				var byteLength = msg.ReadInt32();
 				var bytes = msg.ReadBytes(byteLength);
-				var param = Game.ClientNetworkManager.Deserialize<#= genericTypeText #>(bytes);
+				var param = SerializationUtils.Deserialize<#= genericTypeText #>(bytes);
 				<#= localIdentifier #>(param);
 			};
 <#
@@ -133,7 +134,7 @@ foreach (var method in methods)
 		else if (param.Type.ToString() != "NetConnection")
 		{
 #>
-            byte[] <#= localIdentifier #>Data = Game.ClientNetworkManager.Serialize(<#= localIdentifier #>);
+            byte[] <#= localIdentifier #>Data = SerializationUtils.Serialize(<#= localIdentifier #>);
             message.Write(<#= localIdentifier #>Data.Length);
             message.Write(<#= localIdentifier #>Data);
 <#
@@ -162,7 +163,7 @@ foreach (var method in methods)
 				Action<#= genericTypeText #> returnParam = (obj) =>
 				{
 					var callbackMessage = Game.ClientNetworkManager.Connection.CreateMessage();
-					byte[] callbackParamData = Game.ClientNetworkManager.Serialize(obj);
+					byte[] callbackParamData = SerializationUtils.Serialize(obj);
 					callbackMessage.Write("callback");
 					callbackMessage.Write(returnCallbackID);
 					callbackMessage.Write(callbackParamData.Length);
@@ -191,10 +192,11 @@ foreach (var method in methods)
 #>
                 var dataLength = msg.ReadInt32();
                 var bytes = msg.ReadBytes(dataLength);
-				completionSource.SetResult(Game.ClientNetworkManager.Deserialize<<#= method.ReturnType.ToString() #>>(bytes));
+				completionSource.SetResult(SerializationUtils.Deserialize<<#= method.ReturnType.ToString() #>>(bytes));
 <#
 	}
 #>
+                TaskCompletionSources.Remove(conversationID);
             };
 
             Game.ClientNetworkManager.Connection.SendMessage(message, NetDeliveryMethod.ReliableUnordered);

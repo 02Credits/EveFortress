@@ -72,6 +72,30 @@ namespace EveFortressClient
             }
         }
 
+        public int MouseScrollDelta
+        {
+            get
+            {
+                return CurrentMouseState.ScrollWheelValue - PreviousMouseState.ScrollWheelValue;
+            }
+        }
+
+        public bool MouseScrolledUp
+        {
+            get
+            {
+                return MouseScrollDelta > 0;
+            }
+        }
+
+        public bool MouseScrolledDown
+        {
+            get
+            {
+                return MouseScrollDelta < 0;
+            }
+        }
+
         public bool KeyDown(Keys key)
         {
             return PreviousKeyboardState.IsKeyDown(key);

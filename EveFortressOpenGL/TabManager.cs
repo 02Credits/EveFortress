@@ -11,7 +11,7 @@ namespace EveFortressClient
     public class TabManager : IUpdateNeeded, IDrawNeeded, IInputNeeded
     {
         public TabSection MainSection { get; set; }
-        public TabSection ActiveSection { get; set; }
+        public TabSection   ActiveSection { get; set; }
 
         public int MinimumWidth
         {

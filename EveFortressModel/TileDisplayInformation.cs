@@ -34,7 +34,7 @@ namespace EveFortressModel
             TerrainTile = tile;
             IncludeColor = false;
         }
-        public TileDisplayInformation(TerrainTiles tile, byte r, byte g, byte b, byte a)
+        public TileDisplayInformation(TerrainTiles tile, byte r, byte g, byte b, byte a = 255)
         {
             TerrainTile = tile;
             R = r;
@@ -47,7 +47,7 @@ namespace EveFortressModel
             EntityTile = tile;
             IncludeColor = false;
         }
-        public TileDisplayInformation(EntityTiles tile, byte r = 255, byte g = 255, byte b = 255, byte a = 255)
+        public TileDisplayInformation(EntityTiles tile, byte r, byte g, byte b, byte a = 255)
         {
             EntityTile = tile;
             R = r;
@@ -60,7 +60,7 @@ namespace EveFortressModel
             UITile = tile;
             IncludeColor = false;
         }
-        public TileDisplayInformation(UITiles tile, byte r = 255, byte g = 255, byte b = 255, byte a = 255)
+        public TileDisplayInformation(UITiles tile, byte r, byte g, byte b, byte a = 255)
         {
             UITile = tile;
             R = r;
@@ -73,7 +73,7 @@ namespace EveFortressModel
             ItemTile = tile;
             IncludeColor = false;
         }
-        public TileDisplayInformation(ItemTiles tile, byte r = 255, byte g = 255, byte b = 255, byte a = 255)
+        public TileDisplayInformation(ItemTiles tile, byte r, byte g, byte b, byte a = 255)
         {
             ItemTile = tile;
             R = r;

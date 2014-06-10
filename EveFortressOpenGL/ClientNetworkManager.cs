@@ -3,11 +3,13 @@ using Lidgren.Network;
 using Microsoft.Xna.Framework;
 using ProtoBuf;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace EveFortressClient
@@ -27,6 +29,8 @@ namespace EveFortressClient
             }
         }
 
+        ConcurrentQueue<NetIncomingMessage> Messages = new ConcurrentQueue<NetIncomingMessage>();
+
         public ClientNetworkManager()
         {
             var config = new NetPeerConfiguration("EveFortress");
@@ -34,17 +38,42 @@ namespace EveFortressClient
             Connection.Start();
             Game.Updateables.Add(this);
             Game.Disposables.Add(this);
+            Task.Run(() =>
+            {
+                while (true)
+                {
+                    if (Connected)
+                    {
+                        NetIncomingMessage msg = Connection.ReadMessage();
+                        if (msg != null)
+                        {
+                            Messages.Enqueue(msg);
+                            continue;
+                        }
+                    }
+                    Thread.Sleep(20);
+                }
+            });
         }
 
-        private void Connect()
+        bool connecting;
+        private async void Connect()
         {
-            if (DEBUG)
+            if (!connecting)
             {
-                Connection.Connect("localhost", 19952);
-            }
-            else
-            {
-                Connection.Connect("the-simmons.dnsalias.net", 19952);
+                connecting = true;
+                await Task.Run(() =>
+                {
+                    if (DEBUG)
+                    {
+                        Connection.Connect("localhost", 19952);
+                    }
+                    else
+                    {
+                        Connection.Connect("the-simmons.dnsalias.net", 19952);
+                    }
+                });
+                connecting = false;
             }
         }
 
@@ -53,7 +82,7 @@ namespace EveFortressClient
             if (Connected)
             {
                 NetIncomingMessage msg;
-                while ((msg = Connection.ReadMessage()) != null)
+                while (Messages.TryDequeue(out msg))
                 {
                     switch (msg.MessageType)
                     {
@@ -84,7 +113,8 @@ namespace EveFortressClient
                     Connection.ServerConnection.Status != NetConnectionStatus.InitiatedConnect ||
                     Connection.ServerConnection.Status != NetConnectionStatus.RespondedConnect)
                 {
-                    Game.TabManager.ActiveSection.ReplaceTab(new ConnectingTab());
+                    Game.QueueReset();
+                    Game.TabManager.MainSection.ReplaceTab(new ConnectingTab());
                     Connect();
                 }
             }

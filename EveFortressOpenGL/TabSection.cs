@@ -163,7 +163,7 @@ namespace EveFortressClient
                     {
                         Game.TileManager.DrawTile(UITiles.BorderVertical, x, y);
                     }
-                    Game.TileManager.DrawTile(UITiles.BorderCapBottom, x, Y + Height + 1);
+                    Game.TileManager.DrawTile(UITiles.BorderCapBottom, x, Y + Height);
                 }
                 else
                 {
@@ -173,7 +173,7 @@ namespace EveFortressClient
                     {
                         Game.TileManager.DrawTile(UITiles.BorderHorizontal, x, y);
                     }
-                    Game.TileManager.DrawTile(UITiles.BorderCapRight, X + Width + 1, y);
+                    Game.TileManager.DrawTile(UITiles.BorderCapRight, X + Width, y);
                 }
                 First.Render();
                 Second.Render();
@@ -265,8 +265,10 @@ namespace EveFortressClient
             }
             else
             {
-                First.Close();
-                Second.Close();
+                if (First != null)
+                    First.Close();
+                if (Second != null)
+                    Second.Close();
             }
         }
 
@@ -361,7 +363,7 @@ namespace EveFortressClient
             if (!Populated)
             {
                 if ((Game.InputManager.KeyDown(Keys.LeftControl) || Game.InputManager.KeyDown(Keys.RightControl)) && 
-                     Game.ClientMethods.Connected)
+                     Game.ClientNetworkManager.Connected)
                 {
                     if (Game.InputManager.KeyPressed(Keys.Left))
                     {
@@ -391,12 +393,12 @@ namespace EveFortressClient
                         Parent.CloseChild(this);
                         return true;
                     }
-                    else if (Game.ClientMethods.Connected)
+                    else if (Game.ClientNetworkManager.Connected)
                     {
                         ReplaceTab(new NewTab());
                     }
                 }
-                else if (Game.InputManager.KeyPressed(Keys.Home) && Game.ClientMethods.Connected)
+                else if (Game.InputManager.KeyPressed(Keys.Home) && Game.ClientNetworkManager.Connected)
                 {
                     ReplaceTab(new NewTab());
                 }
