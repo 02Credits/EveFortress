@@ -1,14 +1,9 @@
 ﻿using EveFortressModel;
 using Lidgren.Network;
-using Microsoft.Xna.Framework;
 using ProtoBuf;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Dynamic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -16,7 +11,7 @@ namespace EveFortressClient
 {
     public class ClientNetworkManager : IUpdateNeeded, IDisposeNeeded
     {
-        const bool DEBUG = false;
+        const bool DEBUG = true;
         public NetClient Connection { get; set; }
 
         public bool Connected
