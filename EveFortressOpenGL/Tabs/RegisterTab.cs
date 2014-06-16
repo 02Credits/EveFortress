@@ -16,21 +16,21 @@ namespace EveFortressClient
             get { return "Register"; }
         }
 
-        TextBlock usernameError;
+        Label usernameError;
         TextInput usernameInput;
-        TextBlock passwordError;
+        Label passwordError;
         TextInput passwordInput;
         Button registerButton;
         Button backButton;
 
         public RegisterTab(string username, string password)
         {
-            new TextBlock(this, 1, 1, "UserName:");
-            usernameError = new TextBlock(this, 11, 1, "", Color.Red);
+            new Label(this, 1, 1, "UserName:");
+            usernameError = new Label(this, 11, 1, "", Color.Red);
             usernameInput = new TextInput(this, 2, 3, 20, (s) => passwordInput.Focus());
             usernameInput.Text = username;
-            new TextBlock(this, 1, 5, "Password:");
-            passwordError = new TextBlock(this, 11, 5, "", Color.Red);
+            new Label(this, 1, 5, "Password:");
+            passwordError = new Label(this, 11, 5, "", Color.Red);
             passwordInput = new TextInput(this, 2, 7, 20, (s) => registerButton.OnClicked(), password: true);
             passwordInput.Text = password;
             registerButton = new Button(this, 1, 9, AttemptRegister, "Register");

@@ -17,19 +17,19 @@ namespace EveFortressClient
         }
 
         TextInput usernameInput;
-        TextBlock usernameError;
+        Label usernameError;
         TextInput passwordInput;
-        TextBlock passwordError;
+        Label passwordError;
         Button registerButton;
         Button loginButton;
 
         public LoginTab()
         {
-            new TextBlock(this, 1, 1, "UserName:");
-            usernameError = new TextBlock(this, 11, 1, "", Color.Red);
+            new Label(this, 1, 1, "UserName:");
+            usernameError = new Label(this, 11, 1, "", Color.Red);
             usernameInput = new TextInput(this, 2, 3, 20, (s) => passwordInput.Focus());
-            new TextBlock(this, 1, 5, "Password:");
-            passwordError = new TextBlock(this, 11, 5, "", Color.Red);
+            new Label(this, 1, 5, "Password:");
+            passwordError = new Label(this, 11, 5, "", Color.Red);
             passwordInput = new TextInput(this, 2, 7, 20, (s) => loginButton.OnClicked(), password: true);
             loginButton = new Button(this, 1, 9, AttemptLogin, "Login");
             registerButton = new Button(this, 1, 11, 

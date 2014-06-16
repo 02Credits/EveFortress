@@ -24,7 +24,7 @@ namespace EveFortressClient
             Game.Drawables.Add(this);
         }
 
-        public void AddSprite(Texture2D texture, Rectangle destinationRectangle, Rectangle? sourceRectangle, Color color)
+        public void AddSprite(Texture2D texture, Rectangle destinationRectangle, float z, Rectangle? sourceRectangle, Color color)
         {
             var destinationLeft = destinationRectangle.X;
             var destinationRight = destinationRectangle.X + destinationRectangle.Width;
@@ -54,25 +54,25 @@ namespace EveFortressClient
 
             TopLeftWorld.X = destinationLeft;
             TopLeftWorld.Y = destinationTop;
-            TopLeftWorld.Z = 1;
+            TopLeftWorld.Z = z;
             TopLeftTexture.X = sourceLeft;
             TopLeftTexture.Y = sourceTop;
 
             TopRightWorld.X = destinationRight;
             TopRightWorld.Y = destinationTop;
-            TopRightWorld.Z = 1;
+            TopRightWorld.Z = z;
             TopRightTexture.X = sourceRight;
             TopRightTexture.Y = sourceTop;
 
             BottomRightWorld.X = destinationRight;
             BottomRightWorld.Y = destinationBottom;
-            BottomRightWorld.Z = 1;
+            BottomRightWorld.Z = z;
             BottomRightTexture.X = sourceRight;
             BottomRightTexture.Y = sourceBottom;
 
             BottomLeftWorld.X = destinationLeft;
             BottomLeftWorld.Y = destinationBottom;
-            BottomLeftWorld.Z = 1;
+            BottomLeftWorld.Z = z;
             BottomLeftTexture.X = sourceLeft;
             BottomLeftTexture.Y = sourceBottom;
 

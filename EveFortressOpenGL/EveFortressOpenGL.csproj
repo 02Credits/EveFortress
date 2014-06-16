@@ -70,7 +70,7 @@
     <Compile Include="Tabs\Tab.cs" />
     <Compile Include="TabManager.cs" />
     <Compile Include="TabSection.cs" />
-    <Compile Include="UIComponents\TextBlock.cs" />
+    <Compile Include="UIComponents\Label.cs" />
     <Compile Include="UIComponents\TextInput.cs" />
     <Compile Include="TileManager.cs" />
     <Compile Include="UIComponents\UIElement.cs" />

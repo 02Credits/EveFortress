@@ -16,7 +16,7 @@ namespace EveFortressClient
 
         public ConnectingTab()
         {
-            var message = new TextBlock(this,
+            var message = new Label(this,
                 new CVal<int>(() => Width / 2),
                 new CVal<int>(() => Height / 2),
                 "Connecting...");
