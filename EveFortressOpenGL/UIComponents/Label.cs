@@ -7,7 +7,7 @@ using Utils;
 
 namespace EveFortressClient
 {
-    public class TextBlock : UIElement
+    public class Label : UIElement
     {
         public override bool Activateable
         {
@@ -20,10 +20,10 @@ namespace EveFortressClient
 
         public Color TextColor { get; set; }
 
-        public TextBlock(IUIElementContainer parent, CVal<int> x, CVal<int> y, string text)
+        public Label(IUIElementContainer parent, CVal<int> x, CVal<int> y, string text)
             : this(parent, x, y, text, Color.White) { }
 
-        public TextBlock(IUIElementContainer parent, CVal<int> x, CVal<int> y, string text, Color textColor)
+        public Label(IUIElementContainer parent, CVal<int> x, CVal<int> y, string text, Color textColor)
             : base(parent, x, y, text.Length, 1)
         {
             Width = new CVal<int>(() => Text.Length);
@@ -43,26 +43,34 @@ namespace EveFortressClient
 
         public List<string> BreakIntoLines(string text, int lineLength)
         {
+            var remainingChars = text;
             var returnList = new List<string>();
             var nextLine = "";
-            for (int i = 0; i < text.Length; i++)
+            while (remainingChars.Length > 0)
             {
-                nextLine += text[i];
-                if (nextLine.Length > lineLength)
+                var nextChar = remainingChars[0];
+                remainingChars = remainingChars.Substring(1);
+                if (nextChar == ' ')
                 {
-                    var lastChars = nextLine.Substring(nextLine.Length - 3);
-                    nextLine = nextLine.Substring(0, nextLine.Length - 3) + "-";
-                    returnList.Add(nextLine);
-                    nextLine = lastChars;
-                }
-                else if (nextLine.Length > lineLength - 8)
-                {
-                    if (text[i] == ' ')
+                    if (nextLine.Length > lineLength - 8)
                     {
-                        returnList.Add(nextLine);
+                        if (!remainingChars.Contains(' ') || remainingChars.IndexOf(' ') >= lineLength - nextLine.Length)
+                        {
+                            returnList.Add(nextLine);
+                            nextLine = "";
+                            continue;
+                        }
+                    }
+                }
+                else
+                {
+                    if (nextLine.Length == lineLength - 1 && remainingChars.Length != 0)
+                    {
+                        returnList.Add(nextLine + "-");
                         nextLine = "";
                     }
                 }
+                nextLine += nextChar;
             }
             if (!string.IsNullOrWhiteSpace(nextLine))
                 returnList.Add(nextLine);

@@ -51,7 +51,7 @@ namespace EveFortressClient
             var messages = Game.ChatManager.Messages;
             for (int i = list.Elements.Count; i < messages.Count; i++)
             {
-                new TextBlock(list, 0, 0, messages[i]);
+                new Label(list, 0, 0, messages[i]);
                 list.ScrollPercentage = 1;
             }
         }

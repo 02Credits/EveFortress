@@ -76,13 +76,13 @@ namespace EveFortressClient
 
             var destinationRectangle = new Rectangle(TilePositionX * TileSize, TilePositionY * TileSize, TileSize, TileSize);
 
-            DrawTileFromSheet((int)tileToDraw.TerrainTile, TerrainSheet, destinationRectangle, color);
-            DrawTileFromSheet((int)tileToDraw.EntityTile, EntitySheet, destinationRectangle, color);
-            DrawTileFromSheet((int)tileToDraw.ItemTile, ItemSheet, destinationRectangle, color);
-            DrawTileFromSheet((int)tileToDraw.UITile, UISheet, destinationRectangle, color);
+            DrawTileFromSheet((int)tileToDraw.TerrainTile, TerrainSheet, destinationRectangle, color, 0);
+            DrawTileFromSheet((int)tileToDraw.EntityTile, EntitySheet, destinationRectangle, color, 1);
+            DrawTileFromSheet((int)tileToDraw.ItemTile, ItemSheet, destinationRectangle, color, 2);
+            DrawTileFromSheet((int)tileToDraw.UITile, UISheet, destinationRectangle, color, 3);
         }
 
-        public void DrawTileFromSheet(int index, Texture2D sheet, Rectangle destination, Color color)
+        public void DrawTileFromSheet(int index, Texture2D sheet, Rectangle destination, Color color, float z)
         {
             if (index != 0)
             {
@@ -90,7 +90,7 @@ namespace EveFortressClient
                 var tileX = index % (sheet.Width / SHEET_TILE_SIZE);
                 var tileY = (index - tileX) / (sheet.Width / SHEET_TILE_SIZE);
                 var sourceRect = new Rectangle(tileX * SHEET_TILE_SIZE, tileY * SHEET_TILE_SIZE, SHEET_TILE_SIZE, SHEET_TILE_SIZE);
-                Game.SpriteManager.AddSprite(sheet, destination, sourceRect, color);
+                Game.SpriteManager.AddSprite(sheet, destination, z, sourceRect, color);
             }
         }
 

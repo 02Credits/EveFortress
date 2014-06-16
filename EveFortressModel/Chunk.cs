@@ -36,23 +36,34 @@ namespace EveFortressModel
                 {
                     for (byte z = 0; z < DEPTH; z++)
                     {
+                        var worldX = chunkX * WIDTH + x;
+                        var worldY = chunkY * HEIGHT + y;
+                        var distance = Math.Sqrt(worldX * worldX + worldY * worldY);
                         if (z == DEPTH / 2)
                         {
-                            var worldX = chunkX * WIDTH + x;
-                            var worldY = chunkY * HEIGHT + y;
-                            var xAndYSquared = worldX * worldX + worldY * worldY;
-                            if (xAndYSquared < 36)
+                            if (distance < 10)
                             {
                                 SetVoxel(x, y, z, new Voxel(new GrassBlock()));
                             }
                             else
                             {
-                                SetVoxel(x, y, z, new Voxel(new DirtBlock()));
+                                SetVoxel(x, y, z, new Voxel(new AirBlock()));
                             }
                         }
                         else if (z <= DEPTH / 2)
                         {
-                            SetVoxel(x, y, z, new Voxel(new StoneBlock()));
+                            if (distance < 9 + (DEPTH / 2 - z))
+                            {
+                                SetVoxel(x, y, z, new Voxel(new StoneBlock()));
+                            }
+                            else if (distance < 10 + (DEPTH / 2 - z))
+                            {
+                                SetVoxel(x, y, z, new Voxel(new GrassBlock()));
+                            }
+                            else
+                            {
+                                SetVoxel(x, y, z, new Voxel(new AirBlock()));
+                            }
                         }
                         else
                         {
@@ -65,6 +76,8 @@ namespace EveFortressModel
 
         public Voxel GetVoxel(byte x, byte y, byte z)
         {
+            if (z < 0 || z > DEPTH || x < 0 || x > WIDTH || y < 0 || y > HEIGHT)
+                return null;
             return Voxels[z * WIDTH * HEIGHT + y * HEIGHT + x];
         }
 
