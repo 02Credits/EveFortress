@@ -76,7 +76,7 @@ namespace EveFortressModel
 
         public Voxel GetVoxel(byte x, byte y, byte z)
         {
-            if (z < 0 || z > DEPTH || x < 0 || x > WIDTH || y < 0 || y > HEIGHT)
+            if (z < 0 || z >= DEPTH || x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT)
                 return null;
             return Voxels[z * WIDTH * HEIGHT + y * HEIGHT + x];
         }
@@ -92,18 +92,25 @@ namespace EveFortressModel
         public List<TileDisplayInformation> GetDisplayInfo(byte x, byte y, byte z)
         {
             var voxel = GetVoxel(x, y, z);
-            if (voxel.IsEmpty())
+            if (voxel != null)
             {
-                if (z > 0)
+                if (voxel.IsEmpty())
                 {
-                    var lowerVoxel = GetVoxel(x, y, (byte)(z - 1));
-                    var returnList = new List<TileDisplayInformation>();
-                    if (lowerVoxel.IsEmpty()) returnList.Add(TerrainTiles.EmptySpace);
-                    else returnList.Add(lowerVoxel.Block.GetDisplayInfo());
-                    returnList.Add(voxel.Block.GetDisplayInfo());
+                    if (z > 0)
+                    {
+                        var lowerVoxel = GetVoxel(x, y, (byte)(z - 1));
+                        var returnList = new List<TileDisplayInformation>();
+                        if (lowerVoxel.IsEmpty()) returnList.Add(TerrainTiles.EmptySpace);
+                        else returnList.Add(lowerVoxel.Block.GetDisplayInfo());
+                        returnList.Add(voxel.Block.GetDisplayInfo());
+                    }
                 }
+                return new List<TileDisplayInformation> { voxel.Block.GetDisplayInfo() };
             }
-            return new List<TileDisplayInformation> { voxel.Block.GetDisplayInfo() };
+            else
+            {
+                return new List<TileDisplayInformation> { TerrainTiles.Checkered };
+            }
         }
 
         public void ApplyPatch(List<Voxel> changes)

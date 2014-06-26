@@ -37,48 +37,16 @@ namespace EveFortressClient
 {
     public class MessageParser
     {
-        public Dictionary<string, Action<NetIncomingMessage, long>> Parsers { get; set; }
+        public Dictionary<string, Func<NetIncomingMessage, byte[]>> Parsers { get; set; }
         public MessageParser()
         {
-            Parsers = new Dictionary<string, Action<NetIncomingMessage, long>>();
+            Parsers = new Dictionary<string, Func<NetIncomingMessage, byte[]>>();
             PopulateParsers();
         }
 
-        public void ParseMessage(NetIncomingMessage msg)
+        public byte[] ParseMessage(string command, NetIncomingMessage msg)
         {
-            var commandName = msg.ReadString();
-            var id = msg.ReadInt64();
-            if (commandName == "response")
-            {
-                Game.ServerMethods.TaskCompletionSources[id](msg);
-            }
-			else if (commandName == "callback")
-			{
-				Console.WriteLine("Recieved Callback for CallbackID: " + id);
-				Game.ServerMethods.CallbackActions[id](msg);
-			}
-            else
-            {
-                Parsers[commandName](msg, id);
-            }
-        }
-
-        public void SendResponse(long conversationID)
-        {
-            SendResponse(conversationID, new byte[]{});
-        }
-
-        public void SendResponse(long conversationID, byte[] responseData)
-        {
-            var message = Game.ClientNetworkManager.Connection.CreateMessage();
-            message.Write("response");
-            message.Write(conversationID);
-            if (responseData.Length != 0)
-            {
-                message.Write(responseData.Length);
-                message.Write(responseData);
-            }
-            Game.ClientNetworkManager.Connection.SendMessage(message, NetDeliveryMethod.ReliableUnordered);
+            return Parsers[command](msg);
         }
 
         private void PopulateParsers()
@@ -88,112 +56,23 @@ foreach (var method in methods)
 {
 	var parameters = method.ParameterList.Parameters;
 #>
-            Parsers["<#= method.Identifier.ToString() #>"] = (msg, id) =>
+            Parsers["<#= method.Identifier.ToString() #>"] = (msg) =>
             {
 <#
-	string methodArgumentList = "";
+	string typeList = "";
 	foreach (var param in parameters)
     {
-		var paramId = param.Identifier.ToString();
 		var paramType = param.Type.ToString();
-		if (paramType.StartsWith("Action"))
-        {
-#>
-				var <#= paramId #>ID = msg.ReadInt64();
-<#
-			if (param.Type.ChildNodes().Any())
-            {
-				var genericTypeText = param.Type.ChildNodes().First();
-#>
-				Action<#= genericTypeText #> <#= paramId #> = (obj) => 
-				{
-					var callbackMessage = Game.ClientNetworkManager.Connection.CreateMessage();
-					byte[] callbackParamData = SerializationUtils.Serialize(obj);
-					callbackMessage.Write("callback");
-					callbackMessage.Write(<#= paramId #>ID);
-					callbackMessage.Write(callbackParamData.Length);
-					callbackMessage.Write(callbackParamData);
-					Game.ClientNetworkManager.Connection.SendMessage(callbackMessage, NetDeliveryMethod.ReliableUnordered);
-				};
-<#
-			}
-			else
-            {
-#>
-				Action <#= paramId #> = () =>
-				{
-					var callbackMessage = Game.ClientNetworkManager.Connection.CreateMessage();
-					callbackMessage.Write("callback");
-					callbackMessage.Write(<#= paramId #>ID);
-					Game.ClientNetworkManager.Connection.SendMessage(callbackMessage, NetDeliveryMethod.ReliableUnordered);
-				};
-<#
-            }
-        }
-		else
-        {
-#>
-                var <#= paramId #>ByteCount = msg.ReadInt32();
-                var <#= paramId #>Bytes = msg.ReadBytes(<#= paramId #>ByteCount);
-				var <#= paramId #> = SerializationUtils.Deserialize<<#= paramType #>>(<#= paramId #>Bytes);
-<#
-		}
-		if (methodArgumentList != "") methodArgumentList += ", ";
-		methodArgumentList += param.Identifier.ToString();
-	} 
-
-	if (method.ReturnType.ToString() != "void")
-	{
-#>
-                var result = Game.ClientMethods.<#= method.Identifier.ToString() #>(<#= methodArgumentList #>);
-                byte[] resultData = SerializationUtils.Serialize(result);
-                SendResponse(id, resultData);
-<#
+		if (typeList != "") typeList += ", ";
+		typeList += paramType;
 	}
-	else if (method.ReturnType.ChildTokens().First().ToString() == "Action")
+    if (method.ReturnType.ToString() != "void")
     {
-#>
-				var returnCallbackID = Game.ServerMethods.GetNextCallbackID()
-				var returnAction = Game.ClientMethods.<#= method.Identifier.ToString() #>(<#= methodArgumentList #>);
-<#
-				if (method.ReturnType.ChildNodes().Any())
-                {
-					var genericTypeText = method.ReturnType.ChildNodes().First();
-#>
-				Game.ServerMethods.CallbackActions[returnCallbackID] = (returnMsg) =>
-				{
-					var byteLength = returnMsg.ReadInt32();
-					var bytes = returnMsg.ReadBytes(byteLength);
-					var returnParam = SerializationUtils.Deserialize<#= genericTypeText #>(bytes);
-					returnAction(returnParam);
-				};
-<#
-                } 
-				else
-                {
-#>
-				Game.ServerMethods.CallbackActions[returnCallbackID] = (returnMsg) =>
-				{
-					returnAction();
-				};
-<#
-                }
-#>
-				var message = Game.ClientNetworkManager.Connection.CreateMessage();
-				message.Write("response");
-				message.Write(conversationID);
-				message.Write(returnCallbackID);
-				Game.ClientNetworkManager.Connection.SendMessage(message, NetDeliveryMethod.ReliableUnordered);
-<#
+		if (typeList != "") typeList += ", ";
+        typeList += method.ReturnType.ToString();
     }
-	else
-    {
 #>
-				Game.ClientMethods.<#= method.Identifier.ToString() #>(<#= methodArgumentList #>);
-				SendResponse(id, new byte[]{});
-<#
-	}
-#>
+                return Game.ClientNetworkManager.ExecuteMethodFromMessage<<#= typeList #>>(msg, Game.ClientMethods.<#= method.Identifier.ToString() #>);
             };
 <#
 } 

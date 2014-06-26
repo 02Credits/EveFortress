@@ -82,10 +82,18 @@ namespace EveFortressClient
             if (Game.InputManager.KeyTyped(Keys.E))
             {
                 z += 1;
+                if (z >= Chunk.DEPTH)
+                {
+                    z = (byte)(Chunk.DEPTH - 1);
+                }
             }
             if (Game.InputManager.KeyTyped(Keys.C))
             {
                 z -= 1;
+                if (z == 255)
+                {
+                    z = 0;
+                }
             }
             return Task.FromResult(false);
         }

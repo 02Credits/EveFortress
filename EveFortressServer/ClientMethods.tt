@@ -38,171 +38,44 @@ namespace EveFortressServer
 {
     public class ClientMethods
     {
-        public long CurrentConversationID { get; set; }
-		public long CurrentCallbackID { get; set; }
-        public Dictionary<long, Action<NetIncomingMessage>> TaskCompletionSources { get; set; }
-		public Dictionary<long, Action<NetIncomingMessage>> CallbackActions { get; set; }
-
-        public ClientMethods()
-        {
-            TaskCompletionSources = new Dictionary<long, Action<NetIncomingMessage>>();
-			CallbackActions = new Dictionary<long, Action<NetIncomingMessage>>();
-        }
-
-        public long GetNextConversationID()
-        {
-            var id = CurrentConversationID;
-            CurrentConversationID++;
-            return id;
-        }
-
-		public long GetNextCallbackID()
-		{
-			var id = CurrentCallbackID;
-			CurrentCallbackID++;
-			return id;
-		}
 <#
-foreach (var method in methods)
-{
-	string returnTypeText;
-	if (method.ReturnType.ToString() != "void")
-	{
-		returnTypeText = "Task<" + method.ReturnType.ToString() + ">";
-	}
-	else
-	{
-		returnTypeText = "Task<object>";
-	}
-	
-    var parameters = method.ParameterList.Parameters;
-    var parameterText = "";
-    foreach (var param in parameters)
+    foreach (var method in methods)
     {
-        if (parameterText != "")
-            parameterText += ", ";
-        parameterText += param.ToString();
+        var typeParameters = "";
+        string returnTypeText;
+        if (method.ReturnType.ToString() != "void")
+        {
+            returnTypeText = "Task<" + method.ReturnType.ToString() + ">";
+            typeParameters += method.ReturnType.ToString();
+        }
+	    else
+        {
+            returnTypeText = "Task<object>";
+            typeParameters += "object";
+        }
+
+        var parameters = method.ParameterList.Parameters;
+        var parameterText = "";
+        var sendParametersText = "";
+        foreach (var param in parameters)
+        {
+            if (parameterText != "")
+                parameterText += ", ";
+            parameterText += param.ToString();
+            if (typeParameters != "")
+                typeParameters += ", ";
+            typeParameters += param.Type.ToString();
+            if (sendParametersText != "")
+                sendParametersText += ", ";
+            sendParametersText += param.Identifier.ToString();
+        }
+#>
+        public <#=returnTypeText#> <#=method.Identifier.ToString()#>(<#=parameterText#>, NetConnection connection)
+        {
+            return Program.ServerNetworkManager.SendCommand<<#=typeParameters#>>(connection, "<#=method.Identifier.ToString()#>", <#=sendParametersText#>);
+        }
+<#
     }
-	
-    if (parameterText != "")
-        parameterText += ", ";
-	parameterText += "NetConnection connection";
-#>
-
-        public <#=returnTypeText#> <#= method.Identifier.ToString() #>(<#= parameterText #>)
-        {
-            var _completionSource = new TaskCompletionSource<<#= method.ReturnType.ToString() == "void" ? "object": method.ReturnType.ToString() #>>();
-            var _conversationID = GetNextConversationID();
-
-            var _message = Program.ServerNetworkManager.Clients.CreateMessage();
-            _message.Write("<#= method.Identifier.ToString() #>");
-            _message.Write(_conversationID);
-
-<#
-	foreach (var param in parameters)
-    {
-		var localIdentifier = param.Identifier.ToString();
-		if (param.Type.ChildTokens().First().ToString() == "Action")
-        {
-#>
-			var _<#= localIdentifier #>ID = GetNextCallbackID();
-<#
-			if (param.Type.ChildNodes().Any())
-            {
-				var genericTypeText = param.Type.ChildNodes().First();
-#>
-			CallbackActions[_<#= localIdentifier #>ID] = (_msg) =>
-			{
-				var _byteLength = _msg.ReadInt32();
-				var _bytes = _msg.ReadBytes(_byteLength);
-				var _param = SerializationUtils.Deserialize<#= genericTypeText #>(_bytes);
-				<#= localIdentifier #>(_param);
-			};
-<#
-			}
-			else
-            {
-#>
-			CallbackActions[_<#= localIdentifier #>ID] = (_msg) =>
-			{
-				<#= localIdentifier #>();
-			};
-<#
-            }
-        }
-		else
-        {
-#>
-            byte[] _<#= localIdentifier #>Data = SerializationUtils.Serialize(<#= localIdentifier #>);
-            _message.Write(_<#= localIdentifier #>Data.Length);
-            _message.Write(_<#= localIdentifier #>Data);
-<#
-		}
-    }
-#>
-
-            TaskCompletionSources[_conversationID] = (msg) =>
-            {
-<#
-	if (returnTypeText == "Task<object>")
-    {
-#>
-				_completionSource.SetResult(null);
-<#
-	}
-	else if (returnTypeText.StartsWith("Task<Action"))
-    {
-#>
-				var _returnCallbackID = msg.ReadInt64();
-				var _sender = msg.SenderConnection;
-<#
-		if (method.ReturnType.ChildNodes().Any())
-        {
-			var genericTypeText = method.ReturnType.ChildNodes().First();
-#>
-				Action<#= genericTypeText #> returnParam = (obj) =>
-				{
-					var _callbackMessage = Program.ServerNetworkManager.Clients.CreateMessage();
-					byte[] _callbackParamData = SerializationUtils.Serialize(obj);
-					_callbackMessage.Write("callback");
-					_callbackMessage.Write(_returnCallbackID);
-					_callbackMessage.Write(_callbackParamData.Length);
-					_callbackMessage.Write(_callbackParamData);
-					Program.ServerNetworkManager.Clients.SendMessage(_callbackMessage, _sender, NetDeliveryMethod.ReliableUnordered);
-				};
-				_completionSource.SetResult(returnParam);
-<#
-        }
-		else
-        {
-#>
-				Action returnParam = () =>
-				{
-					var _callbackMessage = Program.ServerNetworkManager.Clients.CreateMessage();
-					_callbackMessage.Write("callback");
-					_callbackMessage.Write(_returnCallbackID);
-					Program.ServerNetworkManager.Clients.SendMessage(_callbackMessage, _sender, NetDeliveryMethod.ReliableUnordered);
-				};
-				_completionSource.SetResult(returnParam);
-<#
-        }
-    }
-	else
-    {
-#>
-                var _dataLength = msg.ReadInt32();
-                var _bytes = msg.ReadBytes(_dataLength);
-				_completionSource.SetResult(SerializationUtils.Deserialize<<#= method.ReturnType.ToString() #>>(_bytes);
-<#
-	}
-#>
-            };
-
-            Program.ServerNetworkManager.Clients.SendMessage(_message, connection, NetDeliveryMethod.ReliableUnordered);
-            return _completionSource.Task;
-        }
-<#
-}
 #>
     }
 }

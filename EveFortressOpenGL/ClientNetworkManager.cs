@@ -1,6 +1,7 @@
 ﻿using EveFortressModel;
 using Lidgren.Network;
 using Microsoft.Xna.Framework;
+using NetworkLibrary;
 using ProtoBuf;
 using System;
 using System.Collections.Concurrent;
@@ -14,46 +15,35 @@ using System.Threading.Tasks;
 
 namespace EveFortressClient
 {
-    public class ClientNetworkManager : IUpdateNeeded, IDisposeNeeded
+    public class ClientNetworkManager : NetworkManager
     {
-        const bool DEBUG = false;
-        public NetClient Connection { get; set; }
+        const bool DEBUG = true;
+
+        public ClientNetworkManager()
+        {
+            Game.Updateables.Add(this);
+            Game.Disposables.Add(this);
+            var config = new NetPeerConfiguration("EveFortress");
+            LidgrenPeer = new NetPeer(config);
+            LidgrenPeer.Start();
+        }
 
         public bool Connected
         {
             get
             {
-                return Connection.ServerConnection != null && 
-                      (Connection.ServerConnection.Status == NetConnectionStatus.Connected ||
-                       Connection.ServerConnection.Status == NetConnectionStatus.None);
-            }
-        }
-
-        ConcurrentQueue<NetIncomingMessage> Messages = new ConcurrentQueue<NetIncomingMessage>();
-
-        public ClientNetworkManager()
-        {
-            var config = new NetPeerConfiguration("EveFortress");
-            Connection = new NetClient(config);
-            Connection.Start();
-            Game.Updateables.Add(this);
-            Game.Disposables.Add(this);
-            Task.Run(() =>
-            {
-                while (true)
+                if (LidgrenPeer.Connections.Count == 1)
                 {
-                    if (Connected)
+                    var serverStatus = LidgrenPeer.Connections[0].Status;
+                    if (serverStatus == NetConnectionStatus.Connected ||
+                        serverStatus == NetConnectionStatus.InitiatedConnect ||
+                        serverStatus == NetConnectionStatus.None)
                     {
-                        NetIncomingMessage msg = Connection.ReadMessage();
-                        if (msg != null)
-                        {
-                            Messages.Enqueue(msg);
-                            continue;
-                        }
+                        return true;
                     }
-                    Thread.Sleep(20);
                 }
-            });
+                return false;
+            }
         }
 
         bool connecting;
@@ -64,54 +54,33 @@ namespace EveFortressClient
                 connecting = true;
                 await Task.Run(() =>
                 {
-                    if (DEBUG)
+                    if (!Connected)
                     {
-                        Connection.Connect("localhost", 19952);
-                    }
-                    else
-                    {
-                        Connection.Connect("the-simmons.dnsalias.net", 19952);
+                        if (DEBUG)
+                        {
+                            LidgrenPeer.Connect("localhost", 19952);
+                        }
+                        else
+                        {
+                            LidgrenPeer.Connect("the-simmons.dnsalias.net", 19952);
+                        }
                     }
                 });
                 connecting = false;
             }
         }
 
-        public void Update()
+        public override void Update()
         {
             if (Connected)
             {
-                NetIncomingMessage msg;
-                while (Messages.TryDequeue(out msg))
-                {
-                    switch (msg.MessageType)
-                    {
-                        case NetIncomingMessageType.Data:
-                            Game.MessageParser.ParseMessage(msg);
-                            break;
-                        case NetIncomingMessageType.StatusChanged:
-                            var status = (NetConnectionStatus)msg.ReadByte();
-                            var text = msg.ReadString();
-                            Console.WriteLine(Enum.GetName(status.GetType(), status) + ":" + text);
-                            break;
-                        case NetIncomingMessageType.VerboseDebugMessage:
-                        case NetIncomingMessageType.DebugMessage:
-                        case NetIncomingMessageType.WarningMessage:
-                        case NetIncomingMessageType.ErrorMessage:
-                            Console.WriteLine(msg.ReadString());
-                            break;
-                        default:
-                            Console.WriteLine("Unhandled type: " + msg.MessageType);
-                            break;
-                    }
-                    Connection.Recycle(msg);
-                }
+                base.Update();
             }
             else
             {
-                if (Connection.ServerConnection == null ||
-                    Connection.ServerConnection.Status != NetConnectionStatus.InitiatedConnect ||
-                    Connection.ServerConnection.Status != NetConnectionStatus.RespondedConnect)
+                if (LidgrenPeer.Connections.Count < 1 ||
+                    LidgrenPeer.Connections[0].Status != NetConnectionStatus.InitiatedConnect ||
+                    LidgrenPeer.Connections[0].Status != NetConnectionStatus.RespondedConnect)
                 {
                     Game.QueueReset();
                     Game.TabManager.MainSection.ReplaceTab(new ConnectingTab());
@@ -120,28 +89,39 @@ namespace EveFortressClient
             }
         }
 
-        public byte[] Serialize<T>(T itemToSerialize)
+        public Task<R> SendCommand<R>(string commandName)
         {
-            byte[] returnArray;
-            using (var stream = new MemoryStream())
-            {
-                Serializer.Serialize(stream, itemToSerialize);
-                returnArray = stream.ToArray();
-            }
-            return returnArray;
+            return SendCommand<R>(LidgrenPeer.Connections[0], commandName);
         }
 
-        public T Deserialize<T>(byte[] data)
+        public Task<R> SendCommand<R, T1>(string commandName, T1 param1)
         {
-            using (var stream = new MemoryStream(data))
-            {
-                return Serializer.Deserialize<T>(stream);
-            }
+            return SendCommand<R, T1>(LidgrenPeer.Connections[0], commandName, param1);
         }
 
-        public void Dispose()
+        public Task<R> SendCommand<R, T1, T2>(string commandName, T1 param1, T2 param2)
         {
-            Connection.Disconnect("Closed by the user");
+            return SendCommand<R, T1, T2>(LidgrenPeer.Connections[0], commandName, param1, param2);
+        }
+
+        public Task<R> SendCommand<R, T1, T2, T3>(string commandName, T1 param1, T2 param2, T3 param3)
+        {
+            return SendCommand<R, T1, T2, T3>(LidgrenPeer.Connections[0], commandName, param1, param2, param3);
+        }
+
+        public Task<R> SendCommand<R, T1, T2, T3, T4>(string commandName, T1 param1, T2 param2, T3 param3, T4 param4)
+        {
+            return SendCommand<R, T1, T2, T3, T4>(LidgrenPeer.Connections[0], commandName, param1, param2, param3, param4);
+        }
+
+        public Task<R> SendCommand<R, T1, T2, T3, T4, T5>(string commandName, T1 param1, T2 param2, T3 param3, T4 param4, T5 param5)
+        {
+            return SendCommand<R, T1, T2, T3, T4, T5>(LidgrenPeer.Connections[0], commandName, param1, param2, param3, param4, param5);
+        }
+
+        public override byte[] ParseMessage(string commandName, NetIncomingMessage message)
+        {
+            return Game.MessageParser.ParseMessage(commandName, message);
         }
     }
 }

@@ -83,6 +83,10 @@
       <Project>{470adbc3-7015-4755-b1ec-a9f84b008538}</Project>
       <Name>EveFortressModel</Name>
     </ProjectReference>
+    <ProjectReference Include="..\NetworkLibrary\NetworkLibrary.csproj">
+      <Project>{1a3b7d5e-8d68-4b95-8417-405050b31c80}</Project>
+      <Name>NetworkLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Utils\Utils.csproj">
       <Project>{429ae3fa-574b-4225-9a00-190a484adf6d}</Project>
       <Name>Utils</Name>

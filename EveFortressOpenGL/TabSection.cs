@@ -362,8 +362,8 @@ namespace EveFortressClient
         {
             if (!Populated)
             {
-                if ((Game.InputManager.KeyDown(Keys.LeftControl) || Game.InputManager.KeyDown(Keys.RightControl)) && 
-                     Game.ClientNetworkManager.Connected)
+                if ((Game.InputManager.KeyDown(Keys.LeftControl) || Game.InputManager.KeyDown(Keys.RightControl)) &&
+                     Game.ClientNetworkManager.Connected && !(Tab is LoginTab))
                 {
                     if (Game.InputManager.KeyPressed(Keys.Left))
                     {
@@ -393,7 +393,7 @@ namespace EveFortressClient
                         Parent.CloseChild(this);
                         return true;
                     }
-                    else if (Game.ClientNetworkManager.Connected)
+                    else if (Game.ClientNetworkManager.Connected && !(Tab is LoginTab))
                     {
                         ReplaceTab(new NewTab());
                     }

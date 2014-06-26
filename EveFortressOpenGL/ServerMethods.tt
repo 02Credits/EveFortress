@@ -38,172 +38,47 @@ namespace EveFortressClient
 {
     public class ServerMethods
     {
-        public long CurrentConversationID { get; set; }
-		public long CurrentCallbackID { get; set; }
-        public Dictionary<long, Action<NetIncomingMessage>> TaskCompletionSources { get; set; }
-		public Dictionary<long, Action<NetIncomingMessage>> CallbackActions { get; set; }
-
-        public ServerMethods()
-        {
-            TaskCompletionSources = new Dictionary<long, Action<NetIncomingMessage>>();
-			CallbackActions = new Dictionary<long, Action<NetIncomingMessage>>();
-        }
-
-        public long GetNextConversationID()
-        {
-            var id = CurrentConversationID;
-            CurrentConversationID++;
-            return id;
-        }
-
-		public long GetNextCallbackID()
-		{
-			var id = CurrentCallbackID;
-			CurrentCallbackID++;
-			return id;
-		}
 <#
-foreach (var method in methods)
-{
-	string returnTypeText;
-	if (method.ReturnType.ToString() != "void")
-	{
-		returnTypeText = "Task<" + method.ReturnType.ToString() + ">";
-	}
-	else
-	{
-		returnTypeText = "Task<object>";
-	}
-	
-    var parameters = method.ParameterList.Parameters;
-    var parameterText = "";
-    foreach (var param in parameters)
+    foreach (var method in methods)
     {
-        if (param.Type.ToString() != "NetConnection")
+        var typeParameters = "";
+        string returnTypeText;
+        if (method.ReturnType.ToString() != "void")
         {
-            if (parameterText != "")
-                parameterText += ", ";
-            parameterText += param.ToString();
+            returnTypeText = "Task<" + method.ReturnType.ToString() + ">";
+            typeParameters += method.ReturnType.ToString();
         }
-    }
-#>
-
-        public <#=returnTypeText#> <#= method.Identifier.ToString() #>(<#= parameterText #>)
+	    else
         {
-            var completionSource = new TaskCompletionSource<<#= method.ReturnType.ToString() == "void" ? "object" : method.ReturnType.ToString() #>>();
-            var conversationID = GetNextConversationID();
-            var message = Game.ClientNetworkManager.Connection.CreateMessage();
-            message.Write("<#= method.Identifier.ToString() #>");
-            message.Write(conversationID);
+            returnTypeText = "Task<object>";
+            typeParameters += "object";
+        }
 
-<#
-	foreach (var param in parameters)
-    {
-		var localIdentifier = param.Identifier.ToString();
-		if (param.Type.ChildTokens().First().ToString() == "Action")
+        var parameters = method.ParameterList.Parameters;
+        var parameterText = "";
+        var sendParametersText = "";
+        foreach (var param in parameters)
         {
-#>
-			var <#= localIdentifier #>ID = GetNextCallbackID();
-<#
-			if (param.Type.ChildNodes().Any())
+            if (param.Type.ToString() != "NetConnection")
             {
-				var genericTypeText = param.Type.ChildNodes().First();
-#>
-			CallbackActions[<#= localIdentifier #>ID] = (msg) =>
-			{
-				var byteLength = msg.ReadInt32();
-				var bytes = msg.ReadBytes(byteLength);
-				var param = SerializationUtils.Deserialize<#= genericTypeText #>(bytes);
-				<#= localIdentifier #>(param);
-			};
-<#
-			}
-			else
-            {
-#>
-			CallbackActions[conversationID] = (msg) =>
-			{
-				<#= localIdentifier #>();
-			};
-<#
+                if (parameterText != "")
+                    parameterText += ", ";
+                parameterText += param.ToString();
+                if (typeParameters != "")
+                    typeParameters += ", ";
+                typeParameters += param.Type.ToString();
+                if (sendParametersText != "")
+                    sendParametersText += ", ";
+                sendParametersText += param.Identifier.ToString();
             }
-#>
-			message.Write(<#= localIdentifier #>ID);
-<#
         }
-		else if (param.Type.ToString() != "NetConnection")
-		{
 #>
-            byte[] <#= localIdentifier #>Data = SerializationUtils.Serialize(<#= localIdentifier #>);
-            message.Write(<#= localIdentifier #>Data.Length);
-            message.Write(<#= localIdentifier #>Data);
-<#
-		}
-	}
-#>
-
-            TaskCompletionSources[conversationID] = (msg) =>
-            {
-<#
-	if (returnTypeText == "Task<object>")
-    {
-#>
-				completionSource.SetResult(null);
-<#
-	}
-	else if (returnTypeText.StartsWith("Task<Action"))
-    {
-#>
-				var returnCallbackID = msg.ReadInt64();
-<#
-		if (method.ReturnType.ChildNodes().Any())
+        public <#=returnTypeText#> <#=method.Identifier.ToString()#>(<#=parameterText#>)
         {
-			var genericTypeText = method.ReturnType.ChildNodes().First();
-#>
-				Action<#= genericTypeText #> returnParam = (obj) =>
-				{
-					var callbackMessage = Game.ClientNetworkManager.Connection.CreateMessage();
-					byte[] callbackParamData = SerializationUtils.Serialize(obj);
-					callbackMessage.Write("callback");
-					callbackMessage.Write(returnCallbackID);
-					callbackMessage.Write(callbackParamData.Length);
-					callbackMessage.Write(callbackParamData);
-					Game.ClientNetworkManager.Connection.SendMessage(callbackMessage, NetDeliveryMethod.ReliableUnordered);
-				};
-				completionSource.SetResult(returnParam);
-<#
+            return Game.ClientNetworkManager.SendCommand<<#=typeParameters#>>("<#=method.Identifier.ToString()#>", <#=sendParametersText#>);
         }
-		else
-        {
-#>
-				Action returnParam = () =>
-				{
-					var callbackMessage = Game.ClientNetworkManager.Connection.CreateMessage();
-					callbackMessage.Write("callback");
-					callbackMessage.Write(returnCallbackID);
-					Game.ClientNetworkManager.Connection.SendMessage(callbackMessage, NetDeliveryMethod.ReliableUnordered);
-				};
-				completionSource.SetResult(returnParam);
 <#
-        }
     }
-	else
-    {
-#>
-                var dataLength = msg.ReadInt32();
-                var bytes = msg.ReadBytes(dataLength);
-				completionSource.SetResult(SerializationUtils.Deserialize<<#= method.ReturnType.ToString() #>>(bytes));
-<#
-	}
-#>
-                TaskCompletionSources.Remove(conversationID);
-            };
-
-            Game.ClientNetworkManager.Connection.SendMessage(message, NetDeliveryMethod.ReliableUnordered);
-            return completionSource.Task;
-        }
-<#
-}
 #>
     }
 }

@@ -15,73 +15,27 @@ namespace EveFortressClient
 {
     public class MessageParser
     {
-        public Dictionary<string, Action<NetIncomingMessage, long>> Parsers { get; set; }
+        public Dictionary<string, Func<NetIncomingMessage, byte[]>> Parsers { get; set; }
         public MessageParser()
         {
-            Parsers = new Dictionary<string, Action<NetIncomingMessage, long>>();
+            Parsers = new Dictionary<string, Func<NetIncomingMessage, byte[]>>();
             PopulateParsers();
         }
 
-        public void ParseMessage(NetIncomingMessage msg)
+        public byte[] ParseMessage(string command, NetIncomingMessage msg)
         {
-            var commandName = msg.ReadString();
-            var id = msg.ReadInt64();
-            if (commandName == "response")
-            {
-                Game.ServerMethods.TaskCompletionSources[id](msg);
-            }
-			else if (commandName == "callback")
-			{
-				Console.WriteLine("Recieved Callback for CallbackID: " + id);
-				Game.ServerMethods.CallbackActions[id](msg);
-			}
-            else
-            {
-                Parsers[commandName](msg, id);
-            }
-        }
-
-        public void SendResponse(long conversationID)
-        {
-            SendResponse(conversationID, new byte[]{});
-        }
-
-        public void SendResponse(long conversationID, byte[] responseData)
-        {
-            var message = Game.ClientNetworkManager.Connection.CreateMessage();
-            message.Write("response");
-            message.Write(conversationID);
-            if (responseData.Length != 0)
-            {
-                message.Write(responseData.Length);
-                message.Write(responseData);
-            }
-            Game.ClientNetworkManager.Connection.SendMessage(message, NetDeliveryMethod.ReliableUnordered);
+            return Parsers[command](msg);
         }
 
         private void PopulateParsers()
         {
-            Parsers["ChatMessage"] = (msg, id) =>
+            Parsers["ChatMessage"] = (msg) =>
             {
-                var messageByteCount = msg.ReadInt32();
-                var messageBytes = msg.ReadBytes(messageByteCount);
-				var message = SerializationUtils.Deserialize<string>(messageBytes);
-				Game.ClientMethods.ChatMessage(message);
-				SendResponse(id, new byte[]{});
+                return Game.ClientNetworkManager.ExecuteMethodFromMessage<string>(msg, Game.ClientMethods.ChatMessage);
             };
-            Parsers["UpdateChunk"] = (msg, id) =>
+            Parsers["UpdateChunk"] = (msg) =>
             {
-                var xByteCount = msg.ReadInt32();
-                var xBytes = msg.ReadBytes(xByteCount);
-				var x = SerializationUtils.Deserialize<long>(xBytes);
-                var yByteCount = msg.ReadInt32();
-                var yBytes = msg.ReadBytes(yByteCount);
-				var y = SerializationUtils.Deserialize<long>(yBytes);
-                var patchByteCount = msg.ReadInt32();
-                var patchBytes = msg.ReadBytes(patchByteCount);
-				var patch = SerializationUtils.Deserialize<List<Voxel>>(patchBytes);
-				Game.ClientMethods.UpdateChunk(x, y, patch);
-				SendResponse(id, new byte[]{});
+                return Game.ClientNetworkManager.ExecuteMethodFromMessage<long, long, List<Voxel>>(msg, Game.ClientMethods.UpdateChunk);
             };
         }
     }
