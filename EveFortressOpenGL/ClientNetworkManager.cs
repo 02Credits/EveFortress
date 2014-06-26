@@ -5,11 +5,7 @@ using NetworkLibrary;
 using ProtoBuf;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Dynamic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -29,21 +25,21 @@ namespace EveFortressClient
         }
 
         public bool Connected
-        {
-            get
             {
-                if (LidgrenPeer.Connections.Count == 1)
+            get
                 {
+                if (LidgrenPeer.Connections.Count == 1)
+                    {
                     var serverStatus = LidgrenPeer.Connections[0].Status;
                     if (serverStatus == NetConnectionStatus.Connected ||
                         serverStatus == NetConnectionStatus.InitiatedConnect ||
                         serverStatus == NetConnectionStatus.None)
-                    {
+                        {
                         return true;
+                        }
                     }
-                }
                 return false;
-            }
+                }
         }
 
         bool connecting;
@@ -56,14 +52,14 @@ namespace EveFortressClient
                 {
                     if (!Connected)
                     {
-                        if (DEBUG)
-                        {
+                    if (DEBUG)
+                    {
                             LidgrenPeer.Connect("localhost", 19952);
-                        }
-                        else
-                        {
+                    }
+                    else
+                    {
                             LidgrenPeer.Connect("the-simmons.dnsalias.net", 19952);
-                        }
+                    }
                     }
                 });
                 connecting = false;
@@ -95,9 +91,9 @@ namespace EveFortressClient
         }
 
         public Task<R> SendCommand<R, T1>(string commandName, T1 param1)
-        {
+            {
             return SendCommand<R, T1>(LidgrenPeer.Connections[0], commandName, param1);
-        }
+            }
 
         public Task<R> SendCommand<R, T1, T2>(string commandName, T1 param1, T2 param2)
         {
@@ -110,9 +106,9 @@ namespace EveFortressClient
         }
 
         public Task<R> SendCommand<R, T1, T2, T3, T4>(string commandName, T1 param1, T2 param2, T3 param3, T4 param4)
-        {
+            {
             return SendCommand<R, T1, T2, T3, T4>(LidgrenPeer.Connections[0], commandName, param1, param2, param3, param4);
-        }
+            }
 
         public Task<R> SendCommand<R, T1, T2, T3, T4, T5>(string commandName, T1 param1, T2 param2, T3 param3, T4 param4, T5 param5)
         {
