@@ -36,5 +36,9 @@ namespace EveFortressClient
         {
             return Game.ClientNetworkManager.SendCommand<object, long, long>("UnsubscribeToChunk", x, y);
         }
+        public Task<object> SetVoxel(long x, long y, byte z, Voxel v)
+        {
+            return Game.ClientNetworkManager.SendCommand<object, long, long, byte, Voxel>("SetVoxel", x, y, z, v);
+        }
     }
 }

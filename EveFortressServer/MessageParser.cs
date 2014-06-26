@@ -54,6 +54,11 @@ namespace EveFortressServer
                 Action<long, long> method = (T0, T1) => Program.ServerMethods.UnsubscribeToChunk(T0, T1, msg.SenderConnection);
                 return Program.ServerNetworkManager.ExecuteMethodFromMessage<long, long>(msg, method);
             };
+            Parsers["SetVoxel"] = (msg) =>
+            {
+                Action<long, long, byte, Voxel> method = (T0, T1, T2, T3) => Program.ServerMethods.SetVoxel(T0, T1, T2, T3);
+                return Program.ServerNetworkManager.ExecuteMethodFromMessage<long, long, byte, Voxel>(msg, method);
+            };
         }
     }
 }

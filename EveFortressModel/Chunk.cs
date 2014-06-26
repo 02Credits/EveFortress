@@ -81,12 +81,13 @@ namespace EveFortressModel
             return Voxels[z * WIDTH * HEIGHT + y * HEIGHT + x];
         }
 
-        public void SetVoxel(byte x, byte y, byte z, Voxel v)
+        public Voxel SetVoxel(byte x, byte y, byte z, Voxel v)
         {
             v.X = x;
             v.Y = y;
             v.Z = z;
             Voxels[z * WIDTH * HEIGHT + y * HEIGHT + x] = v;
+            return v;
         }
 
         public List<TileDisplayInformation> GetDisplayInfo(byte x, byte y, byte z)

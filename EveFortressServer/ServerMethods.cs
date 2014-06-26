@@ -44,5 +44,10 @@ namespace EveFortressServer
                             Program.PlayerManager.ConnectionNames[connection]];
             player.SubscribedChunks.Remove(Tuple.Create(x, y));
         }
+
+        public void SetVoxel(long x, long y, byte z, Voxel v)
+        {
+            Program.WorldManager.SetVoxel(x, y, z, v);
+        }
     }
 }

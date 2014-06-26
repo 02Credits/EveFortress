@@ -29,6 +29,38 @@ namespace EveFortressClient
         long y = 0;
         byte z = (byte)(Chunk.DEPTH / 2);
 
+        long left
+        {
+            get
+            {
+                return x - Width / 2;
+            }
+        }
+
+        long right
+        {
+            get
+            {
+                return left + Width;
+            }
+        }
+        
+        long top
+        {
+            get
+            {
+                return y - Height / 2;
+            }
+        }
+
+        long bottom
+        {
+            get
+            {
+                return top + Height;
+            }
+        }
+
         public override void Render()
         {
             var left = x - Width / 2;
@@ -52,8 +84,16 @@ namespace EveFortressClient
             var zLevelTiles = Game.TileManager.GetTilesFromString("Z" + z);
             for (int i = 0; i < zLevelTiles.Count; i++)
             {
-                var dz = i + 2;
-                Game.TileManager.DrawTile(zLevelTiles[i], Width, dz, this);
+                var tileZ = i + 2;
+                Game.TileManager.DrawTile(zLevelTiles[i], Width, tileZ, this);
+            }
+
+            var coordsTiles = Game.TileManager.GetTilesFromString("X" + x + "Y" + y);
+            var startPos = Width - coordsTiles.Count;
+            for (int i = 0; i < coordsTiles.Count; i++)
+            {
+                var tileX = i + startPos;
+                Game.TileManager.DrawTile(coordsTiles[i], tileX, 0, this);
             }
         }
 
@@ -79,7 +119,7 @@ namespace EveFortressClient
                 y += 1;
                 return Task.FromResult(true);
             }
-            if (Game.InputManager.KeyTyped(Keys.E))
+            if (Game.InputManager.KeyTyped(Keys.C))
             {
                 z += 1;
                 if (z >= Chunk.DEPTH)
@@ -87,7 +127,7 @@ namespace EveFortressClient
                     z = (byte)(Chunk.DEPTH - 1);
                 }
             }
-            if (Game.InputManager.KeyTyped(Keys.C))
+            if (Game.InputManager.KeyTyped(Keys.E))
             {
                 z -= 1;
                 if (z == 255)
@@ -96,6 +136,15 @@ namespace EveFortressClient
                 }
             }
             return Task.FromResult(false);
+        }
+
+        public override void ManageMouseInput()
+        {
+            if (Game.InputManager.MouseLeftDown)
+            {
+                Game.ServerMethods.SetVoxel(left + Game.InputManager.MouseTilePosition.X - 1, top + Game.InputManager.MouseTilePosition.Y - 1, z, new Voxel(new DirtBlock()));
+            }
+            base.ManageMouseInput();
         }
     }
 }

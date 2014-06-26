@@ -52,14 +52,20 @@ namespace EveFortressClient
                 {
                     if (!Connected)
                     {
-                    if (DEBUG)
-                    {
-                            LidgrenPeer.Connect("localhost", 19952);
-                    }
-                    else
-                    {
-                            LidgrenPeer.Connect("the-simmons.dnsalias.net", 19952);
-                    }
+                        try
+                        {
+                            if (DEBUG)
+                            {
+                                    LidgrenPeer.Connect("localhost", 19952);
+                            }
+                            else
+                            {
+                                    LidgrenPeer.Connect("the-simmons.dnsalias.net", 19952);
+                            }
+                        }
+                        catch (NetException e)
+                        {
+                        }
                     }
                 });
                 connecting = false;
