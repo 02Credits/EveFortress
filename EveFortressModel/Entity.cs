@@ -7,6 +7,7 @@ using System.Text;
 namespace EveFortressModel
 {
     [ProtoContract]
+    [ProtoInclude(1, typeof(Item))]
     public abstract class Entity
     {
     }

@@ -1,10 +1,6 @@
 ﻿using ProtoBuf;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Utils
 {
@@ -32,6 +28,9 @@ namespace Utils
         public static void SerializeToFile<T>(string fileName, T obj)
         {
             Console.WriteLine("Saving to " + fileName);
+            var path = Path.GetDirectoryName(fileName);
+            if (!Directory.Exists(path) && !String.IsNullOrWhiteSpace(path))
+                Directory.CreateDirectory(path);
             using (var stream = File.OpenWrite(fileName))
             {
                 Serializer.Serialize(stream, obj);

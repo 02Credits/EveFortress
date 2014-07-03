@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>EveFortressModel</RootNamespace>
     <AssemblyName>EveFortressModel</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,6 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="protobuf-net">
@@ -43,11 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Blocks\AirBlock.cs" />
-    <Compile Include="Blocks\Block.cs" />
-    <Compile Include="Blocks\DirtBlock.cs" />
-    <Compile Include="Blocks\GrassBlock.cs" />
-    <Compile Include="Blocks\StoneBlock.cs" />
+    <Compile Include="BlockTypes.cs" />
     <Compile Include="Chunk.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="Interfaces\IDisposeNeeded.cs" />
@@ -58,13 +56,20 @@
     <Compile Include="Interfaces\IUpdateNeeded.cs" />
     <Compile Include="LoginInformation.cs" />
     <Compile Include="LoginResponse.cs" />
+    <Compile Include="Octree.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Ray.cs" />
     <Compile Include="TileDisplayInformation.cs" />
     <Compile Include="Tiles.cs" />
-    <Compile Include="Voxel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Utils\Utils.csproj">
+      <Project>{429ae3fa-574b-4225-9a00-190a484adf6d}</Project>
+      <Name>Utils</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

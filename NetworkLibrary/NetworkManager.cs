@@ -90,11 +90,18 @@ namespace NetworkLibrary
 
                 if ((DateTime.Now - sentTime).TotalSeconds > 1)
                 {
-                    var ackMessage = LidgrenPeer.CreateMessage();
-                    ackMessage.Write(id);
-                    ackMessage.Write(nonAckedMessage.PeekDataBuffer());
-                    LidgrenPeer.SendMessage(ackMessage, recipient, NetDeliveryMethod.Unreliable);
-                    nonAckedMessages[id] = Tuple.Create(DateTime.Now, recipient, nonAckedMessage);
+                    if (nonAckedMessage.LengthBits != 0)
+                    {
+                        var ackMessage = LidgrenPeer.CreateMessage();
+                        ackMessage.Write(id);
+                        ackMessage.Write(nonAckedMessage.PeekDataBuffer());
+                        LidgrenPeer.SendMessage(ackMessage, recipient, NetDeliveryMethod.Unreliable);
+                        nonAckedMessages[id] = Tuple.Create(DateTime.Now, recipient, nonAckedMessage);
+                    }
+                    else
+                    {
+                        nonAckedMessages.Remove(id);
+                    }
                 }
             }
         }

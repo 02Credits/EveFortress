@@ -1,9 +1,5 @@
 ﻿using EveFortressModel;
 using Microsoft.Xna.Framework.Input;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace EveFortressClient
@@ -27,7 +23,7 @@ namespace EveFortressClient
 
         long x = 0;
         long y = 0;
-        byte z = (byte)(Chunk.DEPTH / 2);
+        long z = Chunk.TERRAIN_HEIGHT;
 
         long left
         {
@@ -63,16 +59,12 @@ namespace EveFortressClient
 
         public override void Render()
         {
-            var left = x - Width / 2;
-            var right = left + Width;
-            var top = y - Height / 2;
-            var bottom = top + Height;
-            var tiles = Game.ChunkManager.GetTiles(left, right, top, bottom, z);
             var dx = 0;
             var dy = 0;
-            foreach (var tile in tiles)
+            while (top + dy <= bottom)
             {
-                Game.TileManager.DrawTile(tile, dx, dy, this);
+                var displayInfo = Game.ChunkManager.PerspectiveRayCast(x, y, (byte)(z + 5), left + dx, top + dy, z);
+                Game.TileManager.DrawTile(displayInfo, dx, dy, this);
                 dx++;
                 if (dx > Width)
                 {
@@ -99,52 +91,42 @@ namespace EveFortressClient
 
         public override Task<bool> ManageInput()
         {
-            if (Game.InputManager.KeyTyped(Keys.A))
+            var inputManaged = false;
+            if (Game.InputManager.KeyDown(Keys.A))
             {
                 x -= 1;
-                return Task.FromResult(true);
+                inputManaged = true;
             }
-            if (Game.InputManager.KeyTyped(Keys.D))
+            if (Game.InputManager.KeyDown(Keys.D))
             {
                 x += 1;
-                return Task.FromResult(true);
+                inputManaged = true;
             }
-            if (Game.InputManager.KeyTyped(Keys.W))
+            if (Game.InputManager.KeyDown(Keys.W))
             {
                 y -= 1;
-                return Task.FromResult(true);
+                inputManaged = true;
             }
-            if (Game.InputManager.KeyTyped(Keys.S))
+            if (Game.InputManager.KeyDown(Keys.S))
             {
                 y += 1;
-                return Task.FromResult(true);
+                inputManaged = true;
             }
             if (Game.InputManager.KeyTyped(Keys.C))
             {
                 z += 1;
-                if (z >= Chunk.DEPTH)
-                {
-                    z = (byte)(Chunk.DEPTH - 1);
-                }
+                inputManaged = true;
             }
             if (Game.InputManager.KeyTyped(Keys.E))
             {
                 z -= 1;
-                if (z == 255)
+                if (z < 0)
                 {
                     z = 0;
                 }
+                inputManaged = true;
             }
-            return Task.FromResult(false);
-        }
-
-        public override void ManageMouseInput()
-        {
-            if (Game.InputManager.MouseLeftDown)
-            {
-                Game.ServerMethods.SetVoxel(left + Game.InputManager.MouseTilePosition.X - 1, top + Game.InputManager.MouseTilePosition.Y - 1, z, new Voxel(new DirtBlock()));
-            }
-            base.ManageMouseInput();
+            return Task.FromResult(inputManaged);
         }
     }
 }

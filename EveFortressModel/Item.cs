@@ -7,7 +7,7 @@ using System.Text;
 namespace EveFortressModel
 {
     [ProtoContract]
-    public class Item
+    public class Item : Entity
     {
     }
 }

@@ -20,9 +20,9 @@ namespace EveFortressServer
         {
             return Program.ServerNetworkManager.SendCommand<object, string>(connection, "ChatMessage", message);
         }
-        public Task<object> UpdateChunk(long x, long y, List<Voxel> patch, NetConnection connection)
+        public Task<object> UpdateChunk(long x, long y, long z, List<Tuple<byte, byte, byte, BlockTypes>> patch, NetConnection connection)
         {
-            return Program.ServerNetworkManager.SendCommand<object, long, long, List<Voxel>>(connection, "UpdateChunk", x, y, patch);
+            return Program.ServerNetworkManager.SendCommand<object, long, long, long, List<Tuple<byte, byte, byte, BlockTypes>>>(connection, "UpdateChunk", x, y, z, patch);
         }
     }
 }

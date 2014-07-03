@@ -45,6 +45,7 @@
     <Compile Include="CVal.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="IDManager.cs" />
+    <Compile Include="Noise.cs" />
     <Compile Include="SerializationUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

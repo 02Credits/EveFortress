@@ -28,17 +28,13 @@ namespace EveFortressClient
         {
             return Game.ClientNetworkManager.SendCommand<object, string>("Chat", text);
         }
-        public Task<Chunk> SubscribeToChunk(long x, long y)
+        public Task<Chunk> SubscribeToChunk(long x, long y, long z)
         {
-            return Game.ClientNetworkManager.SendCommand<Chunk, long, long>("SubscribeToChunk", x, y);
+            return Game.ClientNetworkManager.SendCommand<Chunk, long, long, long>("SubscribeToChunk", x, y, z);
         }
-        public Task<object> UnsubscribeToChunk(long x, long y)
+        public Task<object> UnsubscribeToChunk(long x, long y, long z)
         {
-            return Game.ClientNetworkManager.SendCommand<object, long, long>("UnsubscribeToChunk", x, y);
-        }
-        public Task<object> SetVoxel(long x, long y, byte z, Voxel v)
-        {
-            return Game.ClientNetworkManager.SendCommand<object, long, long, byte, Voxel>("SetVoxel", x, y, z, v);
+            return Game.ClientNetworkManager.SendCommand<object, long, long, long>("UnsubscribeToChunk", x, y, z);
         }
     }
 }

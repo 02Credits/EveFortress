@@ -1,10 +1,6 @@
 ﻿using EveFortressModel;
 using Lidgren.Network;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EveFortressServer
 {
@@ -30,24 +26,21 @@ namespace EveFortressServer
             }
         }
 
-        public Chunk SubscribeToChunk(long x, long y, NetConnection connection)
+        public Chunk SubscribeToChunk(long x, long y, long z, NetConnection connection)
         {
             var player = Program.PlayerManager.Players[
                             Program.PlayerManager.ConnectionNames[connection]];
-            player.SubscribedChunks.Add(Tuple.Create(x, y));
-            return Program.WorldManager.GetChunk(x, y);
+            player.SubscribedChunks.Add(Tuple.Create(x, y, z));
+            var chunk = Program.WorldManager.GetChunk(x, y, z);
+            chunk.Blocks.PackUp();
+            return chunk;
         }
 
-        public void UnsubscribeToChunk(long x, long y, NetConnection connection)
+        public void UnsubscribeToChunk(long x, long y, long z, NetConnection connection)
         {
             var player = Program.PlayerManager.Players[
                             Program.PlayerManager.ConnectionNames[connection]];
-            player.SubscribedChunks.Remove(Tuple.Create(x, y));
-        }
-
-        public void SetVoxel(long x, long y, byte z, Voxel v)
-        {
-            Program.WorldManager.SetVoxel(x, y, z, v);
+            player.SubscribedChunks.Remove(Tuple.Create(x, y, z));
         }
     }
 }

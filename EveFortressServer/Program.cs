@@ -35,6 +35,8 @@ namespace EveFortressServer
         public static PlayerManager PlayerManager;
         public static ServerNetworkManager ServerNetworkManager;
 
+        public static long Time = 0;
+
         static void Main(string[] args)
         {
             WorldManager = new WorldManager();
@@ -56,6 +58,7 @@ namespace EveFortressServer
                     updateable.Update();
                 }
 
+                Time += 50;
                 var updateTime = start - DateTime.Now;
                 if (updateTime > TimePerTick)
                 {

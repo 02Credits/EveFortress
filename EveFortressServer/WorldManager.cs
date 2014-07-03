@@ -1,71 +1,49 @@
 ﻿using EveFortressModel;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Utils;
 
 namespace EveFortressServer
 {
     public class WorldManager : IUpdateNeeded, IDisposeNeeded
     {
-        Dictionary<long, Dictionary<long, Chunk>> Chunks { get; set; }
-        Dictionary<Tuple<long, long>, List<Voxel>> Patches { get; set; }
+        Dictionary<Tuple<long, long, long>, Chunk> Chunks { get; set; } 
+        Dictionary<Tuple<long, long, long>, List<Tuple<byte, byte, byte, BlockTypes>>> Patches { get; set; }
 
         public WorldManager()
         {
             Program.Updateables.Add(this);
             Program.Disposables.Add(this);
-            Chunks = SerializationUtils.DeserializeFileOrValue("Chunks.bin", new Dictionary<long, Dictionary<long, Chunk>>());
-            Patches = new Dictionary<Tuple<long, long>, List<Voxel>>();
+            Chunks = new Dictionary<Tuple<long, long, long>, Chunk>();
+            Patches = new Dictionary<Tuple<long, long, long>, List<Tuple<byte, byte, byte, BlockTypes>>>();
         }
 
-        public void NotifyOfChanges(long x, long y, Voxel voxel)
+        public void NotifyOfChanges(long x, long y, long z, BlockTypes block)
         {
-            
-        }
-
-        public void NotifyOfChanges(Tuple<long, long> loc, Voxel voxel)
-        {
+            var loc = Tuple.Create(x, y, z);
+            var blockPos = Chunk.GetBlockCoords(x, y, z);
             if (!Patches.ContainsKey(loc))
-                Patches[loc] = new List<Voxel>();
-            Patches[loc].Add(voxel);
+                Patches[loc] = new List<Tuple<byte, byte, byte, BlockTypes>>();
+            Patches[loc].Add(Tuple.Create(blockPos.Item1, blockPos.Item2, blockPos.Item3, block));
         }
 
-        public Chunk GetChunk(long x, long y)
+        public Chunk GetChunk(long x, long y, long z)
+        {
+            return GetChunk(Tuple.Create(x, y, z));
+        }
+
+        public Chunk GetChunk(Tuple<long, long, long> loc)
         {
             Chunk chunk;
-            Dictionary<long, Chunk> chunksAtX;
-            if (Chunks.TryGetValue(x, out chunksAtX))
+            if (Chunks.TryGetValue(loc, out chunk))
             {
-                if (chunksAtX.TryGetValue(y, out chunk))
-                {
-                    return chunk;
-                }
-                else
-                {
-                    chunk = new Chunk(x, y);
-                    chunksAtX[y] = chunk;
-                    return chunk;
-                }
+                return chunk;
             }
             else
             {
-                chunk = new Chunk(x, y);
-                Chunks[x] = new Dictionary<long, Chunk>();
-                Chunks[x][y] = chunk;
+                chunk = new Chunk(loc);
+                Chunks[loc] = chunk;
                 return chunk;
             }
-        }
-
-        public void SetVoxel(long x, long y, byte z, Voxel voxel)
-        {
-            var chunkCoords = Chunk.GetChunkAtWorldCoords(x, y);
-            var chunk = GetChunk(chunkCoords.Item1, chunkCoords.Item2);
-            var voxelCoords = Chunk.GetVoxelCoords(x, y);
-            chunk.SetVoxel(voxelCoords.Item1, voxelCoords.Item2, z, voxel);
-            NotifyOfChanges(chunkCoords, voxel);
         }
 
         public void Update()
@@ -78,11 +56,12 @@ namespace EveFortressServer
                     var connection = Program.PlayerManager.Connections[name];
                     foreach (var subscribedChunkLocation in player.SubscribedChunks)
                     {
-                        List<Voxel> patch;
+                        List<Tuple<byte, byte, byte, BlockTypes>> patch;
                         if (Patches.TryGetValue(subscribedChunkLocation, out patch))
                         {
                             Program.ClientMethods.UpdateChunk(subscribedChunkLocation.Item1,
                                                               subscribedChunkLocation.Item2,
+                                                              subscribedChunkLocation.Item3,
                                                               patch, connection);
                         }
                     }
@@ -93,7 +72,10 @@ namespace EveFortressServer
 
         public void Dispose()
         {
-            SerializationUtils.SerializeToFile("Chunks.bin", Chunks);
+            foreach (var chunk in Chunks.Values)
+            {
+                chunk.Save();
+            }
         }
     }
 }

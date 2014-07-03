@@ -1,4 +1,5 @@
 ﻿using EveFortressModel;
+using System;
 using System.Collections.Generic;
 
 namespace EveFortressClient
@@ -10,9 +11,9 @@ namespace EveFortressClient
             Game.ChatManager.AddMessage(message);
         }
 
-        public void UpdateChunk(long x, long y, List<Voxel> patch)
+        public void UpdateChunk(long x, long y, long z, List<Tuple<byte, byte, byte, BlockTypes>> patch)
         {
-            var chunk = Game.ChunkManager.GetChunk(x, y);
+            var chunk = Game.ChunkManager.GetChunk(x, y, z);
             if (chunk != null)
             {
                 chunk.ApplyPatch(patch);

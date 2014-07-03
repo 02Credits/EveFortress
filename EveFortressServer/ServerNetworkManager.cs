@@ -1,16 +1,6 @@
-﻿using EveFortressModel;
-using Lidgren.Network;
+﻿using Lidgren.Network;
 using NetworkLibrary;
-using ProtoBuf;
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace EveFortressServer
 {

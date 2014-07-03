@@ -1,12 +1,5 @@
-﻿using EveFortressModel;
-using Lidgren.Network;
-using Microsoft.Xna.Framework;
+﻿using Lidgren.Network;
 using NetworkLibrary;
-using ProtoBuf;
-using System;
-using System.Collections.Concurrent;
-using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace EveFortressClient
@@ -63,7 +56,7 @@ namespace EveFortressClient
                                     LidgrenPeer.Connect("the-simmons.dnsalias.net", 19952);
                             }
                         }
-                        catch (NetException e)
+                        catch (NetException)
                         {
                         }
                     }
