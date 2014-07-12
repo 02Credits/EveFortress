@@ -1,14 +1,22 @@
 ﻿using ProtoBuf;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace EveFortressModel
 {
     [ProtoContract]
-    [ProtoInclude(1, typeof(Item))]
+    [ProtoInclude(2, typeof(Item))]
     public abstract class Entity
     {
+        [ProtoMember(1)]
+        public Point<long> Position { get; set; }
+
+        public Entity() { }
+
+        public Entity(Point<long> position)
+        {
+            Position = position;
+        }
+        
+        public abstract List<TileDisplayInformation> GetDisplayInfo();
     }
 }

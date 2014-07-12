@@ -1,6 +1,5 @@
 ﻿using EveFortressModel;
 using Lidgren.Network;
-using System;
 
 namespace EveFortressServer
 {
@@ -30,7 +29,7 @@ namespace EveFortressServer
         {
             var player = Program.PlayerManager.Players[
                             Program.PlayerManager.ConnectionNames[connection]];
-            player.SubscribedChunks.Add(Tuple.Create(x, y, z));
+            player.SubscribedChunks.Add(new Point<long>(x, y, z));
             var chunk = Program.WorldManager.GetChunk(x, y, z);
             chunk.Blocks.PackUp();
             return chunk;
@@ -40,7 +39,7 @@ namespace EveFortressServer
         {
             var player = Program.PlayerManager.Players[
                             Program.PlayerManager.ConnectionNames[connection]];
-            player.SubscribedChunks.Remove(Tuple.Create(x, y, z));
+            player.SubscribedChunks.Remove(new Point<long>(x, y, z));
         }
     }
 }

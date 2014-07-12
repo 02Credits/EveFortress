@@ -1,10 +1,7 @@
-﻿using Microsoft.Xna.Framework;
+﻿using EveFortressModel;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using EveFortressModel;
 using System.Threading.Tasks;
 
 namespace EveFortressClient
@@ -15,13 +12,6 @@ namespace EveFortressClient
         public bool IgnoreSizeChanges { get; set; }
         public int TargetWidth { get; private set; }
         public int TargetHeight { get; private set; }
-
-        int frameRate = 0;
-        int frameCounter = 0;
-        long lastFrameTime = 0;
-        long elapsedTime = 0;
-
-        DateTime windowOpened;
 
         public int TileWidth
         {
@@ -40,7 +30,6 @@ namespace EveFortressClient
             Window.AllowUserResizing = true;
             Window.ClientSizeChanged += WindowSizeChanged;
             WindowSizeChanged(null, null);
-            windowOpened = DateTime.Now;
             Game.Updateables.Add(this);
             Game.Drawables.Add(this);
         }
@@ -80,18 +69,6 @@ namespace EveFortressClient
 
         public void Update()
         {
-            Game.Time = (long)(DateTime.Now - windowOpened).TotalMilliseconds;
-            var frameTime = Game.Time - lastFrameTime;
-            lastFrameTime = Game.Time;
-            elapsedTime += frameTime;
-
-            if (elapsedTime > 1000)
-            {
-                elapsedTime -= 1000;
-                frameRate = frameCounter;
-                frameCounter = 0;
-            }
-
             var tileWidth = (int)Math.Round((double)TargetWidth / Game.TileManager.TileSize);
             if (tileWidth < Game.TabManager.MinimumWidth)
             {
@@ -116,8 +93,7 @@ namespace EveFortressClient
 
         public void Draw()
         {
-            frameCounter++;
-            Window.Title = "EveFortress FPS:" + frameRate;
+            Window.Title = "EveFortress FPS:" + Game.TimeManager.FrameRate;
         }
 
         public Task<bool> ManageInput()

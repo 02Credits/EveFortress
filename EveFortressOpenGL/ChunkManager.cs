@@ -2,40 +2,55 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Utils;
 
 namespace EveFortressClient
 {
+    // A class which is meant to manage the chunks. I also perform ray casts here, although it might be more
+    // useful to make a specialized ray class for this. Havent decided yet.
     public class ChunkManager : IUpdateNeeded, IResetNeeded
     {
-        Dictionary<Tuple<long, long, long>, Chunk> SubscribedChunks { get; set; }
-        Dictionary<Tuple<long, long, long>, bool> ChunkLocationsToSubscribeTo { get; set; }
 
+        // The chunks which are currently in storage and are being updated by the server.
+        Dictionary<Point<long>, Chunk> SubscribedChunks { get; set; }
+        // Chunks which will be fetched from the server next update loop
+        Dictionary<Point<long>, bool> ChunkLocationsToSubscribeTo { get; set; }
+
+        // Initialize storage and subscribe to updates and resets
         public ChunkManager()
         {
-            SubscribedChunks = new Dictionary<Tuple<long, long, long>, Chunk>();
-            ChunkLocationsToSubscribeTo = new Dictionary<Tuple<long, long, long>, bool>();
+            SubscribedChunks = new Dictionary<Point<long>, Chunk>();
+            ChunkLocationsToSubscribeTo = new Dictionary<Point<long>, bool>();
             Game.Updateables.Add(this);
             Game.Resetables.Add(this);
         }
 
+        // Gets a block at the given world coordinates
         public BlockTypes GetBlock(long x, long y, long z)
         {
+            // Get the chunk at the x y and z
             var chunkPos = Chunk.GetChunkCoords(x, y, z);
             var chunk = GetChunk(chunkPos);
             
+            // Check if the chunk is present, if so get the block at the block position
             if (chunk != null)
             {
                 var blockPos = Chunk.GetBlockCoords(x, y, z);
                 return chunk.GetBlock(blockPos);
             }
 
-            ChunkLocationsToSubscribeTo[chunkPos] = true;
+            // this is only a possible control path if the chunk is null, so return unknown
             return BlockTypes.Unknown;
         }
 
+
         public List<TileDisplayInformation> PerspectiveRayCast(long cameraX, long cameraY, long cameraZ, long planeX, long planeY, long planeZ)
         {
+            var blockAboveCamera = GetBlock(planeX, planeY, planeZ + 1);
+            if (blockAboveCamera != BlockTypes.None && blockAboveCamera != BlockTypes.Unknown)
+            {
+                return new List<TileDisplayInformation> { TerrainTiles.EmptySpace };
+            }
+
             var changeInZ = (float)(planeZ - cameraZ);
             var changeInX = (float)(planeX - cameraX);
             var changeInY = (float)(planeY - cameraY);
@@ -55,7 +70,8 @@ namespace EveFortressClient
                 long currentY = YOfZ(currentZ);
                 if (currentChunk == null || !currentChunk.ContainsLoc(currentX, currentY, currentZ))
                 {
-                    currentChunk = GetChunk(currentX, currentY, currentZ);
+                    var chunkPos = Chunk.GetChunkCoords(currentX, currentY, currentZ);
+                    currentChunk = GetChunk(chunkPos);
                 }
 
                 if (currentChunk != null)
@@ -95,6 +111,7 @@ namespace EveFortressClient
                     }
                     else
                     {
+                        
                         var blockType = containingOctree.BlockType;
                         var displayInfo = BlockDisplayer.GetDisplayInfo(blockType);
                         var zDistance = planeZ - currentZ;
@@ -115,31 +132,23 @@ namespace EveFortressClient
             return new List<TileDisplayInformation> { TerrainTiles.None };
         }
 
-        public Chunk GetChunk(Tuple<long, long, long> pos)
+        public Chunk GetChunk(Point<long> loc)
         {
-            return GetChunk(pos.Item1, pos.Item2, pos.Item3);
-        }
-
-        Chunk cachedChunk;
-        public Chunk GetChunk(long x, long y, long z)
-        {
-            var loc = Chunk.GetChunkCoords(x, y, z);
-            if (loc != cachedChunk.Maybe((c) => c.Loc))
+            Chunk chunk = null;
+            if (SubscribedChunks.TryGetValue(loc, out chunk))
             {
-                if (SubscribedChunks.TryGetValue(loc, out cachedChunk))
-                {
-                    return cachedChunk;
-                }
-                else
-                {
-                    ChunkLocationsToSubscribeTo[loc] = true;
-                    return null;
-                }
+                return chunk;
             }
             else
             {
-                return cachedChunk;
+                ChunkLocationsToSubscribeTo[loc] = true;
+                return null;
             }
+        }
+
+        public Chunk GetChunk(long x, long y, long z)
+        {
+            return GetChunk(x, y, z);
         }
 
         bool subscribing;
@@ -150,10 +159,7 @@ namespace EveFortressClient
                 subscribing = true;
                 foreach (var chunkLocation in ChunkLocationsToSubscribeTo.Keys.ToList())
                 {
-                    var x = chunkLocation.Item1;
-                    var y = chunkLocation.Item2;
-                    var z = chunkLocation.Item3;
-                    var chunk = await Game.ServerMethods.SubscribeToChunk(x, y, z);
+                    var chunk = await Game.ServerMethods.SubscribeToChunk(chunkLocation.X, chunkLocation.Y, chunkLocation.Z);
                     chunk.Blocks.UnPack();
                     SubscribedChunks[chunkLocation] = chunk;
                     ChunkLocationsToSubscribeTo.Remove(chunkLocation);

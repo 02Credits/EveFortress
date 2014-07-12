@@ -35,7 +35,7 @@ namespace EveFortressClient
             };
             Parsers["UpdateChunk"] = (msg) =>
             {
-                return Game.ClientNetworkManager.ExecuteMethodFromMessage<long, long, long, List<Tuple<byte, byte, byte, BlockTypes>>>(msg, Game.ClientMethods.UpdateChunk);
+                return Game.ClientNetworkManager.ExecuteMethodFromMessage<Point<long>, List<Tuple<Point<byte>, BlockTypes>>>(msg, Game.ClientMethods.UpdateChunk);
             };
         }
     }

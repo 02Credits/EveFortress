@@ -11,9 +11,9 @@ namespace EveFortressClient
             Game.ChatManager.AddMessage(message);
         }
 
-        public void UpdateChunk(long x, long y, long z, List<Tuple<byte, byte, byte, BlockTypes>> patch)
+        public void UpdateChunk(Point<long> loc, List<Tuple<Point<byte>, BlockTypes>> patch)
         {
-            var chunk = Game.ChunkManager.GetChunk(x, y, z);
+            var chunk = Game.ChunkManager.GetChunk(loc);
             if (chunk != null)
             {
                 chunk.ApplyPatch(patch);

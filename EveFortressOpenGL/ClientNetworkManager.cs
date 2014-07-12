@@ -1,12 +1,13 @@
 ﻿using Lidgren.Network;
 using NetworkLibrary;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace EveFortressClient
 {
     public class ClientNetworkManager : NetworkManager
     {
-        const bool DEBUG = true;
+        const bool DEBUG = false;
 
         public ClientNetworkManager()
         {
@@ -49,11 +50,12 @@ namespace EveFortressClient
                         {
                             if (DEBUG)
                             {
-                                    LidgrenPeer.Connect("localhost", 19952);
+                                LidgrenPeer.Connect("localhost", 19952);
                             }
                             else
                             {
-                                    LidgrenPeer.Connect("the-simmons.dnsalias.net", 19952);
+                                var address = Dns.GetHostAddresses("the-simmons.dnsalias.net")[0];
+                                LidgrenPeer.Connect(new IPEndPoint(address, 19952));
                             }
                         }
                         catch (NetException)

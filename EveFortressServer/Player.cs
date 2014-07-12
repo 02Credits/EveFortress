@@ -1,5 +1,4 @@
 ﻿using ProtoBuf;
-using System;
 using System.Collections.Generic;
 
 namespace EveFortressModel
@@ -12,11 +11,11 @@ namespace EveFortressModel
         [ProtoMember(2)]
         public string Password { get; set; }
 
-        public List<Tuple<long, long, long>> SubscribedChunks { get; set; }
+        public List<Point<long>> SubscribedChunks { get; set; }
 
         public Player() 
         {
-            SubscribedChunks = new List<Tuple<long, long, long>>();
+            SubscribedChunks = new List<Point<long>>();
         }
 
         public Player(string username, string password)

@@ -119,9 +119,9 @@ namespace EveFortressModel
                    z >= Z && z < Z + Diameter;
         }
 
-        public Octree GetContainingOctree(Tuple<byte, byte, byte> loc)
+        public Octree GetContainingOctree(Point<byte> loc)
         {
-            return GetContainingOctree(loc.Item1, loc.Item2, loc.Item3);
+            return GetContainingOctree(loc.X, loc.Y, loc.Z);
         }
 
         public Octree GetContainingOctree(byte x, byte y, byte z)

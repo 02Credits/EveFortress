@@ -42,13 +42,13 @@
     <Compile Include="ChatManager.cs" />
     <Compile Include="ChunkManager.cs" />
     <Compile Include="Tabs\MapTab.cs" />
+    <Compile Include="TimeManager.cs" />
     <Compile Include="UIComponents\Button.cs" />
     <Compile Include="Tabs\ChatTab.cs" />
     <Compile Include="ClientMethods.cs" />
     <Compile Include="Tabs\ConnectingTab.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="InputManager.cs" />
-    <Compile Include="Tabs\LoadingTab.cs" />
     <Compile Include="UIComponents\ScrollList.cs" />
     <Compile Include="Tabs\LoginTab.cs" />
     <Compile Include="ClientNetworkManager.cs" />
@@ -118,10 +118,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\..\..\..\..\..\..\Program Files %28x86%29\MonoGame\v3.0\Assemblies\WindowsGL\SDL.dll">
-      <Link>SDL.dll</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Content\EntityTiles.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
