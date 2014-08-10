@@ -7,7 +7,7 @@ namespace EveFortressClient
 {
     public class ClientNetworkManager : NetworkManager
     {
-        const bool DEBUG = false;
+        const bool DEBUG = true;
 
         public ClientNetworkManager()
         {

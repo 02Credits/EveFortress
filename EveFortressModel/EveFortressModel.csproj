@@ -62,7 +62,6 @@
     <Compile Include="TileDisplayInformation.cs" />
     <Compile Include="Tiles.cs" />
     <Compile Include="Point.cs" />
-    <Compile Include="Tree.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
