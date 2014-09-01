@@ -21,11 +21,11 @@ namespace EveFortressClient
             get { return "Map Test"; }
         }
 
-        long x = 0;
-        long y = 0;
-        long z = Chunk.TERRAIN_HEIGHT;
+        private long x = 0;
+        private long y = 0;
+        private long z = Chunk.TERRAIN_HEIGHT;
 
-        long left
+        private long left
         {
             get
             {
@@ -33,15 +33,15 @@ namespace EveFortressClient
             }
         }
 
-        long right
+        private long right
         {
             get
             {
                 return left + Width;
             }
         }
-        
-        long top
+
+        private long top
         {
             get
             {
@@ -49,7 +49,7 @@ namespace EveFortressClient
             }
         }
 
-        long bottom
+        private long bottom
         {
             get
             {

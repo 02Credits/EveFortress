@@ -1,13 +1,11 @@
 ﻿using Microsoft.Xna.Framework.Input;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace EveFortressClient
 {
-    public abstract class UITab: Tab, IUIElementContainer
+    public abstract class UITab : Tab, IUIElementContainer
     {
         public IUIElementContainer Parent { get { return null; } }
 
@@ -32,7 +30,7 @@ namespace EveFortressClient
 
         public override int MinimumHeight
         {
-            get 
+            get
             {
                 var minHeight = 5;
                 foreach (var element in Elements)
@@ -50,6 +48,7 @@ namespace EveFortressClient
         }
 
         private List<UIElement> elements = new List<UIElement>();
+
         public List<UIElement> Elements
         {
             get
@@ -59,8 +58,9 @@ namespace EveFortressClient
         }
 
         private UIElement activeElement;
-        public UIElement ActiveElement 
-        { 
+
+        public UIElement ActiveElement
+        {
             get
             {
                 return activeElement;

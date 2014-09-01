@@ -6,7 +6,6 @@ namespace EveFortressServer
 {
     public class ServerNetworkManager : NetworkManager
     {
-
         public ServerNetworkManager()
         {
             Program.Updateables.Add(this);

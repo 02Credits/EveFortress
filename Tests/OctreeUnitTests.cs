@@ -77,7 +77,6 @@ namespace Tests
             var octree = new Octree(null, 0, 0, 0, 8);
             octree.SetBlock(5, 6, 3, BlockTypes.Water);
 
-
             Assert.AreEqual(octree.GetBlock(5, 6, 3), octree.Children[5].Children[7].Children[2].BlockType);
         }
 
@@ -136,7 +135,7 @@ namespace Tests
             octree.Children[3].Children = null;
             octree.PackUp();
 
-            var expectedData = new byte[] 
+            var expectedData = new byte[]
             {
                 0,
                 0,

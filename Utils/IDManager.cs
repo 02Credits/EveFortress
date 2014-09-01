@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Utils
+﻿namespace Utils
 {
     public class IDManager
     {
         public long CurrentID;
+
+        public IDManager() { }
+
+        public IDManager(long id) { CurrentID = id; }
+
         public long GetNextID()
         {
             var id = CurrentID;

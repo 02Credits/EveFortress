@@ -9,11 +9,17 @@ namespace EveFortressModel
     public class Octree
     {
         public byte X { get; set; }
+
         public byte Y { get; set; }
+
         public byte Z { get; set; }
+
         public byte Diameter { get; set; }
+
         public BlockTypes BlockType { get; set; }
+
         public Octree[] Children { get; set; }
+
         public Octree Parent { get; set; }
 
         [ProtoMember(1)]
@@ -97,7 +103,9 @@ namespace EveFortressModel
             return currentIndex;
         }
 
-        public Octree() { }
+        public Octree()
+        {
+        }
 
         public Octree(Octree parent, byte x, byte y, byte z, byte diameter)
         {
@@ -137,7 +145,7 @@ namespace EveFortressModel
             return this;
         }
 
-        int IndexWhichContainsLocation(byte x, byte y, byte z)
+        private int IndexWhichContainsLocation(byte x, byte y, byte z)
         {
             var radius = (byte)(Diameter / 2);
             if (x >= X + radius)
@@ -199,18 +207,25 @@ namespace EveFortressModel
             {
                 case 0:
                     return new Octree(this, X, Y, Z, radius);
+
                 case 1:
                     return new Octree(this, (byte)(X + radius), Y, Z, radius);
+
                 case 2:
                     return new Octree(this, (byte)(X + radius), Y, (byte)(Z + radius), radius);
+
                 case 3:
                     return new Octree(this, X, Y, (byte)(Z + radius), radius);
+
                 case 4:
                     return new Octree(this, X, (byte)(Y + radius), Z, radius);
+
                 case 5:
                     return new Octree(this, (byte)(X + radius), (byte)(Y + radius), Z, radius);
+
                 case 6:
                     return new Octree(this, (byte)(X + radius), (byte)(Y + radius), (byte)(Z + radius), radius);
+
                 case 7:
                     return new Octree(this, X, (byte)(Y + radius), (byte)(Z + radius), radius);
             }

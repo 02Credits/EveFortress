@@ -1,9 +1,7 @@
 ﻿using EveFortressModel;
 using Microsoft.Xna.Framework.Input;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Utils;
 
@@ -35,8 +33,9 @@ namespace EveFortressClient
         public TextInput(IUIElementContainer parent, CVal<int> x, CVal<int> y, CVal<int> maxWidth, Action<string> returnAction = null, string text = "", bool password = false)
             : this(parent, x, y, maxWidth, (s, i) => returnAction(s), text, password) { }
 
-        int cursorCounter = 0;
-        bool drawCursor = true;
+        private int cursorCounter = 0;
+        private bool drawCursor = true;
+
         public override void Draw()
         {
             cursorCounter += 1;
@@ -51,7 +50,7 @@ namespace EveFortressClient
                 }
                 textToDraw = acc;
             }
-            
+
             if (textToDraw.Length > Width - 2)
             {
                 textToDraw = textToDraw.Skip(textToDraw.Length - (Width - 2))
@@ -63,7 +62,6 @@ namespace EveFortressClient
                 cursorCounter = 0;
                 drawCursor = !drawCursor;
             }
-
 
             if (ActiveElement)
             {
@@ -83,6 +81,7 @@ namespace EveFortressClient
         }
 
         public bool firstTime = true;
+
         public override void OnFocusGained()
         {
             if (firstTime)

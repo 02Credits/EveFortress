@@ -15,7 +15,7 @@ namespace Tests
                 var specificX = x % 32;
                 if (specificX < 0)
                     specificX = 32 + specificX;
-                var expectedX = (x - specificX) / 32; 
+                var expectedX = (x - specificX) / 32;
                 var chunkCoords = Chunk.GetChunkCoords(x, 0, 0);
                 Assert.AreEqual(new Point<long>(expectedX, 0, 0), chunkCoords);
             }

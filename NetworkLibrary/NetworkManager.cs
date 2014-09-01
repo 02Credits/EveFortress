@@ -14,19 +14,22 @@ namespace NetworkLibrary
     {
         public NetPeer LidgrenPeer;
 
-        IDManager AckIDManager = new IDManager();
-        IDManager ConvoIDManager = new IDManager();
+        private IDManager AckIDManager = new IDManager();
+        private IDManager ConvoIDManager = new IDManager();
 
-        Dictionary<long, Tuple<DateTime, NetConnection, NetOutgoingMessage>> nonAckedMessages = new Dictionary<long, Tuple<DateTime, NetConnection, NetOutgoingMessage>>();
-        Dictionary<long, Action<NetIncomingMessage>> callbackActions = new Dictionary<long, Action<NetIncomingMessage>>();
+        private Dictionary<long, Tuple<DateTime, NetConnection, NetOutgoingMessage>> nonAckedMessages = new Dictionary<long, Tuple<DateTime, NetConnection, NetOutgoingMessage>>();
+        private Dictionary<long, Action<NetIncomingMessage>> callbackActions = new Dictionary<long, Action<NetIncomingMessage>>();
 
-        ConcurrentQueue<NetIncomingMessage> Messages = new ConcurrentQueue<NetIncomingMessage>();
+        private ConcurrentQueue<NetIncomingMessage> Messages = new ConcurrentQueue<NetIncomingMessage>();
 
-        Dictionary<NetConnection, List<long>> SeenAckIDs = new Dictionary<NetConnection, List<long>>();
-        Dictionary<long, Action<NetIncomingMessage>> ConversationSubscriptions = new Dictionary<long, Action<NetIncomingMessage>>();
+        private Dictionary<NetConnection, List<long>> SeenAckIDs = new Dictionary<NetConnection, List<long>>();
+        private Dictionary<long, Action<NetIncomingMessage>> ConversationSubscriptions = new Dictionary<long, Action<NetIncomingMessage>>();
 
         public abstract byte[] ParseMessage(string commandName, NetIncomingMessage message);
-        public virtual void ConnectionDisconnected(NetConnection connection) { }
+
+        public virtual void ConnectionDisconnected(NetConnection connection)
+        {
+        }
 
         public NetworkManager()
         {
@@ -59,15 +62,18 @@ namespace NetworkLibrary
                         var ackID = msg.ReadInt64();
                         ParseOrHandleAck(msg, ackID);
                         break;
+
                     case NetIncomingMessageType.StatusChanged:
                         HandleStatusChange(msg);
                         break;
+
                     case NetIncomingMessageType.VerboseDebugMessage:
                     case NetIncomingMessageType.DebugMessage:
                     case NetIncomingMessageType.WarningMessage:
                     case NetIncomingMessageType.ErrorMessage:
                         Console.WriteLine(msg.ReadString());
                         break;
+
                     default:
                         Console.WriteLine("Unhandled type: " + msg.MessageType);
                         break;
@@ -92,7 +98,6 @@ namespace NetworkLibrary
                     if (nonAckedMessage.LengthBits != 0)
                     {
                         var ackMessage = LidgrenPeer.CreateMessage();
-                        ackMessage.Write(id);
                         ackMessage.Write(nonAckedMessage.PeekDataBuffer());
                         LidgrenPeer.SendMessage(ackMessage, recipient, NetDeliveryMethod.Unreliable);
                         nonAckedMessages[id] = Tuple.Create(DateTime.Now, recipient, nonAckedMessage);
@@ -282,6 +287,7 @@ namespace NetworkLibrary
             LidgrenPeer.SendMessage(msg, connection, NetDeliveryMethod.Unreliable);
             return SubscribeToResponse<R>(id);
         }
+
         public byte[] ExecuteMethodFromMessage(NetIncomingMessage message, Action method)
         {
             method();
@@ -410,4 +416,3 @@ namespace NetworkLibrary
         }
     }
 }
-

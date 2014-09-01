@@ -1,6 +1,7 @@
 ﻿using EveFortressModel;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace EveFortressClient
 {
@@ -18,6 +19,16 @@ namespace EveFortressClient
             {
                 chunk.ApplyPatch(patch);
             }
+        }
+
+        public void SendEntities(IEnumerable<EntityPatch> entityPatches)
+        {
+            Game.EntityManager.AddEntities(entityPatches.Select(p => p.CreateEntity()));
+        }
+
+        public void PatchEntity(EntityPatch patch)
+        {
+            Game.EntityManager.PatchEntity(patch);
         }
     }
 }

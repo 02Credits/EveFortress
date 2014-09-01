@@ -1,10 +1,7 @@
 ﻿using EveFortressModel;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace EveFortressClient
@@ -14,17 +11,23 @@ namespace EveFortressClient
         public TabSection Parent { get; set; }
 
         public int X { get; set; }
+
         public int Y { get; set; }
 
         public TabSection First { get; set; }
+
         public TabSection Second { get; set; }
+
         public Tab Tab { get; set; }
 
         public bool Populated { get; set; }
+
         public float SplitPercentage { get; set; }
+
         public bool Vertical { get; set; }
 
-        int _width;
+        private int _width;
+
         public int Width
         {
             get
@@ -39,7 +42,9 @@ namespace EveFortressClient
                     _width = value;
             }
         }
-        int _height;
+
+        private int _height;
+
         public int Height
         {
             get
@@ -54,6 +59,7 @@ namespace EveFortressClient
                     _height = value;
             }
         }
+
         public int MinimumWidth
         {
             get
@@ -410,7 +416,8 @@ namespace EveFortressClient
             return false;
         }
 
-        bool draggingDivider = false;
+        private bool draggingDivider = false;
+
         public void ManageMouseInput()
         {
             if (!Populated)

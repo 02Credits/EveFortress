@@ -7,7 +7,7 @@ namespace EveFortressClient
 {
     public class ClientNetworkManager : NetworkManager
     {
-        const bool DEBUG = true;
+        private const bool DEBUG = true;
 
         public ClientNetworkManager()
         {
@@ -19,24 +19,25 @@ namespace EveFortressClient
         }
 
         public bool Connected
-            {
+        {
             get
-                {
+            {
                 if (LidgrenPeer.Connections.Count == 1)
-                    {
+                {
                     var serverStatus = LidgrenPeer.Connections[0].Status;
                     if (serverStatus == NetConnectionStatus.Connected ||
                         serverStatus == NetConnectionStatus.InitiatedConnect ||
                         serverStatus == NetConnectionStatus.None)
-                        {
+                    {
                         return true;
-                        }
                     }
-                return false;
                 }
+                return false;
+            }
         }
 
-        bool connecting;
+        private bool connecting;
+
         private async void Connect()
         {
             if (!connecting)
@@ -92,9 +93,9 @@ namespace EveFortressClient
         }
 
         public Task<R> SendCommand<R, T1>(string commandName, T1 param1)
-            {
+        {
             return SendCommand<R, T1>(LidgrenPeer.Connections[0], commandName, param1);
-            }
+        }
 
         public Task<R> SendCommand<R, T1, T2>(string commandName, T1 param1, T2 param2)
         {
@@ -107,9 +108,9 @@ namespace EveFortressClient
         }
 
         public Task<R> SendCommand<R, T1, T2, T3, T4>(string commandName, T1 param1, T2 param2, T3 param3, T4 param4)
-            {
+        {
             return SendCommand<R, T1, T2, T3, T4>(LidgrenPeer.Connections[0], commandName, param1, param2, param3, param4);
-            }
+        }
 
         public Task<R> SendCommand<R, T1, T2, T3, T4, T5>(string commandName, T1 param1, T2 param2, T3 param3, T4 param4, T5 param5)
         {

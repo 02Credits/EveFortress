@@ -1,8 +1,4 @@
 ﻿using EveFortressModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Utils;
 
@@ -11,10 +7,12 @@ namespace EveFortressClient
     public abstract class UIElement : IDrawNeeded, IUpdateNeeded, IInputNeeded
     {
         public abstract bool Activateable { get; }
+
         public bool ActiveElement { get { return this == Parent.ActiveElement; } }
-        public bool MouseOver 
-        { 
-            get 
+
+        public bool MouseOver
+        {
+            get
             {
                 return Game.InputManager.MouseTilePosition.X >= Parent.X + X &&
                        Game.InputManager.MouseTilePosition.X < Parent.X + X + Width &&
@@ -24,9 +22,11 @@ namespace EveFortressClient
         }
 
         public virtual CVal<int> X { get; set; }
+
         public virtual CVal<int> Y { get; set; }
 
         public virtual CVal<int> Width { get; set; }
+
         public virtual CVal<int> Height { get; set; }
 
         public IUIElementContainer Parent { get; set; }
@@ -49,15 +49,23 @@ namespace EveFortressClient
             return Task.FromResult(false);
         }
 
-        public virtual void ManageMouseInput() { }
+        public virtual void ManageMouseInput()
+        {
+        }
 
-        public virtual void Update() { }
+        public virtual void Update()
+        {
+        }
 
         public abstract void Draw();
 
-        public virtual void OnFocusGained() { }
+        public virtual void OnFocusGained()
+        {
+        }
 
-        public virtual void OnFocusLossed() { }
+        public virtual void OnFocusLossed()
+        {
+        }
 
         public virtual void Focus()
         {

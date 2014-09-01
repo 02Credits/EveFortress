@@ -1,24 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EveFortressModel;
+﻿using EveFortressModel;
 using Lidgren.Network;
-using ProtoBuf;
-using System.IO;
+using System.Collections.Generic;
 
 namespace EveFortressServer
 {
     public class PlayerManager : IDisposeNeeded
     {
         public Dictionary<string, Player> Players { get; set; }
+
         public Dictionary<string, NetConnection> Connections { get; set; }
+
         public Dictionary<NetConnection, string> ConnectionNames { get; set; }
 
         public PlayerManager()
         {
-            Players = Utils.SerializationUtils.DeserializeFileOrValue("Players.bin", new Dictionary<string,Player>());
+            Players = Utils.SerializationUtils.DeserializeFileOrValue("Players.bin", new Dictionary<string, Player>());
             Connections = new Dictionary<string, NetConnection>();
             ConnectionNames = new Dictionary<NetConnection, string>();
 

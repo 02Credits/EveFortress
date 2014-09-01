@@ -9,11 +9,11 @@ namespace EveFortressClient
     // useful to make a specialized ray class for this. Havent decided yet.
     public class ChunkManager : IUpdateNeeded, IResetNeeded
     {
-
         // The chunks which are currently in storage and are being updated by the server.
-        Dictionary<Point<long>, Chunk> SubscribedChunks { get; set; }
+        private Dictionary<Point<long>, Chunk> SubscribedChunks { get; set; }
+
         // Chunks which will be fetched from the server next update loop
-        Dictionary<Point<long>, bool> ChunkLocationsToSubscribeTo { get; set; }
+        private Dictionary<Point<long>, bool> ChunkLocationsToSubscribeTo { get; set; }
 
         // Initialize storage and subscribe to updates and resets
         public ChunkManager()
@@ -30,7 +30,7 @@ namespace EveFortressClient
             // Get the chunk at the x y and z
             var chunkPos = Chunk.GetChunkCoords(x, y, z);
             var chunk = GetChunk(chunkPos);
-            
+
             // Check if the chunk is present, if so get the block at the block position
             if (chunk != null)
             {
@@ -41,7 +41,6 @@ namespace EveFortressClient
             // this is only a possible control path if the chunk is null, so return unknown
             return BlockTypes.Unknown;
         }
-
 
         public List<TileDisplayInformation> PerspectiveRayCast(long cameraX, long cameraY, long cameraZ, long planeX, long planeY, long planeZ)
         {
@@ -111,7 +110,6 @@ namespace EveFortressClient
                     }
                     else
                     {
-                        
                         var blockType = containingOctree.BlockType;
                         var displayInfo = BlockDisplayer.GetDisplayInfo(blockType);
                         var zDistance = planeZ - currentZ;
@@ -121,7 +119,23 @@ namespace EveFortressClient
                         displayInfo.R = (byte)(displayInfo.R * shading);
                         displayInfo.G = (byte)(displayInfo.G * shading);
                         displayInfo.B = (byte)(displayInfo.B * shading);
-                        return new List<TileDisplayInformation> { displayInfo };
+
+                        var displayList = new List<TileDisplayInformation>();
+                        foreach (var entity in Game.EntityManager.Entities.Values)
+                        {
+                            var appearance = entity.GetComponentOrDefault<Appearance>();
+                            if (appearance != null)
+                            {
+                                if (entity.Position.X == currentX &&
+                                    entity.Position.Y == currentY &&
+                                    entity.Position.Z == currentZ)
+                                {
+                                    displayList.Add(appearance.DisplayInfo);
+                                }
+                            }
+                        }
+                        displayList.Add(displayInfo);
+                        return displayList;
                     }
                 }
                 else
@@ -151,7 +165,8 @@ namespace EveFortressClient
             return GetChunk(x, y, z);
         }
 
-        bool subscribing;
+        private bool subscribing;
+
         public async void Update()
         {
             if (!subscribing)

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Utils;
 
 namespace EveFortressClient
@@ -12,9 +8,11 @@ namespace EveFortressClient
         IUIElementContainer Parent { get; }
 
         CVal<int> Width { get; set; }
+
         CVal<int> Height { get; set; }
 
         CVal<int> X { get; set; }
+
         CVal<int> Y { get; set; }
 
         List<UIElement> Elements { get; }

@@ -1,10 +1,6 @@
 ﻿using EveFortressModel;
-using Microsoft.Xna.Framework.Input;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Utils;
 
 namespace EveFortressClient
@@ -12,22 +8,26 @@ namespace EveFortressClient
     public class ScrollList : UIElement, IUIElementContainer
     {
         public override bool Activateable { get { return false; } }
+
         public new UIElement ActiveElement { get; set; }
 
-        List<UIElement> elements = new List<UIElement>();
+        private List<UIElement> elements = new List<UIElement>();
+
         public List<UIElement> Elements
         {
             get { return elements; }
         }
 
         public float ScrollPercentage { get; set; }
-        public int InnerHeight 
-        { 
+
+        public int InnerHeight
+        {
             get
             {
                 return Elements.Aggregate(0, (acc, e) => acc + e.Height);
             }
         }
+
         public int HeightDelta
         {
             get
@@ -42,7 +42,7 @@ namespace EveFortressClient
         }
 
         public ScrollList(IUIElementContainer parent, CVal<int> x, CVal<int> y, CVal<int> width, CVal<int> height)
-            : base(parent, x, y, width, height) 
+            : base(parent, x, y, width, height)
         {
             ScrollPercentage = 1;
         }
@@ -54,7 +54,7 @@ namespace EveFortressClient
             {
                 var scrollBarHeight = (int)(Height * ((float)Height / InnerHeight));
                 var scrollBarPositionY = (int)((Height - scrollBarHeight) * ScrollPercentage);
-                
+
                 for (int y = scrollBarPositionY; y < scrollBarPositionY + scrollBarHeight; y++)
                 {
                     Game.TileManager.DrawTile(UITiles.BorderVertical, Width, y, this);

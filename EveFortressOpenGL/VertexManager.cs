@@ -2,8 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace EveFortressClient
 {
@@ -13,7 +11,7 @@ namespace EveFortressClient
         public static List<Texture2D> TextureOrder = new List<Texture2D>();
         public static VertexPositionColorTexture vertexToAdd;
 
-        static VertexManager GetManager(Texture2D texture)
+        private static VertexManager GetManager(Texture2D texture)
         {
             VertexManager returnManager = null;
             Managers.TryGetValue(texture, out returnManager);
@@ -56,11 +54,16 @@ namespace EveFortressClient
 
         public VertexPositionColorTexture[] Vertices = new VertexPositionColorTexture[4000];
         public Int16[] Indices = new Int16[4000];
+
         public int VertexCount { get; private set; }
+
         public int IndexCount { get; private set; }
-        Int16 CurrentIndex { get; set; }
-        int CurrentMaxVertexCount { get; set; }
-        int CurrentMaxIndexCount { get; set; }
+
+        private Int16 CurrentIndex { get; set; }
+
+        private int CurrentMaxVertexCount { get; set; }
+
+        private int CurrentMaxIndexCount { get; set; }
 
         public void AddRectangle(Color color,
             Vector3 topLeftWorld, Vector3 topRightWorld, Vector3 bottomRightWorld, Vector3 bottomLeftWorld,

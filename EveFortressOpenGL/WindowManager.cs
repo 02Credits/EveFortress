@@ -9,8 +9,11 @@ namespace EveFortressClient
     public class WindowManager : IUpdateNeeded, IDrawNeeded, IInputNeeded
     {
         public GameWindow Window { get; set; }
+
         public bool IgnoreSizeChanges { get; set; }
+
         public int TargetWidth { get; private set; }
+
         public int TargetHeight { get; private set; }
 
         public int TileWidth
@@ -18,6 +21,7 @@ namespace EveFortressClient
             get { return Window.ClientBounds.Width / Game.TileManager.TileSize; }
             set { TargetWidth = value * Game.TileManager.TileSize; }
         }
+
         public int TileHeight
         {
             get { return Window.ClientBounds.Height / Game.TileManager.TileSize; }

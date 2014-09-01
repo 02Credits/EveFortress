@@ -1,22 +1,117 @@
 ﻿using ProtoBuf;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace EveFortressModel
 {
     [ProtoContract]
-    [ProtoInclude(2, typeof(Item))]
-    public abstract class Entity
+    public class Entity
     {
         [ProtoMember(1)]
+        public long ID { get; set; }
+        [ProtoMember(2)]
+        public Dictionary<Type, Component> Components { get; set; }
+        [ProtoMember(3)]
+        public Point<long> Position { get; set; }
+        public List<Type> UpdatedComponents { get; set; }
+
+        public Entity(long id, Point<long> position)
+        {
+            ID = id;
+            Position = position;
+            Components = new Dictionary<Type, Component>();
+            UpdatedComponents = new List<Type>();
+        }
+
+        public bool HasComponent<T>()
+        {
+            return Components.ContainsKey(typeof(T));
+        }
+
+        public bool HasComponent(Type type)
+        {
+            return Components.ContainsKey(type);
+        }
+
+        public T GetComponent<T>() where T : Component
+        {
+            return (T)Components[typeof(T)];
+        }
+
+        public void GetComponent<T>(Action<T> callBack) where T : Component
+        {
+            callBack((T)Components[typeof(T)]);
+        }
+
+        public T GetComponentOrDefault<T>() where T : Component
+        {
+            Component returnValue;
+            Components.TryGetValue(typeof(T), out returnValue);
+            return (T)returnValue;
+        }
+
+        public void AddComponent(Component component)
+        {
+            Components[component.GetType()] = component;
+        }
+
+        public void RemoveComponent<T>()
+        {
+            Components.Remove(typeof(T));
+        }
+
+        public void RemoveComponent(Component T)
+        {
+            Components.Remove(T.GetType());
+        }
+
+        public void UpdateComponent<T>(Func<T,T> function) where T : Component
+        {
+            var type = typeof(T);
+            Components[type] = function((T)Components[type]);
+            if (!UpdatedComponents.Contains(type))
+            {
+                UpdatedComponents.Add(type);
+            }
+        }
+
+        public EntityPatch GetInitialPatch()
+        {
+            return new EntityPatch { ID = ID, Position = Position, PatchedComponents = Components.Values.OfType<SyncedComponent>() };
+        }
+
+        public void ApplyPatch(EntityPatch patch)
+        {
+            foreach (var component in patch.PatchedComponents)
+            {
+                Components[component.GetType()] = component;
+            }
+        }
+    }
+
+    [ProtoContract]
+    public class EntityPatch
+    {
+        [ProtoMember(1)]
+        public long ID { get; set; }
+
+        [ProtoMember(2)]
         public Point<long> Position { get; set; }
 
-        public Entity() { }
+        [ProtoMember(3)]
+        public IEnumerable<SyncedComponent> PatchedComponents { get; set; }
 
-        public Entity(Point<long> position)
+        public Entity CreateEntity()
         {
-            Position = position;
+            var entity = new Entity(ID, Position);
+            foreach (var component in PatchedComponents)
+            {
+                entity.AddComponent(component);
+            }
+            return entity;
         }
-        
-        public abstract List<TileDisplayInformation> GetDisplayInfo();
     }
 }

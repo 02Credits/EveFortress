@@ -1,10 +1,8 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework.Input;
 using System.Threading.Tasks;
-using Microsoft.Xna.Framework;
 
 namespace EveFortressClient
 {
@@ -15,9 +13,9 @@ namespace EveFortressClient
             get { return "Tab Selection"; }
         }
 
-        List<Button> newTabOptions = new List<Button>();
-        string currentSearchText;
-        int framesSinceLastKeyPressed;
+        private List<Button> newTabOptions = new List<Button>();
+        private string currentSearchText;
+        private int framesSinceLastKeyPressed;
 
         public NewTab()
         {

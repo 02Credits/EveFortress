@@ -1,5 +1,6 @@
 ﻿using EveFortressModel;
 using Lidgren.Network;
+using System.Linq;
 
 namespace EveFortressServer
 {
@@ -7,7 +8,13 @@ namespace EveFortressServer
     {
         public LoginInformation Login(LoginInformation info, NetConnection connection)
         {
-            return Program.PlayerManager.LoginAttempt(info, connection);
+            var loginInformation = Program.PlayerManager.LoginAttempt(info, connection);
+            if (loginInformation.LoginResponse == LoginResponse.Success)
+            {
+                var patches = Program.EntityManager.Entities.Select(e => e.GetInitialPatch());
+                Program.ClientMethods.SendEntities(patches, connection);
+            }
+            return loginInformation;
         }
 
         public LoginInformation RegisterUser(LoginInformation info, NetConnection connection)

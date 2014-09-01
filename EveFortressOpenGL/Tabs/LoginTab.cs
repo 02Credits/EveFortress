@@ -1,11 +1,5 @@
 ﻿using EveFortressModel;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EveFortressClient
 {
@@ -16,12 +10,12 @@ namespace EveFortressClient
             get { return "Login Tab"; }
         }
 
-        TextInput usernameInput;
-        Label usernameError;
-        TextInput passwordInput;
-        Label passwordError;
-        Button registerButton;
-        Button loginButton;
+        private TextInput usernameInput;
+        private Label usernameError;
+        private TextInput passwordInput;
+        private Label passwordError;
+        private Button registerButton;
+        private Button loginButton;
 
         public LoginTab()
         {
@@ -32,7 +26,7 @@ namespace EveFortressClient
             passwordError = new Label(this, 11, 5, "", Color.Red);
             passwordInput = new TextInput(this, 2, 7, 20, (s) => loginButton.OnClicked(), password: true);
             loginButton = new Button(this, 1, 9, AttemptLogin, "Login");
-            registerButton = new Button(this, 1, 11, 
+            registerButton = new Button(this, 1, 11,
                 () => ParentSection.ReplaceTab(new RegisterTab(usernameInput.Text, passwordInput.Text)), "Register");
             usernameInput.Focus();
         }
@@ -52,23 +46,29 @@ namespace EveFortressClient
                 case LoginResponse.AlreadyLoggedIn:
                     usernameError.Text = "That user is already logged in...";
                     break;
+
                 case LoginResponse.PasswordWrong:
                     passwordError.Text = "Wrong password";
                     break;
+
                 case LoginResponse.UserDoesNotExist:
                     usernameError.Text = "Unknown login. New user?";
                     break;
+
                 case LoginResponse.UsernameEmpty:
                     usernameError.Text = "Needs non-empty username";
                     ActiveElement = usernameInput;
                     break;
+
                 case LoginResponse.PasswordEmpty:
                     passwordError.Text = "Needs non-empty password";
                     ActiveElement = passwordInput;
                     break;
+
                 case LoginResponse.Success:
                     ParentSection.ReplaceTab(new NewTab());
                     break;
+
                 default:
                     usernameError.Text = "Unknown error has occured";
                     break;

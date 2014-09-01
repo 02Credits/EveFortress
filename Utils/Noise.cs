@@ -14,10 +14,10 @@
  * attribution is appreciated.
  *
  * Update by NightCabbage (2013-11-05) NightCabbage@gmail.com
- * 
+ *
  * Working with Stefan (thanks!) I have compiled all of the
  * improvements I could find and put them into this code.
- * 
+ *
  * Note that for corner contribution I have made the decision here to
  * use 0.6 instead of 0.5, as I believe it looks a bit better for 2d
  * purposes (0.5 made it a bit more grey, and also had more pulsating for
@@ -47,7 +47,6 @@ namespace Utils
 
         public NoiseGen()
         {
-
         }
 
         public NoiseGen(double pScale, byte pOctaves)
@@ -110,6 +109,7 @@ namespace Utils
 
         // To remove the need for index wrapping, double the permutation table length
         private static short[] perm = new short[512];
+
         private static short[] permMod12 = new short[512];
 
         static Noise()
@@ -123,6 +123,7 @@ namespace Utils
 
         // Skewing and unskewing factors for 2, 3, and 4 dimensions
         private static double F3 = 1.0 / 3.0;
+
         private static double G3 = 1.0 / 6.0;
 
         // This method is a *lot* faster than using (int)Math.floor(x)

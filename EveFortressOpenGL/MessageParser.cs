@@ -37,6 +37,14 @@ namespace EveFortressClient
             {
                 return Game.ClientNetworkManager.ExecuteMethodFromMessage<Point<long>, List<Tuple<Point<byte>, BlockTypes>>>(msg, Game.ClientMethods.UpdateChunk);
             };
+            Parsers["SendEntities"] = (msg) =>
+            {
+                return Game.ClientNetworkManager.ExecuteMethodFromMessage<IEnumerable<EntityPatch>>(msg, Game.ClientMethods.SendEntities);
+            };
+            Parsers["PatchEntity"] = (msg) =>
+            {
+                return Game.ClientNetworkManager.ExecuteMethodFromMessage<EntityPatch>(msg, Game.ClientMethods.PatchEntity);
+            };
         }
     }
 }

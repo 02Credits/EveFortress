@@ -7,15 +7,18 @@ namespace EveFortressModel
     public struct Point<T>
         where T : IComparable
     {
-        T x;
+        private T x;
+
         [ProtoMember(1)]
         public T X { get { return x; } set { x = value; } }
 
-        T y;
+        private T y;
+
         [ProtoMember(2)]
         public T Y { get { return y; } set { y = value; } }
 
-        T z;
+        private T z;
+
         [ProtoMember(3)]
         public T Z { get { return z; } set { z = value; } }
 

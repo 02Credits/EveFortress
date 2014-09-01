@@ -1,22 +1,19 @@
 ﻿using EveFortressModel;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace EveFortressClient
 {
     public class TileManager
     {
-        const int SHEET_TILE_SIZE = 16;
+        private const int SHEET_TILE_SIZE = 16;
 
-        Texture2D TerrainSheet;
-        Texture2D EntitySheet;
-        Texture2D ItemSheet;
-        Texture2D UISheet;
+        private Texture2D TerrainSheet;
+        private Texture2D EntitySheet;
+        private Texture2D ItemSheet;
+        private Texture2D UISheet;
 
         public Color DefaultColor { get; set; }
 

@@ -1,9 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using EveFortressModel;
+﻿using EveFortressModel;
 using System.Threading.Tasks;
 
 namespace EveFortressClient
@@ -11,7 +6,8 @@ namespace EveFortressClient
     public class TabManager : IUpdateNeeded, IDrawNeeded, IInputNeeded
     {
         public TabSection MainSection { get; set; }
-        public TabSection   ActiveSection { get; set; }
+
+        public TabSection ActiveSection { get; set; }
 
         public int MinimumWidth
         {

@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Include="ChatManager.cs" />
     <Compile Include="ChunkManager.cs" />
+    <Compile Include="EntityManager.cs" />
     <Compile Include="Tabs\MapTab.cs" />
     <Compile Include="TimeManager.cs" />
     <Compile Include="UIComponents\Button.cs" />

@@ -8,12 +8,13 @@ namespace EveFortressModel
     {
         [ProtoMember(1)]
         public string UserName { get; set; }
+
         [ProtoMember(2)]
         public string Password { get; set; }
 
         public List<Point<long>> SubscribedChunks { get; set; }
 
-        public Player() 
+        public Player()
         {
             SubscribedChunks = new List<Point<long>>();
         }

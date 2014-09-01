@@ -6,12 +6,13 @@ namespace EveFortressClient
     public class TimeManager : IUpdateNeeded, IDrawNeeded, IResetNeeded
     {
         public long Time { get; set; }
+
         public int FrameRate { get; set; }
 
-        DateTime GameStarted;
-        int frameCounter;
-        long lastFrameTime;
-        long elapsedTimeSinceCounterReset;
+        private DateTime GameStarted;
+        private int frameCounter;
+        private long lastFrameTime;
+        private long elapsedTimeSinceCounterReset;
 
         public TimeManager()
         {

@@ -1,19 +1,18 @@
-﻿using System;
+﻿using Lidgren.Network;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Utils
 {
     public static class ExtensionMethods
     {
         #region Maybe
+
         // For class Foo { public int Bar { get; set; } }
         // and Foo foo = null, you can write
         // foo.Maybe(f => f.Bar) and get back null rather than a null reference exception.
 
-        // NOTE: In order to keep the compiler happy, there are a series of overloads here in order to handle cases 
+        // NOTE: In order to keep the compiler happy, there are a series of overloads here in order to handle cases
         // where the input and the output can be either a class or a nullable struct.  There are also overloads which
         // take a default value that may be used for cases where the output type is a non-nullable struct.
 
@@ -31,14 +30,16 @@ namespace Utils
             return parent == null ? defaultValue : selector(parent);
         }
 
-        public static T Maybe<T>( this T? nullable, T defaultValue = default(T))
+        public static T Maybe<T>(this T? nullable, T defaultValue = default(T))
             where T : struct
         {
             return nullable.HasValue ? nullable.Value : defaultValue;
         }
-        #endregion
+
+        #endregion Maybe
 
         #region MaybeAction
+
         // Call a side-effecting method if a variable is non-null.  Otherwise silently skip.
 
         public static void MaybeAction<TParent>(this TParent parent, Action<TParent> action)
@@ -52,9 +53,11 @@ namespace Utils
         {
             if (parent != null) action(parent.Value);
         }
-        #endregion
+
+        #endregion MaybeAction
 
         #region Maybe for dictionaries
+
         // For Dictionary<int, string> foo
         // and some integer (say 5) which isn't a key in the dictionary, you can write
         // foo.Maybe(5) and get back null rather than a key not found exception
@@ -87,6 +90,7 @@ namespace Utils
         {
             return dictionary.Maybe(key).Maybe(selector, defaultValue);
         }
-        #endregion
+
+        #endregion Maybe for dictionaries
     }
 }

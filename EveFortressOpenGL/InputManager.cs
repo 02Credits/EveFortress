@@ -1,24 +1,26 @@
-﻿using Microsoft.Xna.Framework;
+﻿using EveFortressModel;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using EveFortressModel;
 
 namespace EveFortressClient
 {
     public class InputManager : IUpdateNeeded
     {
         public KeyboardState PreviousKeyboardState { get; set; }
+
         public MouseState PreviousMouseState { get; set; }
+
         public KeyboardState CurrentKeyboardState { get; set; }
+
         public MouseState CurrentMouseState { get; set; }
 
         public List<IInputNeeded> InputSubscriptions = new List<IInputNeeded>();
 
-        int framesHeld;
-        Keys heldKey;
+        private int framesHeld;
+        private Keys heldKey;
 
         public Point MousePixelPosition
         {
