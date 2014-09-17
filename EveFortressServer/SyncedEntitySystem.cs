@@ -18,25 +18,20 @@ namespace EveFortressServer
         public override void Update(Entity entity)
         {
             var synced = entity.GetComponent<Synced>();
-            var patchedComponents = new List<SyncedComponent>();
-            foreach (var componentType in synced.SyncedComponents)
-            {
-                patchedComponents.Add((SyncedComponent)entity.Components[componentType]);
-            }
             entity.UpdatedComponents.Clear();
 
-            if (patchedComponents.Count > 0)
+            if (entity.UpdatedComponents.Count > 0)
             {
-                var patch = new EntityPatch
-                {
-                    ID = entity.ID,
-                    Position = entity.Position,
-                    PatchedComponents = patchedComponents
-                };
+                var patch = entity.GetPatch();
+                var entityLoc = Chunk.GetChunkCoords(entity.Position);
 
                 foreach (var client in Program.PlayerManager.Connections.Values)
                 {
-                    Program.ClientMethods.PatchEntity(patch, client);
+                    var player = Program.PlayerManager.Players[Program.PlayerManager.ConnectionNames[client]];
+                    if (player.SubscribedChunks.Contains(entityLoc))
+                    {
+                        Program.ClientMethods.PatchEntity(patch, client);
+                    }
                 }
             }
         }

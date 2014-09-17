@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace EveFortressModel
 {
     [ProtoContract]
-    public class Appearance : SyncedComponent
+    public class Appearance : Component
     {
         [ProtoMember(1)]
         public TileDisplayInformation DisplayInfo { get; set; }

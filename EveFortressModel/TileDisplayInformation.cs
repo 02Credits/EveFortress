@@ -6,16 +6,10 @@ namespace EveFortressModel
     public class TileDisplayInformation
     {
         [ProtoMember(1)]
-        public TerrainTiles TerrainTile { get; set; }
+        public string SheetID { get; set; }
 
         [ProtoMember(2)]
-        public EntityTiles EntityTile { get; set; }
-
-        [ProtoMember(3)]
-        public UITiles UITile { get; set; }
-
-        [ProtoMember(4)]
-        public ItemTiles ItemTile { get; set; }
+        public int TileNumber { get; set; }
 
         [ProtoMember(5)]
         public byte R { get; set; }
@@ -36,30 +30,24 @@ namespace EveFortressModel
         {
         }
 
-        public TileDisplayInformation(TerrainTiles tile)
+        public TileDisplayInformation(string sheetID, int tileNumber, bool includeColor = false)
         {
-            TerrainTile = tile;
-            IncludeColor = false;
-        }
-
-        public TileDisplayInformation(TerrainTiles tile, byte r, byte g, byte b, byte a = 255)
-        {
-            TerrainTile = tile;
-            R = r;
-            G = g;
-            B = b;
-            IncludeColor = true;
+            SheetID = sheetID;
+            TileNumber = tileNumber;
+            IncludeColor = includeColor;
         }
 
         public TileDisplayInformation(EntityTiles tile)
         {
-            EntityTile = tile;
+            SheetID = "Entities";
+            TileNumber = (int)tile;
             IncludeColor = false;
         }
 
         public TileDisplayInformation(EntityTiles tile, byte r, byte g, byte b, byte a = 255)
         {
-            EntityTile = tile;
+            SheetID = "Entities";
+            TileNumber = (int)tile;
             R = r;
             G = g;
             B = b;
@@ -68,13 +56,15 @@ namespace EveFortressModel
 
         public TileDisplayInformation(UITiles tile)
         {
-            UITile = tile;
+            SheetID = "UI";
+            TileNumber = (int)tile;
             IncludeColor = false;
         }
 
         public TileDisplayInformation(UITiles tile, byte r, byte g, byte b, byte a = 255)
         {
-            UITile = tile;
+            SheetID = "UI";
+            TileNumber = (int)tile;
             R = r;
             G = g;
             B = b;
@@ -83,22 +73,19 @@ namespace EveFortressModel
 
         public TileDisplayInformation(ItemTiles tile)
         {
-            ItemTile = tile;
+            SheetID = "Items";
+            TileNumber = (int)tile;
             IncludeColor = false;
         }
 
         public TileDisplayInformation(ItemTiles tile, byte r, byte g, byte b, byte a = 255)
         {
-            ItemTile = tile;
+            SheetID = "Items";
+            TileNumber = (int)tile;
             R = r;
             G = g;
             B = b;
             IncludeColor = true;
-        }
-
-        public static implicit operator TileDisplayInformation(TerrainTiles tiles)
-        {
-            return new TileDisplayInformation(tiles);
         }
 
         public static implicit operator TileDisplayInformation(EntityTiles tiles)

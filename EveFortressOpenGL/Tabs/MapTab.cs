@@ -23,7 +23,6 @@ namespace EveFortressClient
 
         private long x = 0;
         private long y = 0;
-        private long z = Chunk.TERRAIN_HEIGHT;
 
         private long left
         {
@@ -63,21 +62,23 @@ namespace EveFortressClient
             var dy = 0;
             while (top + dy <= bottom)
             {
-                var displayInfo = Game.ChunkManager.PerspectiveRayCast(x, y, (byte)(z + 5), left + dx, top + dy, z);
-                Game.TileManager.DrawTile(displayInfo, dx, dy, this);
+                var worldLoc = new Point<long>(left + dx, top + dy);
+                var chunkCoords = Chunk.GetChunkCoords(worldLoc);
+                var pointCoords = Chunk.GetBlockCoords(worldLoc);
+
+                var chunk = Game.ChunkManager.GetChunk(chunkCoords);
+                if (chunk != null)
+                {
+                    var terrainLevel = chunk.GetTerrainLevel(pointCoords);
+                    var normalizedLevel = (int)(((float)terrainLevel / 255f) * 10f);
+                    Game.TileManager.DrawStringAt(dx, dy, normalizedLevel.ToString(), this);
+                }
                 dx++;
                 if (dx > Width)
                 {
                     dy++;
                     dx = 0;
                 }
-            }
-
-            var zLevelTiles = Game.TileManager.GetTilesFromString("Z" + z);
-            for (int i = 0; i < zLevelTiles.Count; i++)
-            {
-                var tileZ = i + 2;
-                Game.TileManager.DrawTile(zLevelTiles[i], Width, tileZ, this);
             }
 
             var coordsTiles = Game.TileManager.GetTilesFromString("X" + x + "Y" + y);
@@ -110,20 +111,6 @@ namespace EveFortressClient
             if (Game.InputManager.KeyDown(Keys.S))
             {
                 y += 1;
-                inputManaged = true;
-            }
-            if (Game.InputManager.KeyTyped(Keys.C))
-            {
-                z += 1;
-                inputManaged = true;
-            }
-            if (Game.InputManager.KeyTyped(Keys.E))
-            {
-                z -= 1;
-                if (z < 0)
-                {
-                    z = 0;
-                }
                 inputManaged = true;
             }
             return Task.FromResult(inputManaged);

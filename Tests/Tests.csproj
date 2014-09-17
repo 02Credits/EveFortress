@@ -51,7 +51,6 @@
   </Choose>
   <ItemGroup>
     <Compile Include="ChunkUnitTests.cs" />
-    <Compile Include="OctreeUnitTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

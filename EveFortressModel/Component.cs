@@ -7,7 +7,6 @@ using System.Text;
 namespace EveFortressModel
 {
     [ProtoContract]
-    [ProtoInclude(1, typeof(SyncedComponent))]
     [ProtoInclude(2, typeof(Synced))]
     public abstract class Component
     {

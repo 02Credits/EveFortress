@@ -7,7 +7,6 @@ namespace Utils
     public static class ExtensionMethods
     {
         #region Maybe
-
         // For class Foo { public int Bar { get; set; } }
         // and Foo foo = null, you can write
         // foo.Maybe(f => f.Bar) and get back null rather than a null reference exception.
@@ -35,7 +34,6 @@ namespace Utils
         {
             return nullable.HasValue ? nullable.Value : defaultValue;
         }
-
         #endregion Maybe
 
         #region MaybeAction

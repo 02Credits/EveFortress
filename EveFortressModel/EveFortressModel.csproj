@@ -45,7 +45,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BlockTypes.cs" />
     <Compile Include="Chunk.cs" />
     <Compile Include="Component.cs" />
     <Compile Include="Components\Appearance.cs" />
@@ -59,10 +58,8 @@
     <Compile Include="Interfaces\IUpdateNeeded.cs" />
     <Compile Include="LoginInformation.cs" />
     <Compile Include="LoginResponse.cs" />
-    <Compile Include="Octree.cs" />
     <Compile Include="Patch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SyncedComponent.cs" />
     <Compile Include="TileDisplayInformation.cs" />
     <Compile Include="Tiles.cs" />
     <Compile Include="Point.cs" />

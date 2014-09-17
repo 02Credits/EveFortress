@@ -42,7 +42,7 @@ namespace EveFortressServer
 
             foreach (var connection in Program.PlayerManager.Connections.Values)
             {
-                Program.ClientMethods.SendEntities(new List<EntityPatch> { entity.GetInitialPatch() }, connection);
+                Program.ClientMethods.SendNewEntity(entity, connection);
             }
 
             return entity;

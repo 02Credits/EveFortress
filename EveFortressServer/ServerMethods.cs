@@ -9,11 +9,6 @@ namespace EveFortressServer
         public LoginInformation Login(LoginInformation info, NetConnection connection)
         {
             var loginInformation = Program.PlayerManager.LoginAttempt(info, connection);
-            if (loginInformation.LoginResponse == LoginResponse.Success)
-            {
-                var patches = Program.EntityManager.Entities.Select(e => e.GetInitialPatch());
-                Program.ClientMethods.SendEntities(patches, connection);
-            }
             return loginInformation;
         }
 
@@ -32,21 +27,20 @@ namespace EveFortressServer
             }
         }
 
-        public Chunk SubscribeToChunk(long x, long y, long z, NetConnection connection)
+        public Chunk SubscribeToChunk(long x, long y, NetConnection connection)
         {
             var player = Program.PlayerManager.Players[
                             Program.PlayerManager.ConnectionNames[connection]];
-            player.SubscribedChunks.Add(new Point<long>(x, y, z));
-            var chunk = Program.WorldManager.GetChunk(x, y, z);
-            chunk.Blocks.PackUp();
+            player.SubscribedChunks.Add(new Point<long>(x, y));
+            var chunk = Program.WorldManager.GetChunk(x, y);
             return chunk;
         }
 
-        public void UnsubscribeToChunk(long x, long y, long z, NetConnection connection)
+        public void UnsubscribeToChunk(long x, long y, NetConnection connection)
         {
             var player = Program.PlayerManager.Players[
                             Program.PlayerManager.ConnectionNames[connection]];
-            player.SubscribedChunks.Remove(new Point<long>(x, y, z));
+            player.SubscribedChunks.Remove(new Point<long>(x, y));
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using EveFortressModel;
 using Lidgren.Network;
+using System;
 using System.Collections.Generic;
 
 namespace EveFortressServer
@@ -44,20 +45,24 @@ namespace EveFortressServer
                             Connections.Add(loginInfo.UserName, connection);
                             ConnectionNames.Add(connection, loginInfo.UserName);
                             loginInfo.LoginResponse = LoginResponse.Success;
+                            Console.WriteLine(loginInfo.UserName + " has logged in");
                         }
                         else
                         {
                             loginInfo.LoginResponse = LoginResponse.AlreadyLoggedIn;
+                            Console.WriteLine("User tried to login to already connected player " + loginInfo.UserName);
                         }
                     }
                     else
                     {
                         loginInfo.LoginResponse = LoginResponse.PasswordWrong;
+                        Console.WriteLine("User tried to login with the wrong password to " + loginInfo.UserName);
                     }
                 }
                 else
                 {
                     loginInfo.LoginResponse = LoginResponse.UserDoesNotExist;
+                    Console.WriteLine("User tried to login with non-existent account " + loginInfo.UserName);
                 }
             }
 
@@ -82,6 +87,7 @@ namespace EveFortressServer
             {
                 Players[loginInfo.UserName] = new Player(loginInfo.UserName, loginInfo.Password);
                 loginInfo = LoginAttempt(loginInfo, connection);
+                Console.WriteLine("New user " + loginInfo.UserName);
             }
             return loginInfo;
         }

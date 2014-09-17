@@ -43,6 +43,7 @@
     <Compile Include="ChunkManager.cs" />
     <Compile Include="EntityManager.cs" />
     <Compile Include="Tabs\MapTab.cs" />
+    <Compile Include="TileSheet.cs" />
     <Compile Include="TimeManager.cs" />
     <Compile Include="UIComponents\Button.cs" />
     <Compile Include="Tabs\ChatTab.cs" />

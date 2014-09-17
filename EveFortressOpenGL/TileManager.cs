@@ -8,12 +8,8 @@ namespace EveFortressClient
 {
     public class TileManager
     {
-        private const int SHEET_TILE_SIZE = 16;
 
-        private Texture2D TerrainSheet;
-        private Texture2D EntitySheet;
-        private Texture2D ItemSheet;
-        private Texture2D UISheet;
+        private Dictionary<string, TileSheet> TileSheets = new Dictionary<string, TileSheet>();
 
         public Color DefaultColor { get; set; }
 
@@ -21,10 +17,9 @@ namespace EveFortressClient
 
         public TileManager()
         {
-            TerrainSheet = Game.ContentManager.Load<Texture2D>("TerrainTiles.png");
-            EntitySheet = Game.ContentManager.Load<Texture2D>("EntityTiles.png");
-            ItemSheet = Game.ContentManager.Load<Texture2D>("ItemTiles.png");
-            UISheet = Game.ContentManager.Load<Texture2D>("UITiles.png");
+            TileSheets["Entities"] = new TileSheet(Game.ContentManager.Load<Texture2D>("EntityTiles.png"), 16, 0);
+            TileSheets["Items"] = new TileSheet(Game.ContentManager.Load<Texture2D>("ItemTiles.png"), 16, 1);
+            TileSheets["UI"] = new TileSheet(Game.ContentManager.Load<Texture2D>("UITiles.png"), 16, 2);
 
             DefaultColor = Color.White;
             TileSize = 16;
@@ -73,21 +68,18 @@ namespace EveFortressClient
 
             var destinationRectangle = new Rectangle(TilePositionX * TileSize, TilePositionY * TileSize, TileSize, TileSize);
 
-            DrawTileFromSheet((int)tileToDraw.TerrainTile, TerrainSheet, destinationRectangle, color, 0);
-            DrawTileFromSheet((int)tileToDraw.EntityTile, EntitySheet, destinationRectangle, color, 1);
-            DrawTileFromSheet((int)tileToDraw.ItemTile, ItemSheet, destinationRectangle, color, 2);
-            DrawTileFromSheet((int)tileToDraw.UITile, UISheet, destinationRectangle, color, 3);
+            DrawTileFromSheet(tileToDraw.TileNumber, TileSheets[tileToDraw.SheetID], destinationRectangle, color);
         }
 
-        public void DrawTileFromSheet(int index, Texture2D sheet, Rectangle destination, Color color, float z)
+        public void DrawTileFromSheet(int index, TileSheet tileSheet, Rectangle destination, Color color)
         {
             if (index != 0)
             {
                 index -= 1;
-                var tileX = index % (sheet.Width / SHEET_TILE_SIZE);
-                var tileY = (index - tileX) / (sheet.Width / SHEET_TILE_SIZE);
-                var sourceRect = new Rectangle(tileX * SHEET_TILE_SIZE, tileY * SHEET_TILE_SIZE, SHEET_TILE_SIZE, SHEET_TILE_SIZE);
-                Game.SpriteManager.AddSprite(sheet, destination, z, sourceRect, color);
+                var tileX = index % (tileSheet.Texture.Width / tileSheet.TileSize);
+                var tileY = (index - tileX) / (tileSheet.Texture.Width / tileSheet.TileSize);
+                var sourceRect = new Rectangle(tileX * tileSheet.TileSize, tileY * tileSheet.TileSize, tileSheet.TileSize, tileSheet.TileSize);
+                Game.SpriteManager.AddSprite(tileSheet.Texture, destination, tileSheet.Z, sourceRect, color);
             }
         }
 

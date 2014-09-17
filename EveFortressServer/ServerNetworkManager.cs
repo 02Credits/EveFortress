@@ -17,9 +17,13 @@ namespace EveFortressServer
             LidgrenPeer.Start();
         }
 
+        public override void ConnectionConnected(NetConnection connection)
+        {
+            Console.WriteLine("Player connected");
+        }
+
         public override void ConnectionDisconnected(NetConnection connection)
         {
-            Program.PlayerManager.DisconnectPlayer(connection);
             if (Program.PlayerManager.ConnectionNames.ContainsKey(connection))
             {
                 Console.WriteLine(Program.PlayerManager.ConnectionNames[connection] + " has disconnected.");
@@ -28,6 +32,7 @@ namespace EveFortressServer
             {
                 Console.WriteLine("A not yet logged in player disconnected");
             }
+            Program.PlayerManager.DisconnectPlayer(connection);
         }
 
         public override byte[] ParseMessage(string commandName, NetIncomingMessage message)

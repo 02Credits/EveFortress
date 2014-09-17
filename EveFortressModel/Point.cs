@@ -17,16 +17,10 @@ namespace EveFortressModel
         [ProtoMember(2)]
         public T Y { get { return y; } set { y = value; } }
 
-        private T z;
-
-        [ProtoMember(3)]
-        public T Z { get { return z; } set { z = value; } }
-
-        public Point(T x, T y, T z)
+        public Point(T x, T y)
         {
             this.x = x;
             this.y = y;
-            this.z = z;
         }
 
         public override bool Equals(object obj)
@@ -34,7 +28,7 @@ namespace EveFortressModel
             if (obj is Point<T>)
             {
                 var otherPoint = (Point<T>)obj;
-                return otherPoint.X.Equals(X) && otherPoint.Y.Equals(Y) && otherPoint.Z.Equals(Z);
+                return otherPoint.X.Equals(X) && otherPoint.Y.Equals(Y);
             }
             return false;
         }
@@ -56,7 +50,6 @@ namespace EveFortressModel
                 var hash = 17;
                 hash = hash * 23 + X.GetHashCode();
                 hash = hash * 23 + Y.GetHashCode();
-                hash = hash * 23 + Z.GetHashCode();
                 return hash;
             }
         }

@@ -12,23 +12,26 @@ namespace EveFortressClient
             Game.ChatManager.AddMessage(message);
         }
 
-        public void UpdateChunk(Point<long> loc, List<Tuple<Point<byte>, BlockTypes>> patch)
+        public void UpdateChunk(Point<long> chunkPosition, List<Patch> patches)
         {
-            var chunk = Game.ChunkManager.GetChunk(loc);
-            if (chunk != null)
+            var chunk = Game.ChunkManager.GetChunk(chunkPosition);
+
+            foreach (var patch in patches)
             {
                 chunk.ApplyPatch(patch);
             }
         }
 
-        public void SendEntities(IEnumerable<EntityPatch> entityPatches)
-        {
-            Game.EntityManager.AddEntities(entityPatches.Select(p => p.CreateEntity()));
-        }
-
         public void PatchEntity(EntityPatch patch)
         {
             Game.EntityManager.PatchEntity(patch);
+        }
+
+        public void SendNewEntity(Entity entity)
+        {
+            var chunkLoc = Chunk.GetChunkCoords(entity.Position);
+            var chunk = Game.ChunkManager.GetChunk(chunkLoc);
+            chunk.Entities[entity.ID] = entity;
         }
     }
 }

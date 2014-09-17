@@ -27,9 +27,8 @@ namespace NetworkLibrary
 
         public abstract byte[] ParseMessage(string commandName, NetIncomingMessage message);
 
-        public virtual void ConnectionDisconnected(NetConnection connection)
-        {
-        }
+        public virtual void ConnectionDisconnected(NetConnection connection) { }
+        public virtual void ConnectionConnected(NetConnection connection) { }
 
         public NetworkManager()
         {
@@ -117,6 +116,9 @@ namespace NetworkLibrary
             {
                 case NetConnectionStatus.Disconnected:
                     ConnectionDisconnected(msg.SenderConnection);
+                    break;
+                case NetConnectionStatus.Connected:
+                    ConnectionConnected(msg.SenderConnection);
                     break;
             }
         }

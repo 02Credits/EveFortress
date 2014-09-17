@@ -46,13 +46,13 @@ namespace EveFortressServer
             };
             Parsers["SubscribeToChunk"] = (msg) =>
             {
-                Func<long, long, long, Chunk> method = (T0, T1, T2) => Program.ServerMethods.SubscribeToChunk(T0, T1, T2, msg.SenderConnection);
-                return Program.ServerNetworkManager.ExecuteMethodFromMessage<long, long, long, Chunk>(msg, method);
+                Func<long, long, Chunk> method = (T0, T1) => Program.ServerMethods.SubscribeToChunk(T0, T1, msg.SenderConnection);
+                return Program.ServerNetworkManager.ExecuteMethodFromMessage<long, long, Chunk>(msg, method);
             };
             Parsers["UnsubscribeToChunk"] = (msg) =>
             {
-                Action<long, long, long> method = (T0, T1, T2) => Program.ServerMethods.UnsubscribeToChunk(T0, T1, T2, msg.SenderConnection);
-                return Program.ServerNetworkManager.ExecuteMethodFromMessage<long, long, long>(msg, method);
+                Action<long, long> method = (T0, T1) => Program.ServerMethods.UnsubscribeToChunk(T0, T1, msg.SenderConnection);
+                return Program.ServerNetworkManager.ExecuteMethodFromMessage<long, long>(msg, method);
             };
         }
     }

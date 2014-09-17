@@ -55,17 +55,12 @@ namespace EveFortressModel
 
         public void AddComponent(Component component)
         {
-            Components[component.GetType()] = component;
-        }
-
-        public void RemoveComponent<T>()
-        {
-            Components.Remove(typeof(T));
-        }
-
-        public void RemoveComponent(Component T)
-        {
-            Components.Remove(T.GetType());
+            var type = component.GetType();
+            Components[type] = component;
+            if (!UpdatedComponents.Contains(type))
+            {
+                UpdatedComponents.Add(type);
+            }
         }
 
         public void UpdateComponent<T>(Func<T,T> function) where T : Component
@@ -78,14 +73,18 @@ namespace EveFortressModel
             }
         }
 
-        public EntityPatch GetInitialPatch()
+        public EntityPatch GetPatch()
         {
-            return new EntityPatch { ID = ID, Position = Position, PatchedComponents = Components.Values.OfType<SyncedComponent>() };
+            return new EntityPatch 
+                { 
+                    ID = ID, 
+                    UpdatedComponents = Components.Values.Where((c) => UpdatedComponents.Contains(c.GetType())).ToList() 
+                };
         }
 
         public void ApplyPatch(EntityPatch patch)
         {
-            foreach (var component in patch.PatchedComponents)
+            foreach (var component in patch.UpdatedComponents)
             {
                 Components[component.GetType()] = component;
             }
@@ -99,19 +98,6 @@ namespace EveFortressModel
         public long ID { get; set; }
 
         [ProtoMember(2)]
-        public Point<long> Position { get; set; }
-
-        [ProtoMember(3)]
-        public IEnumerable<SyncedComponent> PatchedComponents { get; set; }
-
-        public Entity CreateEntity()
-        {
-            var entity = new Entity(ID, Position);
-            foreach (var component in PatchedComponents)
-            {
-                entity.AddComponent(component);
-            }
-            return entity;
-        }
+        public List<Component> UpdatedComponents { get; set; }
     }
 }
