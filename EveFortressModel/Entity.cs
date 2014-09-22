@@ -18,6 +18,8 @@ namespace EveFortressModel
         public Point<long> Position { get; set; }
         public List<Type> UpdatedComponents { get; set; }
 
+        public Entity() { }
+
         public Entity(long id, Point<long> position)
         {
             ID = id;
@@ -78,12 +80,14 @@ namespace EveFortressModel
             return new EntityPatch 
                 { 
                     ID = ID, 
+                    Position = Position,
                     UpdatedComponents = Components.Values.Where((c) => UpdatedComponents.Contains(c.GetType())).ToList() 
                 };
         }
 
         public void ApplyPatch(EntityPatch patch)
         {
+            Position = patch.Position;
             foreach (var component in patch.UpdatedComponents)
             {
                 Components[component.GetType()] = component;
@@ -98,6 +102,12 @@ namespace EveFortressModel
         public long ID { get; set; }
 
         [ProtoMember(2)]
+        public Point<long> PreviousPosition { get; set; }
+
+        [ProtoMember(2)]
+        public Point<long> Position { get; set; }
+
+        [ProtoMember(3)]
         public List<Component> UpdatedComponents { get; set; }
     }
 }

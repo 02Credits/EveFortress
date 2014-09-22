@@ -10,11 +10,11 @@ namespace EveFortressModel
         public Point<byte> Position { get; set; }
 
         [ProtoMember(2)]
-        public byte Change { get; set; }
+        public TerrainType Change { get; set; }
 
         public Patch() { }
 
-        public Patch(Point<byte> position, byte change)
+        public Patch(Point<byte> position, TerrainType change)
         {
             Position = position;
             Change = change;

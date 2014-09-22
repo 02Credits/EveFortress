@@ -12,26 +12,35 @@ namespace EveFortressModel
         public const byte DIAMETER = 1 << (DIAMETER_BITS - 1);
 
         [ProtoMember(1)]
-        public byte[] TerrainLevel { get; set; }
+        public TerrainType[] Level { get; set; }
 
         [ProtoMember(2)]
-        public Dictionary<long, Entity> Entities { get; set; }
+        public byte[] RandomSelection { get; set; }
 
         [ProtoMember(3)]
-        public long X { get; set; }
+        public Dictionary<long, Entity> Entities { get; set; }
 
         [ProtoMember(4)]
+        public long X { get; set; }
+
+        [ProtoMember(5)]
         public long Y { get; set; }
 
         public Point<long> Loc { get { return new Point<long>(X, Y); } }
 
         public Chunk()
         {
+            Entities = new Dictionary<long, Entity>();
         }
 
-        public byte GetTerrainLevel(Point<byte> loc)
+        public TerrainType GetTerrainLevel(Point<byte> loc)
         {
-            return TerrainLevel[loc.X * DIAMETER + loc.Y];
+            return Level[loc.X * DIAMETER + loc.Y];
+        }
+
+        public byte GetRandomSelection(Point<byte> loc)
+        {
+            return RandomSelection[loc.X * DIAMETER + loc.Y];
         }
 
         public void Save()
@@ -51,21 +60,29 @@ namespace EveFortressModel
             return new Point<long>(chunkX, chunkY);
         }
 
-        public static Point<byte> GetBlockCoords(Point<long> loc)
+        public static Point<byte> GetLocalCoords(Point<long> loc)
         {
-            return GetBlockCoords(loc.X, loc.Y);
+            return GetLocalCoords(loc.X, loc.Y);
         }
 
-        public static Point<byte> GetBlockCoords(long x, long y)
+        public static Point<byte> GetLocalCoords(long x, long y)
         {
             var blockX = x & (DIAMETER - 1);
             var blockY = y & (DIAMETER - 1);
             return new Point<byte>((byte)blockX, (byte)blockY);
         }
 
+        public bool ContainsLoc(Point<long> loc)
+        {
+            return Loc.X - loc.X < DIAMETER &&
+                   Loc.X - loc.X > 0 &&
+                   Loc.Y - loc.Y < DIAMETER &&
+                   Loc.Y - loc.Y > 0;
+        }
+
         public void ApplyPatch(Patch patch)
         {
-            TerrainLevel[patch.Position.X * DIAMETER + patch.Position.Y] = patch.Change;
+            Level[patch.Position.X * DIAMETER + patch.Position.Y] = patch.Change;
         }
     }
 }

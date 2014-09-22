@@ -66,8 +66,6 @@ namespace EveFortressClient
 
         public static TimeManager TimeManager { get; private set; }
 
-        public static EntityManager EntityManager { get; private set; }
-
         // These are properties which are set in the loading method which are already on the
         // game object instance. This allows the singleton classes elsewhere to still access
         // them.
@@ -80,7 +78,6 @@ namespace EveFortressClient
             : base()
         {
             Graphics = new GraphicsDeviceManager(this);
-            Content.RootDirectory = "Content";
             IsMouseVisible = true;
         }
 
@@ -91,7 +88,7 @@ namespace EveFortressClient
             Random = new Random();
 
             // Set references to game objects
-            ContentManager = Content;
+            ContentManager = new NonCachingContentManager(Services);
             GameWindow = Window;
 
             // Initialize all of the singleton level classes
@@ -107,7 +104,6 @@ namespace EveFortressClient
             TabManager = new TabManager();
             SpriteManager = new SpriteManager();
             InputManager = new InputManager();
-            EntityManager = new EntityManager();
         }
 
         // The update loop which is pumped by xna or in this case monogame.

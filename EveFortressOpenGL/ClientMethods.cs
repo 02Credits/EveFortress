@@ -24,7 +24,14 @@ namespace EveFortressClient
 
         public void PatchEntity(EntityPatch patch)
         {
-            Game.EntityManager.PatchEntity(patch);
+            var chunk = Game.ChunkManager.GetChunk(Chunk.GetChunkCoords(patch.PreviousPosition));
+            var entity = chunk.Entities[patch.ID];
+            entity.ApplyPatch(patch);
+            if (!chunk.ContainsLoc(patch.Position))
+            {
+                chunk.Entities.Remove(entity.ID);
+                Game.ChunkManager.GetChunk(Chunk.GetChunkCoords(entity.Position)).Entities[entity.ID] = entity;
+            }
         }
 
         public void SendNewEntity(Entity entity)

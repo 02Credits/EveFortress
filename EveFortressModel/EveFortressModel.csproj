@@ -60,6 +60,7 @@
     <Compile Include="LoginResponse.cs" />
     <Compile Include="Patch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TerrainUtils.cs" />
     <Compile Include="TileDisplayInformation.cs" />
     <Compile Include="Tiles.cs" />
     <Compile Include="Point.cs" />

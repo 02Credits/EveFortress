@@ -8,8 +8,7 @@ namespace EveFortressClient
 {
     public class TileManager
     {
-
-        private Dictionary<string, TileSheet> TileSheets = new Dictionary<string, TileSheet>();
+        public Dictionary<string, Resource<TileSheet>> TileSheets = new Dictionary<string, Resource<TileSheet>>();
 
         public Color DefaultColor { get; set; }
 
@@ -17,12 +16,23 @@ namespace EveFortressClient
 
         public TileManager()
         {
-            TileSheets["Entities"] = new TileSheet(Game.ContentManager.Load<Texture2D>("EntityTiles.png"), 16, 0);
-            TileSheets["Items"] = new TileSheet(Game.ContentManager.Load<Texture2D>("ItemTiles.png"), 16, 1);
-            TileSheets["UI"] = new TileSheet(Game.ContentManager.Load<Texture2D>("UITiles.png"), 16, 2);
+            TileSheets["UI"] = new Resource<TileSheet>("Content/UITiles.png",
+                (s) => new TileSheet(Game.ContentManager.Load<Texture2D>(s), 16, 5));
+            TileSheets["WaterDirtTransition"] = new Resource<TileSheet>("Content/WaterDirtTransition.png",
+                (s) => new TileSheet(Game.ContentManager.Load<Texture2D>(s), 16, 0));
+            TileSheets["WaterTiles"] = new Resource<TileSheet>("Content/WaterTiles.png",
+                (s) => new TileSheet(Game.ContentManager.Load<Texture2D>(s), 16, 0));
+            TileSheets["DirtTiles"] = new Resource<TileSheet>("Content/DirtTiles.png",
+                (s) => new TileSheet(Game.ContentManager.Load<Texture2D>(s), 16, 0));
+            TileSheets["DirtGrassTransition"] = new Resource<TileSheet>("Content/DirtGrassTransition.png",
+                (s) => new TileSheet(Game.ContentManager.Load<Texture2D>(s), 16, 0));
+            TileSheets["GrassTiles"] = new Resource<TileSheet>("Content/GrassTiles.png",
+                (s) => new TileSheet(Game.ContentManager.Load<Texture2D>(s), 16, 0));
+            TileSheets["Tree"] = new Resource<TileSheet>("Content/Tree.png",
+                (s) => new TileSheet(Game.ContentManager.Load<Texture2D>(s), 16, 0));
 
             DefaultColor = Color.White;
-            TileSize = 16;
+            TileSize = 32;
         }
 
         public void DrawTile(List<TileDisplayInformation> tilesToDraw, int TilePositionX, int TilePositionY, IUIElementContainer parent = null)
@@ -76,9 +86,9 @@ namespace EveFortressClient
             if (index != 0)
             {
                 index -= 1;
-                var tileX = index % (tileSheet.Texture.Width / tileSheet.TileSize);
-                var tileY = (index - tileX) / (tileSheet.Texture.Width / tileSheet.TileSize);
-                var sourceRect = new Rectangle(tileX * tileSheet.TileSize, tileY * tileSheet.TileSize, tileSheet.TileSize, tileSheet.TileSize);
+                var tileX = index % ((tileSheet.Texture.Width - 1) / (tileSheet.TileSize + 1));
+                var tileY = (index - tileX) / ((tileSheet.Texture.Width + 1) / (tileSheet.TileSize + 1));
+                var sourceRect = new Rectangle(1 + tileX * (tileSheet.TileSize + 1), 1 + tileY * (tileSheet.TileSize + 1), tileSheet.TileSize, tileSheet.TileSize);
                 Game.SpriteManager.AddSprite(tileSheet.Texture, destination, tileSheet.Z, sourceRect, color);
             }
         }

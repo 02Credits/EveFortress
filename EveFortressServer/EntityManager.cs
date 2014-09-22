@@ -34,17 +34,28 @@ namespace EveFortressServer
 
         public Entity AddEntity(Point<long> position, params Component[] components)
         {
-            var entity = new Entity(EntityIDManager.GetNextID(), position);
-            foreach(var component in components)
-            {
-                entity.AddComponent(component);
-            }
+            var entity = CreateEntity(position, components);
 
             foreach (var connection in Program.PlayerManager.Connections.Values)
             {
                 Program.ClientMethods.SendNewEntity(entity, connection);
             }
 
+            return entity;
+        }
+
+        public Entity NewEntity(Point<long> position, params Component[] components)
+        {
+            return CreateEntity(position, components);
+        }
+
+        private Entity CreateEntity(Point<long> position, Component[] components)
+        {
+            var entity = new Entity(EntityIDManager.GetNextID(), position);
+            foreach (var component in components)
+            {
+                entity.AddComponent(component);
+            }
             return entity;
         }
 

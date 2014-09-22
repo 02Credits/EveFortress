@@ -33,25 +33,8 @@ namespace EveFortressModel
         public TileDisplayInformation(string sheetID, int tileNumber, bool includeColor = false)
         {
             SheetID = sheetID;
-            TileNumber = tileNumber;
+            TileNumber = tileNumber + 1;
             IncludeColor = includeColor;
-        }
-
-        public TileDisplayInformation(EntityTiles tile)
-        {
-            SheetID = "Entities";
-            TileNumber = (int)tile;
-            IncludeColor = false;
-        }
-
-        public TileDisplayInformation(EntityTiles tile, byte r, byte g, byte b, byte a = 255)
-        {
-            SheetID = "Entities";
-            TileNumber = (int)tile;
-            R = r;
-            G = g;
-            B = b;
-            IncludeColor = true;
         }
 
         public TileDisplayInformation(UITiles tile)
@@ -71,34 +54,7 @@ namespace EveFortressModel
             IncludeColor = true;
         }
 
-        public TileDisplayInformation(ItemTiles tile)
-        {
-            SheetID = "Items";
-            TileNumber = (int)tile;
-            IncludeColor = false;
-        }
-
-        public TileDisplayInformation(ItemTiles tile, byte r, byte g, byte b, byte a = 255)
-        {
-            SheetID = "Items";
-            TileNumber = (int)tile;
-            R = r;
-            G = g;
-            B = b;
-            IncludeColor = true;
-        }
-
-        public static implicit operator TileDisplayInformation(EntityTiles tiles)
-        {
-            return new TileDisplayInformation(tiles);
-        }
-
         public static implicit operator TileDisplayInformation(UITiles tiles)
-        {
-            return new TileDisplayInformation(tiles);
-        }
-
-        public static implicit operator TileDisplayInformation(ItemTiles tiles)
         {
             return new TileDisplayInformation(tiles);
         }

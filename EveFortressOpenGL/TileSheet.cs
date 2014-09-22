@@ -15,6 +15,22 @@ namespace EveFortressClient
 
         public int Z { get; set; }
 
+        public int TileWidth
+        {
+            get
+            {
+                return (Texture.Width - 1) / (TileSize + 1);
+            }
+        }
+
+        public int TileHeight
+        {
+            get
+            {
+                return (Texture.Height - 1) / (TileSize + 1);
+            }
+        }
+
         public TileSheet(Texture2D texture, int tileSize, int z)
         {
             Texture = texture;

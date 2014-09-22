@@ -41,7 +41,8 @@
   <ItemGroup>
     <Compile Include="ChatManager.cs" />
     <Compile Include="ChunkManager.cs" />
-    <Compile Include="EntityManager.cs" />
+    <Compile Include="NonCachingContentManager.cs" />
+    <Compile Include="Resource.cs" />
     <Compile Include="Tabs\MapTab.cs" />
     <Compile Include="TileSheet.cs" />
     <Compile Include="TimeManager.cs" />
@@ -120,16 +121,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\EntityTiles.png">
+    <Content Include="Content\DirtGrassTransition.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\ItemTiles.png">
+    <Content Include="Content\DirtTiles.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\TerrainTiles.png">
+    <Content Include="Content\GrassTiles.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Tree.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\UITiles.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\WaterDirtTransition.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\WaterTiles.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Icon.ico" />
