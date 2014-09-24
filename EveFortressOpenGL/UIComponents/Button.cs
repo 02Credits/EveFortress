@@ -47,10 +47,10 @@ namespace EveFortressClient
 
             Game.TileManager.DrawTile(
                 UITiles.IndicateLeft,
-                X, Y, Parent);
+                X, Y, bracketColor, Parent);
             Game.TileManager.DrawTile(
                 UITiles.IndicateRight,
-                X + Width - 1, Y, Parent);
+                X + Width - 1, Y, bracketColor, Parent);
 
             if (Width >= Text.Length + 2)
             {

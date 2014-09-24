@@ -45,6 +45,26 @@ namespace EveFortressClient
 
         public void DrawTile(TileDisplayInformation tileToDraw, int TilePositionX, int TilePositionY, IUIElementContainer parent = null)
         {
+
+            Color color;
+            if (tileToDraw.IncludeColor)
+            {
+                color = new Color(
+                    tileToDraw.R,
+                    tileToDraw.G,
+                    tileToDraw.B,
+                    tileToDraw.A);
+            }
+            else
+            {
+                color = DefaultColor;
+            }
+
+            DrawTile(tileToDraw, TilePositionX, TilePositionY, color, parent);
+        }
+
+        public void DrawTile(TileDisplayInformation tileToDraw, int TilePositionX, int TilePositionY, Color color, IUIElementContainer parent = null)
+        {
             if (parent != null)
             {
                 if (TilePositionX < 0 || TilePositionX >= parent.X + parent.Width ||
@@ -60,20 +80,6 @@ namespace EveFortressClient
                 TilePositionX += currentParent.X;
                 TilePositionY += currentParent.Y;
                 currentParent = currentParent.Parent;
-            }
-
-            Color color;
-            if (tileToDraw.IncludeColor)
-            {
-                color = new Color(
-                    tileToDraw.R,
-                    tileToDraw.G,
-                    tileToDraw.B,
-                    tileToDraw.A);
-            }
-            else
-            {
-                color = DefaultColor;
             }
 
             var destinationRectangle = new Rectangle(TilePositionX * TileSize, TilePositionY * TileSize, TileSize, TileSize);
