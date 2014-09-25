@@ -1,11 +1,12 @@
 ﻿using EveFortressModel;
+using EveFortressModel.Components;
 using System;
 using System.Collections.Generic;
 using Utils;
 
 namespace EveFortressServer
 {
-    public class WorldManager : IUpdateNeeded, IDisposeNeeded
+    public class ChunkManager : IUpdateNeeded, IDisposeNeeded
     {
         public const float NOISE_ROUGHNESS = 1f / 200f;
         public const byte NOISE_OCTAVES = 100;
@@ -14,7 +15,7 @@ namespace EveFortressServer
 
         private Dictionary<Point<long>, List<Patch>> Patches { get; set; }
 
-        public WorldManager()
+        public ChunkManager()
         {
             Program.Updateables.Add(this);
             Program.Disposables.Add(this);
@@ -53,6 +54,14 @@ namespace EveFortressServer
 
         public void Update()
         {
+            foreach (var chunk in Chunks.Values)
+            {
+                foreach (var entity in chunk.Entities.Values)
+                {
+                    Program.EntityManager.HandleEntity(entity);
+                }
+            }
+
             foreach (var name in Program.PlayerManager.Players.Keys)
             {
                 var player = Program.PlayerManager.Players[name];
@@ -100,7 +109,9 @@ namespace EveFortressServer
                         if (Program.Random.Next(100) <= 1)
                         {
                             var entity = Program.EntityManager.NewEntity(new Point<long>(worldX, worldY),
-                                new Appearance(new TileDisplayInformation("Tree", 0)));
+                                new Appearance(new TileDisplayInformation("Tree", 0)),
+                                new Mobile(),
+                                new Synced());
                             chunk.Entities[entity.ID] = entity;
                         }
                     }

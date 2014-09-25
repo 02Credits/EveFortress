@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EveFortressModel
+namespace EveFortressModel.Components
 {
     [ProtoContract]
     public class Appearance : Component

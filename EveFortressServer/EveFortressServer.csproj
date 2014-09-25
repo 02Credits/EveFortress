@@ -53,12 +53,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ClientMethods.tt</DependentUpon>
     </Compile>
-    <Compile Include="EntityManager.cs" />
+    <Compile Include="EntitySystemManager.cs" />
     <Compile Include="MessageParser.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>MessageParser.tt</DependentUpon>
     </Compile>
+    <Compile Include="MobileEntitySystem.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="ServerNetworkManager.cs" />
     <Compile Include="PlayerManager.cs" />
@@ -66,7 +67,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerMethods.cs" />
     <Compile Include="SyncedEntitySystem.cs" />
-    <Compile Include="WorldManager.cs" />
+    <Compile Include="ChunkManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

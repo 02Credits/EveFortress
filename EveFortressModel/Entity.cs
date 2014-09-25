@@ -1,4 +1,5 @@
-﻿using ProtoBuf;
+﻿using EveFortressModel.Components;
+using ProtoBuf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,7 @@ namespace EveFortressModel
         public Dictionary<Type, Component> Components { get; set; }
         [ProtoMember(3)]
         public Point<long> Position { get; set; }
+        public bool PositionUpdated { get; set; }
         public List<Type> UpdatedComponents { get; set; }
 
         public Entity() { }
@@ -104,10 +106,10 @@ namespace EveFortressModel
         [ProtoMember(2)]
         public Point<long> PreviousPosition { get; set; }
 
-        [ProtoMember(2)]
+        [ProtoMember(3)]
         public Point<long> Position { get; set; }
 
-        [ProtoMember(3)]
+        [ProtoMember(4)]
         public List<Component> UpdatedComponents { get; set; }
     }
 }

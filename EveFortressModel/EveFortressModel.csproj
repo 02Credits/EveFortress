@@ -48,6 +48,7 @@
     <Compile Include="Chunk.cs" />
     <Compile Include="Component.cs" />
     <Compile Include="Components\Appearance.cs" />
+    <Compile Include="Components\Mobile.cs" />
     <Compile Include="Components\Synced.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="EntitySystem.cs" />

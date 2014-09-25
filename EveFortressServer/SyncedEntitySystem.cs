@@ -1,4 +1,5 @@
 ﻿using EveFortressModel;
+using EveFortressModel.Components;
 using ProtoBuf;
 using System;
 using System.Collections.Generic;
@@ -17,10 +18,7 @@ namespace EveFortressServer
 
         public override void Update(Entity entity)
         {
-            var synced = entity.GetComponent<Synced>();
-            entity.UpdatedComponents.Clear();
-
-            if (entity.UpdatedComponents.Count > 0)
+            if (entity.UpdatedComponents.Count > 0 || entity.PositionUpdated)
             {
                 var patch = entity.GetPatch();
                 var entityLoc = Chunk.GetChunkCoords(entity.Position);
@@ -34,6 +32,9 @@ namespace EveFortressServer
                     }
                 }
             }
+
+            entity.UpdatedComponents.Clear();
+            entity.PositionUpdated = false;
         }
     }
 }

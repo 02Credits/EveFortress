@@ -27,26 +27,29 @@ namespace EveFortressServer
         public static List<IUpdateNeeded> Updateables = new List<IUpdateNeeded>();
         public static List<IDisposeNeeded> Disposables = new List<IDisposeNeeded>();
 
-        public static WorldManager WorldManager;
+        public static ChunkManager WorldManager;
         public static ServerMethods ServerMethods;
         public static ClientMethods ClientMethods;
         public static MessageParser MessageParser;
         public static PlayerManager PlayerManager;
         public static ServerNetworkManager ServerNetworkManager;
-        public static EntityManager EntityManager;
+        public static EntitySystemManager EntityManager;
 
         public static long Time = 0;
         public static Random Random = new Random();
 
         private static void Main(string[] args)
         {
-            WorldManager = new WorldManager();
+            WorldManager = new ChunkManager();
             ServerMethods = new ServerMethods();
             ClientMethods = new ClientMethods();
             MessageParser = new MessageParser();
             PlayerManager = new PlayerManager();
             ServerNetworkManager = new ServerNetworkManager();
-            EntityManager = new EntityManager();
+            EntityManager = new EntitySystemManager();
+
+            EntityManager.AddSystem(new SyncedEntitySystem());
+            EntityManager.AddSystem(new MobileEntitySystem());
 
             var hr = new HandlerRoutine(OnConsoleClose);
             SetConsoleCtrlHandler(hr, true);
