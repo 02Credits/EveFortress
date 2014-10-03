@@ -70,36 +70,46 @@ namespace EveFortressClient
             var dy = 0;
             while (top + dy <= bottom)
             {
-                var topLeft = GetTypeAtLocation(new Point<long>(left + dx, top + dy));
-                var topRight = GetTypeAtLocation(new Point<long>(left + dx + 1, top + dy));
-                var bottomLeft = GetTypeAtLocation(new Point<long>(left + dx, top + dy + 1));
-                var bottomRight = GetTypeAtLocation(new Point<long>(left + dx + 1, top + dy + 1));
+                var topLeftLoc = new Point<long>(left + dx, top + dy);
+                var corners = new[] 
+                { 
+                    Tuple.Create(1, GetTypeAtLocation(topLeftLoc)),
+                    Tuple.Create(2, GetTypeAtLocation(new Point<long>(left + dx + 1, top + dy))),
+                    Tuple.Create(4, GetTypeAtLocation(new Point<long>(left + dx, top + dy + 1))),
+                    Tuple.Create(8, GetTypeAtLocation(new Point<long>(left + dx + 1, top + dy + 1)))
+                };
 
-                if (topLeft != null && topRight != null && bottomLeft != null && bottomRight != null)
+                if (!corners.Any((t) => t.Item2 == null))
                 {
-                    string sheetName;
-                    int index;
-                    bool solid = true;
-                    TerrainType lower = TerrainType.Water;
-                    TerrainType higher = TerrainType.Water;
-                    solid = SolidOrOrder(ref lower, ref higher, topLeft.Item1, topRight.Item1);
-                    if (solid)
-                        solid = SolidOrOrder(ref lower, ref higher, topLeft.Item1, bottomLeft.Item1);
-                    if (solid)
-                        solid = SolidOrOrder(ref lower, ref higher, topLeft.Item1, bottomRight.Item1);
+                    var orderedGroups = corners.GroupBy((corner) => corner.Item2.Item1).OrderByDescending((grouping) => (int)grouping.Key);
 
-                    if (!solid)
+                    var tilesToDisplay = new List<TileDisplayInformation>();
+                    var topLeft = corners.First((t) => t.Item1 == 1);
+                    var sheetName = TerrainUtils.Names[orderedGroups.First().First().Item2.Item1] + "Tiles";
+                    if (orderedGroups.Count() == 1)
                     {
-                        sheetName = TerrainUtils.Names[lower] + TerrainUtils.Names[higher] + "Transition";
-                        index = TerrainUtils.GetSpriteIndex(topLeft.Item1 == higher, topRight.Item1 == higher, bottomLeft.Item1 == higher, bottomRight.Item1 == higher);
+                        var sheetCount = Game.TileManager.TileSheets[sheetName].Value.Count;
+                        if (topLeft.Item2.Item2 >= 255 - sheetCount + 1)
+                        {
+                            var index = topLeft.Item2.Item2 % sheetCount;
+                            tilesToDisplay.Add(new TileDisplayInformation(sheetName, index));
+                        }
+                        else
+                        {
+                            tilesToDisplay.Add(new TileDisplayInformation(sheetName, 0));
+                        }
                     }
                     else
                     {
-                        sheetName = TerrainUtils.Names[lower] + "Tiles";
-                        var sheetCount = Game.TileManager.TileSheets[sheetName].Value.TileWidth;
-                        index = (int)(((float)topLeft.Item2 / 256f) * sheetCount);
+                        tilesToDisplay.Add(new TileDisplayInformation(sheetName, 0));
+                        foreach (var transition in orderedGroups.Skip(1))
+                        {
+                            sheetName = TerrainUtils.Names[transition.Key] + "Transition";
+                            var index = TerrainUtils.GetSpriteIndex(transition.Select((t) => t.Item1));
+                            tilesToDisplay.Add(new TileDisplayInformation(sheetName, index));
+                        }
                     }
-                    Game.TileManager.DrawTile(new TileDisplayInformation(sheetName, index), dx, dy, this);
+                    Game.TileManager.DrawTile(tilesToDisplay, dx, dy, this);
                 }
 
                 dx++;

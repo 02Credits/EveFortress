@@ -13,7 +13,7 @@ namespace EveFortressClient
 
         public int TileSize { get; set; }
 
-        public int Z { get; set; }
+        public double Z { get; set; }
 
         public int TileWidth
         {
@@ -31,7 +31,15 @@ namespace EveFortressClient
             }
         }
 
-        public TileSheet(Texture2D texture, int tileSize, int z)
+        public int Count
+        {
+            get
+            {
+                return TileWidth * TileHeight;
+            }
+        }
+
+        public TileSheet(Texture2D texture, int tileSize, double z)
         {
             Texture = texture;
             TileSize = tileSize;
