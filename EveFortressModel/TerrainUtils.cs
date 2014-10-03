@@ -9,8 +9,8 @@ namespace EveFortressModel
     public enum TerrainType
     {
         Water,
+        Grass,  
         Dirt,
-        Grass
     }
 
     public static class TerrainUtils
@@ -63,17 +63,32 @@ namespace EveFortressModel
             }
         }
 
-        public static int GetSpriteIndex(bool topLeft, bool topRight, bool bottomLeft, bool bottomRight)
+        static Dictionary<int, int> indexLookup = new Dictionary<int, int>
         {
-            if ((topLeft && topRight && bottomLeft && bottomRight) ||
-                (!topLeft && !topRight && !bottomLeft && !bottomRight))
+            {1, 5},
+            {2, 9},
+            {3, 1},
+            {4, 11},
+            {5, 6},
+            {6, 4},
+            {7, 0},
+            {8, 3},
+            {9, 10},
+            {10, 8},
+            {11, 2},
+            {12, 13},
+            {13, 12},
+            {14, 14},
+        };
+
+        public static int GetSpriteIndex(IEnumerable<int> corners)
+        {
+            var returnIndex = corners.Sum();
+            if (returnIndex == 0 ||
+                returnIndex == 15)
                 throw new ArgumentException("Use solid tileset instead");
-            int returnIndex = -1;
-            if (topLeft) returnIndex += 1;
-            if (topRight) returnIndex += 2;
-            if (bottomLeft) returnIndex += 4;
-            if (bottomRight) returnIndex += 8;
-            return returnIndex;
+
+            return indexLookup[returnIndex];
         }
     }
 }

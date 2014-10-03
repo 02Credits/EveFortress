@@ -18,13 +18,15 @@ namespace EveFortressClient
         {
             TileSheets["UI"] = new Resource<TileSheet>("Content/UITiles.png",
                 (s) => new TileSheet(Game.ContentManager.Load<Texture2D>(s), 16, 5));
-            TileSheets["WaterDirtTransition"] = new Resource<TileSheet>("Content/WaterDirtTransition.png",
-                (s) => new TileSheet(Game.ContentManager.Load<Texture2D>(s), 16, 0));
+            TileSheets["WaterTransition"] = new Resource<TileSheet>("Content/WaterTransition.png",
+                (s) => new TileSheet(Game.ContentManager.Load<Texture2D>(s), 16, 1.3));
+            TileSheets["DirtTransition"] = new Resource<TileSheet>("Content/DirtTransition.png",
+                (s) => new TileSheet(Game.ContentManager.Load<Texture2D>(s), 16, 1.2));
+            TileSheets["GrassTransition"] = new Resource<TileSheet>("Content/GrassTransition.png",
+                (s) => new TileSheet(Game.ContentManager.Load<Texture2D>(s), 16, 1.1));
             TileSheets["WaterTiles"] = new Resource<TileSheet>("Content/WaterTiles.png",
                 (s) => new TileSheet(Game.ContentManager.Load<Texture2D>(s), 16, 0));
             TileSheets["DirtTiles"] = new Resource<TileSheet>("Content/DirtTiles.png",
-                (s) => new TileSheet(Game.ContentManager.Load<Texture2D>(s), 16, 0));
-            TileSheets["DirtGrassTransition"] = new Resource<TileSheet>("Content/DirtGrassTransition.png",
                 (s) => new TileSheet(Game.ContentManager.Load<Texture2D>(s), 16, 0));
             TileSheets["GrassTiles"] = new Resource<TileSheet>("Content/GrassTiles.png",
                 (s) => new TileSheet(Game.ContentManager.Load<Texture2D>(s), 16, 0));
@@ -95,7 +97,7 @@ namespace EveFortressClient
                 var tileX = index % ((tileSheet.Texture.Width - 1) / (tileSheet.TileSize + 1));
                 var tileY = (index - tileX) / ((tileSheet.Texture.Width + 1) / (tileSheet.TileSize + 1));
                 var sourceRect = new Rectangle(1 + tileX * (tileSheet.TileSize + 1), 1 + tileY * (tileSheet.TileSize + 1), tileSheet.TileSize, tileSheet.TileSize);
-                Game.SpriteManager.AddSprite(tileSheet.Texture, destination, tileSheet.Z, sourceRect, color);
+                Game.SpriteManager.AddSprite(tileSheet.Texture, destination, (float)tileSheet.Z, sourceRect, color);
             }
         }
 
