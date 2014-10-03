@@ -73,26 +73,29 @@ namespace EveFortressClient
 
         public void Update()
         {
-            var tileWidth = (int)Math.Round((double)TargetWidth / Game.TileManager.TileSize);
-            if (tileWidth < Game.TabManager.MinimumWidth)
+            if (Game.WindowActive)
             {
-                tileWidth = Game.TabManager.MinimumWidth;
-                TargetWidth = tileWidth * Game.TileManager.TileSize;
+                var tileWidth = (int)Math.Round((double)TargetWidth / Game.TileManager.TileSize);
+                if (tileWidth < Game.TabManager.MinimumWidth)
+                {
+                    tileWidth = Game.TabManager.MinimumWidth;
+                    TargetWidth = tileWidth * Game.TileManager.TileSize;
+                }
+                var tileHeight = (int)Math.Round((double)TargetHeight / Game.TileManager.TileSize);
+                if (tileHeight < Game.TabManager.MinimumHeight)
+                {
+                    tileHeight = Game.TabManager.MinimumHeight;
+                    TargetHeight = tileHeight * Game.TileManager.TileSize;
+                }
+                Game.Graphics.PreferredBackBufferWidth =
+                    tileWidth *
+                    Game.TileManager.TileSize;
+                Game.Graphics.PreferredBackBufferHeight =
+                    tileHeight *
+                    Game.TileManager.TileSize;
+                Game.Graphics.ApplyChanges();
+                Game.TabManager.Resize();
             }
-            var tileHeight = (int)Math.Round((double)TargetHeight / Game.TileManager.TileSize);
-            if (tileHeight < Game.TabManager.MinimumHeight)
-            {
-                tileHeight = Game.TabManager.MinimumHeight;
-                TargetHeight = tileHeight * Game.TileManager.TileSize;
-            }
-            Game.Graphics.PreferredBackBufferWidth =
-                tileWidth *
-                Game.TileManager.TileSize;
-            Game.Graphics.PreferredBackBufferHeight =
-                tileHeight *
-                Game.TileManager.TileSize;
-            Game.Graphics.ApplyChanges();
-            Game.TabManager.Resize();
         }
 
         public void Draw()

@@ -26,6 +26,19 @@ namespace EveFortressClient
 
         public Chunk GetChunk(Point<long> loc)
         {
+            var tempLoc = new Point<long>(loc.X - 1, loc.Y);
+            if (!SubscribedChunks.ContainsKey(tempLoc))
+                ChunkLocationsToSubscribeTo[tempLoc] = true;
+            tempLoc = new Point<long>(loc.X + 1, loc.Y);
+            if (!SubscribedChunks.ContainsKey(tempLoc))
+                ChunkLocationsToSubscribeTo[tempLoc] = true;
+            tempLoc = new Point<long>(loc.X, loc.Y - 1);
+            if (!SubscribedChunks.ContainsKey(tempLoc))
+                ChunkLocationsToSubscribeTo[tempLoc] = true;
+            tempLoc = new Point<long>(loc.X, loc.Y + 1);
+            if (!SubscribedChunks.ContainsKey(tempLoc))
+                ChunkLocationsToSubscribeTo[tempLoc] = true;
+
             Chunk chunk = null;
             if (SubscribedChunks.TryGetValue(loc, out chunk))
             {
@@ -57,6 +70,39 @@ namespace EveFortressClient
                     ChunkLocationsToSubscribeTo.Remove(chunkLocation);
                 }
                 subscribing = false;
+            }
+        }
+
+        Dictionary<Point<long>, EntityPatch> cachedPatches = new Dictionary<Point<long>, EntityPatch>();
+        public async void ApplyEntityPatch(EntityPatch patch)
+        {
+            var previousChunkLoc = Chunk.GetChunkCoords(patch.PreviousPosition);
+            Chunk chunk;
+            if (SubscribedChunks.TryGetValue(previousChunkLoc, out chunk))
+            {
+                if (!chunk.ContainsLoc(patch.Position))
+                {
+                    var entity = chunk.Entities[patch.ID];
+                    chunk.Entities.Remove(patch.ID);
+                    var targetChunkLoc = Chunk.GetChunkCoords(patch.Position);
+                    Chunk targetChunk;
+                    if (SubscribedChunks.TryGetValue(targetChunkLoc, out targetChunk))
+                    {
+                        targetChunk.Entities[patch.ID] = entity;
+                        entity.ApplyPatch(patch);
+                    }
+                    else
+                    {
+                        if (ChunkLocationsToSubscribeTo.ContainsKey(targetChunkLoc))
+                        {
+                            cachedPatches.Add(targetChunkLoc, patch);
+                        }
+                    }
+                }
+                else
+                {
+
+                }
             }
         }
 

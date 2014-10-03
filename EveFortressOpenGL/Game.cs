@@ -73,12 +73,16 @@ namespace EveFortressClient
 
         public static GameWindow GameWindow { get; private set; }
 
+        private static Game game;
+        public static bool WindowActive { get { return game.IsActive; } }
+
         // General initialization of properties on the class;
         public Game()
             : base()
         {
             Graphics = new GraphicsDeviceManager(this);
             IsMouseVisible = true;
+            game = this;
         }
 
         protected override void LoadContent()
