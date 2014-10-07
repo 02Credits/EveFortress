@@ -81,7 +81,7 @@ namespace EveFortressClient
         {
             var graphics = Game.Graphics.GraphicsDevice;
             var basicEffect = Game.BasicEffect;
-            graphics.BlendState = BlendState.AlphaBlend;
+            graphics.BlendState = BlendState.NonPremultiplied;
             graphics.RasterizerState = RasterizerState.CullNone;
             graphics.SamplerStates[0] = SamplerState.PointClamp;
             basicEffect.TextureEnabled = true;

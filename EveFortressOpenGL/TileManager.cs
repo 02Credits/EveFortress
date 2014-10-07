@@ -17,18 +17,22 @@ namespace EveFortressClient
         public TileManager()
         {
             TileSheets["UI"] = new Resource<TileSheet>("Content/UITiles.png",
-                (s) => new TileSheet(Game.ContentManager.Load<Texture2D>(s), 16, 5));
+                (s) => new TileSheet(Game.ContentManager.Load<Texture2D>(s), 16, 5f));
             TileSheets["WaterTransition"] = new Resource<TileSheet>("Content/WaterTransition.png",
-                (s) => new TileSheet(Game.ContentManager.Load<Texture2D>(s), 16, 1.3));
-            TileSheets["DirtTransition"] = new Resource<TileSheet>("Content/DirtTransition.png",
-                (s) => new TileSheet(Game.ContentManager.Load<Texture2D>(s), 16, 1.2));
+                (s) => new TileSheet(Game.ContentManager.Load<Texture2D>(s), 16, 1.5f));
+            TileSheets["SandTransition"] = new Resource<TileSheet>("Content/SandTransition.png",
+                (s) => new TileSheet(Game.ContentManager.Load<Texture2D>(s), 16, 1.4f));
             TileSheets["GrassTransition"] = new Resource<TileSheet>("Content/GrassTransition.png",
-                (s) => new TileSheet(Game.ContentManager.Load<Texture2D>(s), 16, 1.1));
+                (s) => new TileSheet(Game.ContentManager.Load<Texture2D>(s), 16, 1.3f));
+            TileSheets["DirtTransition"] = new Resource<TileSheet>("Content/DirtTransition.png",
+                (s) => new TileSheet(Game.ContentManager.Load<Texture2D>(s), 16, 1.2f));
             TileSheets["WaterTiles"] = new Resource<TileSheet>("Content/WaterTiles.png",
                 (s) => new TileSheet(Game.ContentManager.Load<Texture2D>(s), 16, 0));
             TileSheets["DirtTiles"] = new Resource<TileSheet>("Content/DirtTiles.png",
                 (s) => new TileSheet(Game.ContentManager.Load<Texture2D>(s), 16, 0));
             TileSheets["GrassTiles"] = new Resource<TileSheet>("Content/GrassTiles.png",
+                (s) => new TileSheet(Game.ContentManager.Load<Texture2D>(s), 16, 0));
+            TileSheets["SandTiles"] = new Resource<TileSheet>("Content/SandTiles.png",
                 (s) => new TileSheet(Game.ContentManager.Load<Texture2D>(s), 16, 0));
             TileSheets["Tree"] = new Resource<TileSheet>("Content/Tree.png",
                 (s) => new TileSheet(Game.ContentManager.Load<Texture2D>(s), 16, 0));

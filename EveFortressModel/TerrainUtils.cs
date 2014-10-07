@@ -9,8 +9,9 @@ namespace EveFortressModel
     public enum TerrainType
     {
         Water,
-        Grass,  
+        Grass,
         Dirt,
+        Sand,
     }
 
     public static class TerrainUtils
@@ -20,13 +21,15 @@ namespace EveFortressModel
         public static Dictionary<TerrainType, byte> TypeLevelStarts = new Dictionary<TerrainType, byte>
         {
             { TerrainType.Water, 0},
-            { TerrainType.Dirt, 100},
+            { TerrainType.Sand, 100},
+            { TerrainType.Dirt, 107},
             { TerrainType.Grass, 115}
         };
 
         public static Dictionary<TerrainType, bool> Walkable = new Dictionary<TerrainType, bool>
         {
             { TerrainType.Water, false },
+            { TerrainType.Sand, true},
             { TerrainType.Dirt, true },
             { TerrainType.Grass, true },
         };
