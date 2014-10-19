@@ -93,8 +93,8 @@ foreach (var method in methods)
             lambdaType = "Action";
         }
 #>
-                <#=lambdaType#><<#=typeList#>> method = (<#=lambdaTypeList#>) => Program.ServerMethods.<#=method.Identifier.ToString()#>(<#=lambdaParameterList#>);
-                return Program.ServerNetworkManager.ExecuteMethodFromMessage<<#=typeList#>>(msg, method);
+                <#=lambdaType#><<#=typeList#>> method = (<#=lambdaTypeList#>) => Program.GetSystem<ServerMethods>().<#=method.Identifier.ToString()#>(<#=lambdaParameterList#>);
+                return Program.GetSystem<ServerNetworkManager>().ExecuteMethodFromMessage<<#=typeList#>>(msg, method);
             };
 <#
     }

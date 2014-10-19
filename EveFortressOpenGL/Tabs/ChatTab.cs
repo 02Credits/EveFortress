@@ -38,13 +38,13 @@ namespace EveFortressClient
                 (s, i) =>
                 {
                     i.Text = "";
-                    Game.ServerMethods.Chat(s);
+                    Game.GetSystem<ServerMethods>().Chat(s);
                 }).Focus();
         }
 
         public override void Update()
         {
-            var messages = Game.ChatManager.Messages;
+            var messages = Game.GetSystem<ChatManager>().Messages;
             for (int i = list.Elements.Count; i < messages.Count; i++)
             {
                 new Label(list, 0, 0, messages[i]);
@@ -54,11 +54,11 @@ namespace EveFortressClient
 
         public override async Task<bool> ManageInput()
         {
-            if (Game.InputManager.KeyTyped(Keys.Up) || Game.InputManager.MouseScrolledUp)
+            if (Game.GetSystem<InputManager>().KeyTyped(Keys.Up) || Game.GetSystem<InputManager>().MouseScrolledUp)
             {
                 list.ScrollPercentage -= 1f / list.HeightDelta;
             }
-            if (Game.InputManager.KeyTyped(Keys.Down) || Game.InputManager.MouseScrolledDown)
+            if (Game.GetSystem<InputManager>().KeyTyped(Keys.Down) || Game.GetSystem<InputManager>().MouseScrolledDown)
             {
                 list.ScrollPercentage += 1f / list.HeightDelta;
             }

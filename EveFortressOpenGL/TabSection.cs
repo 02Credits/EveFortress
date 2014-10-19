@@ -148,7 +148,7 @@ namespace EveFortressClient
             {
                 First.Update();
                 Second.Update();
-                if (!Game.InputManager.MouseLeftDown)
+                if (!Game.GetSystem<InputManager>().MouseLeftDown)
                     draggingDivider = false;
             }
             else
@@ -164,22 +164,22 @@ namespace EveFortressClient
                 if (Vertical)
                 {
                     var x = X + First.Width;
-                    Game.TileManager.DrawTile(UITiles.BorderCapTop, x, Y - 1);
+                    Game.GetSystem<TileManager>().DrawTile(UITiles.BorderCapTop, x, Y - 1);
                     for (int y = Y; y < Y + Height; y++)
                     {
-                        Game.TileManager.DrawTile(UITiles.BorderVertical, x, y);
+                        Game.GetSystem<TileManager>().DrawTile(UITiles.BorderVertical, x, y);
                     }
-                    Game.TileManager.DrawTile(UITiles.BorderCapBottom, x, Y + Height);
+                    Game.GetSystem<TileManager>().DrawTile(UITiles.BorderCapBottom, x, Y + Height);
                 }
                 else
                 {
                     var y = Y + First.Height;
-                    Game.TileManager.DrawTile(UITiles.BorderCapLeft, X - 1, y);
+                    Game.GetSystem<TileManager>().DrawTile(UITiles.BorderCapLeft, X - 1, y);
                     for (int x = X; x < X + Width; x++)
                     {
-                        Game.TileManager.DrawTile(UITiles.BorderHorizontal, x, y);
+                        Game.GetSystem<TileManager>().DrawTile(UITiles.BorderHorizontal, x, y);
                     }
-                    Game.TileManager.DrawTile(UITiles.BorderCapRight, X + Width, y);
+                    Game.GetSystem<TileManager>().DrawTile(UITiles.BorderCapRight, X + Width, y);
                 }
                 First.Render();
                 Second.Render();
@@ -187,14 +187,14 @@ namespace EveFortressClient
             else
             {
                 Tab.Render();
-                if (Game.TabManager.ActiveSection != this)
+                if (Game.GetSystem<TabManager>().ActiveSection != this)
                 {
-                    Game.TileManager.DefaultColor = Color.DarkGray;
+                    Game.GetSystem<TileManager>().DefaultColor = Color.DarkGray;
                 }
                 var stringMaxLength = Width - 4;
                 var stringLength = stringMaxLength < Tab.Title.Length ? stringMaxLength : Tab.Title.Length;
-                Game.TileManager.DrawStringAt(X + 1, Y - 1, Tab.Title.Take(stringLength));
-                Game.TileManager.DefaultColor = Color.White;
+                Game.GetSystem<TileManager>().DrawStringAt(X + 1, Y - 1, Tab.Title.Take(stringLength));
+                Game.GetSystem<TileManager>().DefaultColor = Color.White;
             }
         }
 
@@ -230,7 +230,7 @@ namespace EveFortressClient
                     Second = new TabSection(this, newTab);
                 }
                 Tab = null;
-                Game.TabManager.ActiveSection = first ? First : Second;
+                Game.GetSystem<TabManager>().ActiveSection = first ? First : Second;
                 Resize();
             }
             return true;
@@ -255,12 +255,12 @@ namespace EveFortressClient
             else
             {
                 other.Parent = null;
-                Game.TabManager.MainSection = other;
+                Game.GetSystem<TabManager>().MainSection = other;
                 other.X = 1;
                 other.Y = 1;
             }
-            Game.TabManager.ActiveSection = other;
-            Game.TabManager.MainSection.Resize();
+            Game.GetSystem<TabManager>().ActiveSection = other;
+            Game.GetSystem<TabManager>().MainSection.Resize();
         }
 
         public void Close()
@@ -334,8 +334,8 @@ namespace EveFortressClient
 
         public TabSection GetSectionMouseIsIn()
         {
-            int x = Game.InputManager.MouseTilePosition.X;
-            int y = Game.InputManager.MouseTilePosition.Y;
+            int x = Game.GetSystem<InputManager>().MouseTilePosition.X;
+            int y = Game.GetSystem<InputManager>().MouseTilePosition.Y;
             if (Populated)
             {
                 if (Vertical)
@@ -368,43 +368,43 @@ namespace EveFortressClient
         {
             if (!Populated)
             {
-                if ((Game.InputManager.KeyDown(Keys.LeftControl) || Game.InputManager.KeyDown(Keys.RightControl)) &&
-                     Game.ClientNetworkManager.Connected && !(Tab is LoginTab))
+                if ((Game.GetSystem<InputManager>().KeyDown(Keys.LeftControl) || Game.GetSystem<InputManager>().KeyDown(Keys.RightControl)) &&
+                     Game.GetSystem<ClientNetworkManager>().Connected && !(Tab is LoginTab))
                 {
-                    if (Game.InputManager.KeyPressed(Keys.Left))
+                    if (Game.GetSystem<InputManager>().KeyPressed(Keys.Left))
                     {
                         Split(true, true, new NewTab());
                         return true;
                     }
-                    else if (Game.InputManager.KeyPressed(Keys.Right))
+                    else if (Game.GetSystem<InputManager>().KeyPressed(Keys.Right))
                     {
                         Split(true, false, new NewTab());
                         return true;
                     }
-                    else if (Game.InputManager.KeyPressed(Keys.Down))
+                    else if (Game.GetSystem<InputManager>().KeyPressed(Keys.Down))
                     {
                         Split(false, true, new NewTab());
                         return true;
                     }
-                    else if (Game.InputManager.KeyPressed(Keys.Up))
+                    else if (Game.GetSystem<InputManager>().KeyPressed(Keys.Up))
                     {
                         Split(false, false, new NewTab());
                         return true;
                     }
                 }
-                else if (Game.InputManager.KeyPressed(Keys.Escape))
+                else if (Game.GetSystem<InputManager>().KeyPressed(Keys.Escape))
                 {
                     if (Parent != null)
                     {
                         Parent.CloseChild(this);
                         return true;
                     }
-                    else if (Game.ClientNetworkManager.Connected && !(Tab is LoginTab))
+                    else if (Game.GetSystem<ClientNetworkManager>().Connected && !(Tab is LoginTab))
                     {
                         ReplaceTab(new NewTab());
                     }
                 }
-                else if (Game.InputManager.KeyPressed(Keys.Home) && Game.ClientNetworkManager.Connected)
+                else if (Game.GetSystem<InputManager>().KeyPressed(Keys.Home) && Game.GetSystem<ClientNetworkManager>().Connected)
                 {
                     ReplaceTab(new NewTab());
                 }
@@ -422,16 +422,16 @@ namespace EveFortressClient
         {
             if (!Populated)
             {
-                if (Game.InputManager.MouseLeftDown)
+                if (Game.GetSystem<InputManager>().MouseLeftDown)
                 {
-                    Game.TabManager.ActiveSection = this;
+                    Game.GetSystem<TabManager>().ActiveSection = this;
                 }
                 Tab.ManageMouseInput();
             }
             else
             {
                 var mousedOverSection = GetSectionMouseIsIn();
-                if (Game.InputManager.MouseLeftDown)
+                if (Game.GetSystem<InputManager>().MouseLeftDown)
                 {
                     if (draggingDivider)
                     {
@@ -441,15 +441,15 @@ namespace EveFortressClient
                         float newPercentage;
                         if (Vertical)
                         {
-                            dimension = Width * Game.TileManager.TileSize;
-                            pixelPos = (X - 1) * Game.TileManager.TileSize;
-                            mousePos = Game.InputManager.MousePixelPosition.X;
+                            dimension = Width * Game.GetSystem<TileManager>().TileSize;
+                            pixelPos = (X - 1) * Game.GetSystem<TileManager>().TileSize;
+                            mousePos = Game.GetSystem<InputManager>().MousePixelPosition.X;
                         }
                         else
                         {
-                            dimension = Height * Game.TileManager.TileSize;
-                            pixelPos = (Y - 1) * Game.TileManager.TileSize;
-                            mousePos = Game.InputManager.MousePixelPosition.Y;
+                            dimension = Height * Game.GetSystem<TileManager>().TileSize;
+                            pixelPos = (Y - 1) * Game.GetSystem<TileManager>().TileSize;
+                            mousePos = Game.GetSystem<InputManager>().MousePixelPosition.Y;
                         }
                         newPercentage = ((float)mousePos - pixelPos) / dimension;
                         if (newPercentage > 0 && newPercentage < 1)
@@ -465,9 +465,9 @@ namespace EveFortressClient
                         }
                         else
                         {
-                            var tilePos = Game.InputManager.MouseTilePosition;
-                            if (tilePos.X > 0 && tilePos.X < Game.WindowManager.TileWidth - 1 &&
-                                tilePos.Y > 0 && tilePos.Y < Game.WindowManager.TileHeight - 1)
+                            var tilePos = Game.GetSystem<InputManager>().MouseTilePosition;
+                            if (tilePos.X > 0 && tilePos.X < Game.GetSystem<WindowManager>().TileWidth - 1 &&
+                                tilePos.Y > 0 && tilePos.Y < Game.GetSystem<WindowManager>().TileHeight - 1)
                             {
                                 draggingDivider = true;
                             }

@@ -40,7 +40,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="ChatManager.cs" />
-    <Compile Include="ChunkManager.cs" />
     <Compile Include="NonCachingContentManager.cs" />
     <Compile Include="Resource.cs" />
     <Compile Include="Tabs\MapTab.cs" />

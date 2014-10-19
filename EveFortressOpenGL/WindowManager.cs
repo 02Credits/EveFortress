@@ -18,14 +18,14 @@ namespace EveFortressClient
 
         public int TileWidth
         {
-            get { return Window.ClientBounds.Width / Game.TileManager.TileSize; }
-            set { TargetWidth = value * Game.TileManager.TileSize; }
+            get { return Window.ClientBounds.Width / Game.GetSystem<TileManager>().TileSize; }
+            set { TargetWidth = value * Game.GetSystem<TileManager>().TileSize; }
         }
 
         public int TileHeight
         {
-            get { return Window.ClientBounds.Height / Game.TileManager.TileSize; }
-            set { TargetHeight = value * Game.TileManager.TileSize; }
+            get { return Window.ClientBounds.Height / Game.GetSystem<TileManager>().TileSize; }
+            set { TargetHeight = value * Game.GetSystem<TileManager>().TileSize; }
         }
 
         public WindowManager()
@@ -34,8 +34,6 @@ namespace EveFortressClient
             Window.AllowUserResizing = true;
             Window.ClientSizeChanged += WindowSizeChanged;
             WindowSizeChanged(null, null);
-            Game.Updateables.Add(this);
-            Game.Drawables.Add(this);
         }
 
         public void WindowSizeChanged(object sender, EventArgs e)
@@ -59,15 +57,15 @@ namespace EveFortressClient
                 tileSize = 48;
 
             var tooBig = false;
-            if (tileSize * Game.TabManager.MinimumWidth > TargetWidth)
+            if (tileSize * Game.GetSystem<TabManager>().MinimumWidth > TargetWidth)
                 tooBig = true;
-            if (tileSize * Game.TabManager.MinimumHeight > TargetHeight)
+            if (tileSize * Game.GetSystem<TabManager>().MinimumHeight > TargetHeight)
                 tooBig = true;
 
-            if (tileSize != Game.TileManager.TileSize && !tooBig)
+            if (tileSize != Game.GetSystem<TileManager>().TileSize && !tooBig)
             {
                 IgnoreSizeChanges = true;
-                Game.TileManager.TileSize = tileSize;
+                Game.GetSystem<TileManager>().TileSize = tileSize;
             }
         }
 
@@ -75,43 +73,43 @@ namespace EveFortressClient
         {
             if (Game.WindowActive)
             {
-                var tileWidth = (int)Math.Round((double)TargetWidth / Game.TileManager.TileSize);
-                if (tileWidth < Game.TabManager.MinimumWidth)
+                var tileWidth = (int)Math.Round((double)TargetWidth / Game.GetSystem<TileManager>().TileSize);
+                if (tileWidth < Game.GetSystem<TabManager>().MinimumWidth)
                 {
-                    tileWidth = Game.TabManager.MinimumWidth;
-                    TargetWidth = tileWidth * Game.TileManager.TileSize;
+                    tileWidth = Game.GetSystem<TabManager>().MinimumWidth;
+                    TargetWidth = tileWidth * Game.GetSystem<TileManager>().TileSize;
                 }
-                var tileHeight = (int)Math.Round((double)TargetHeight / Game.TileManager.TileSize);
-                if (tileHeight < Game.TabManager.MinimumHeight)
+                var tileHeight = (int)Math.Round((double)TargetHeight / Game.GetSystem<TileManager>().TileSize);
+                if (tileHeight < Game.GetSystem<TabManager>().MinimumHeight)
                 {
-                    tileHeight = Game.TabManager.MinimumHeight;
-                    TargetHeight = tileHeight * Game.TileManager.TileSize;
+                    tileHeight = Game.GetSystem<TabManager>().MinimumHeight;
+                    TargetHeight = tileHeight * Game.GetSystem<TileManager>().TileSize;
                 }
                 Game.Graphics.PreferredBackBufferWidth =
                     tileWidth *
-                    Game.TileManager.TileSize;
+                    Game.GetSystem<TileManager>().TileSize;
                 Game.Graphics.PreferredBackBufferHeight =
                     tileHeight *
-                    Game.TileManager.TileSize;
+                    Game.GetSystem<TileManager>().TileSize;
                 Game.Graphics.ApplyChanges();
-                Game.TabManager.Resize();
+                Game.GetSystem<TabManager>().Resize();
             }
         }
 
         public void Draw()
         {
-            Window.Title = "EveFortress FPS:" + Game.TimeManager.FrameRate;
+            Window.Title = "EveFortress FPS:" + Game.GetSystem<TimeManager>().FrameRate;
         }
 
         public Task<bool> ManageInput()
         {
-            if (Game.InputManager.KeyTyped(Keys.OemPlus))
+            if (Game.GetSystem<InputManager>().KeyTyped(Keys.OemPlus))
             {
-                ChangeTileSize(Game.TileManager.TileSize + 1);
+                ChangeTileSize(Game.GetSystem<TileManager>().TileSize + 1);
             }
-            else if (Game.InputManager.KeyTyped(Keys.OemMinus))
+            else if (Game.GetSystem<InputManager>().KeyTyped(Keys.OemMinus))
             {
-                ChangeTileSize(Game.TileManager.TileSize - 1);
+                ChangeTileSize(Game.GetSystem<TileManager>().TileSize - 1);
             }
             else
             {

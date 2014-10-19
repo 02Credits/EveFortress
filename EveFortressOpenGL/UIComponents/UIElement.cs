@@ -14,10 +14,10 @@ namespace EveFortressClient
         {
             get
             {
-                return Game.InputManager.MouseTilePosition.X >= Parent.X + X &&
-                       Game.InputManager.MouseTilePosition.X < Parent.X + X + Width &&
-                       Game.InputManager.MouseTilePosition.Y >= Parent.Y + Y &&
-                       Game.InputManager.MouseTilePosition.Y < Parent.Y + Y + Height;
+                return Game.GetSystem<InputManager>().MouseTilePosition.X >= Parent.X + X &&
+                       Game.GetSystem<InputManager>().MouseTilePosition.X < Parent.X + X + Width &&
+                       Game.GetSystem<InputManager>().MouseTilePosition.Y >= Parent.Y + Y &&
+                       Game.GetSystem<InputManager>().MouseTilePosition.Y < Parent.Y + Y + Height;
             }
         }
 

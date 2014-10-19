@@ -57,7 +57,7 @@ namespace EveFortressClient
 
                 for (int y = scrollBarPositionY; y < scrollBarPositionY + scrollBarHeight; y++)
                 {
-                    Game.TileManager.DrawTile(UITiles.BorderVertical, Width, y, this);
+                    Game.GetSystem<TileManager>().DrawTile(UITiles.BorderVertical, Width, y, this);
                 }
 
                 var scrollChange = HeightDelta * (1 - ScrollPercentage);

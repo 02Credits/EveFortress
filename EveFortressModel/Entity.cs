@@ -17,8 +17,8 @@ namespace EveFortressModel
         public Dictionary<Type, Component> Components { get; set; }
         [ProtoMember(3)]
         public Point<long> Position { get; set; }
-        public bool PositionUpdated { get; set; }
-        public List<Type> UpdatedComponents { get; set; }
+
+        public Dictionary<Component, bool> Changes { get; set; }
 
         public Entity() { }
 
@@ -27,7 +27,7 @@ namespace EveFortressModel
             ID = id;
             Position = position;
             Components = new Dictionary<Type, Component>();
-            UpdatedComponents = new List<Type>();
+            Changes = new Dictionary<Component, bool>();
         }
 
         public bool HasComponent<T>()
@@ -57,59 +57,33 @@ namespace EveFortressModel
             return (T)returnValue;
         }
 
-        public void AddComponent(Component component)
+        // State modifying Functions
+        public void AddOrUpdateComponent(Component component)
         {
             var type = component.GetType();
             Components[type] = component;
-            if (!UpdatedComponents.Contains(type))
+            Changes[component] = true;
+        }
+
+        public void RemoveComponent(Component component)
+        {
+            Components.Remove(component.GetType());
+            Changes[component] = false;
+        }
+
+        public void ApplyStateChanges(Dictionary<Component, bool> changes)
+        {
+            foreach (var component in changes.Keys)
             {
-                UpdatedComponents.Add(type);
+                if (changes[component])
+                {
+                    Components[component.GetType()] = component;
+                }
+                else
+                {
+                    Components.Remove(component.GetType());
+                }
             }
         }
-
-        public void UpdateComponent<T>(Func<T,T> function) where T : Component
-        {
-            var type = typeof(T);
-            Components[type] = function((T)Components[type]);
-            if (!UpdatedComponents.Contains(type))
-            {
-                UpdatedComponents.Add(type);
-            }
-        }
-
-        public EntityPatch GetPatch()
-        {
-            return new EntityPatch 
-                { 
-                    ID = ID, 
-                    Position = Position,
-                    UpdatedComponents = Components.Values.Where((c) => UpdatedComponents.Contains(c.GetType())).ToList() 
-                };
-        }
-
-        public void ApplyPatch(EntityPatch patch)
-        {
-            Position = patch.Position;
-            foreach (var component in patch.UpdatedComponents)
-            {
-                Components[component.GetType()] = component;
-            }
-        }
-    }
-
-    [ProtoContract]
-    public class EntityPatch
-    {
-        [ProtoMember(1)]
-        public long ID { get; set; }
-
-        [ProtoMember(2)]
-        public Point<long> PreviousPosition { get; set; }
-
-        [ProtoMember(3)]
-        public Point<long> Position { get; set; }
-
-        [ProtoMember(4)]
-        public List<Component> UpdatedComponents { get; set; }
     }
 }

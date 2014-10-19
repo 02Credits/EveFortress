@@ -18,19 +18,15 @@ namespace EveFortressServer
     {
         public Task<object> ChatMessage(string message, NetConnection connection)
         {
-            return Program.ServerNetworkManager.SendCommand<object, string>(connection, "ChatMessage", message);
+            return Program.GetSystem<ServerNetworkManager>().SendCommand<object, string>(connection, "ChatMessage", message);
         }
         public Task<object> UpdateChunk(Point<long> chunkPosition, List<Patch> patches, NetConnection connection)
         {
-            return Program.ServerNetworkManager.SendCommand<object, Point<long>, List<Patch>>(connection, "UpdateChunk", chunkPosition, patches);
-        }
-        public Task<object> PatchEntity(EntityPatch patch, NetConnection connection)
-        {
-            return Program.ServerNetworkManager.SendCommand<object, EntityPatch>(connection, "PatchEntity", patch);
+            return Program.GetSystem<ServerNetworkManager>().SendCommand<object, Point<long>, List<Patch>>(connection, "UpdateChunk", chunkPosition, patches);
         }
         public Task<object> SendNewEntity(Entity entity, NetConnection connection)
         {
-            return Program.ServerNetworkManager.SendCommand<object, Entity>(connection, "SendNewEntity", entity);
+            return Program.GetSystem<ServerNetworkManager>().SendCommand<object, Entity>(connection, "SendNewEntity", entity);
         }
     }
 }

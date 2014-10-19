@@ -11,8 +11,6 @@ namespace EveFortressClient
 
         public ClientNetworkManager()
         {
-            Game.Updateables.Add(this);
-            Game.Disposables.Add(this);
             var config = new NetPeerConfiguration("EveFortress");
             LidgrenPeer = new NetPeer(config);
             LidgrenPeer.Start();
@@ -81,7 +79,7 @@ namespace EveFortressClient
                     LidgrenPeer.Connections[0].Status != NetConnectionStatus.RespondedConnect)
                 {
                     Game.QueueReset();
-                    Game.TabManager.MainSection.ReplaceTab(new ConnectingTab());
+                    Game.GetSystem<TabManager>().MainSection.ReplaceTab(new ConnectingTab());
                     Connect();
                 }
             }
@@ -119,7 +117,7 @@ namespace EveFortressClient
 
         public override byte[] ParseMessage(string commandName, NetIncomingMessage message)
         {
-            return Game.MessageParser.ParseMessage(commandName, message);
+            return Game.GetSystem<MessageParser>().ParseMessage(commandName, message);
         }
     }
 }

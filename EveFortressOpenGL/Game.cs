@@ -34,37 +34,11 @@ namespace EveFortressClient
         //      This is called when the app loses connection and is expected to reset the
         //      game to an initial state. Deletes all connection information.
         public static List<IUpdateNeeded> Updateables = new List<IUpdateNeeded>();
-
         public static List<IDrawNeeded> Drawables = new List<IDrawNeeded>();
         public static List<IDisposeNeeded> Disposables = new List<IDisposeNeeded>();
         public static List<IResetNeeded> Resetables = new List<IResetNeeded>();
 
-        // This is where globably variables are stored. This way I can automatically call
-        // the methods which are required in the collections while still having "static"
-        // properties and methods throught the Game class.
-        public static ChatManager ChatManager { get; private set; }
-
-        public static ChunkManager ChunkManager { get; private set; }
-
-        public static ClientNetworkManager ClientNetworkManager { get; private set; }
-
-        public static ClientMethods ClientMethods { get; private set; }
-
-        public static ServerMethods ServerMethods { get; private set; }
-
-        public static MessageParser MessageParser { get; private set; }
-
-        public static InputManager InputManager { get; private set; }
-
-        public static SpriteManager SpriteManager { get; private set; }
-
-        public static TabManager TabManager { get; private set; }
-
-        public static TileManager TileManager { get; private set; }
-
-        public static WindowManager WindowManager { get; private set; }
-
-        public static TimeManager TimeManager { get; private set; }
+        public static Dictionary<Type, object> Systems = new Dictionary<Type, object>();
 
         // These are properties which are set in the loading method which are already on the
         // game object instance. This allows the singleton classes elsewhere to still access
@@ -96,18 +70,52 @@ namespace EveFortressClient
             GameWindow = Window;
 
             // Initialize all of the singleton level classes
-            TimeManager = new TimeManager();
-            ChatManager = new ChatManager();
-            ChunkManager = new ChunkManager();
-            ClientNetworkManager = new ClientNetworkManager();
-            ClientMethods = new ClientMethods();
-            ServerMethods = new ServerMethods();
-            MessageParser = new MessageParser();
-            TileManager = new TileManager();
-            WindowManager = new WindowManager();
-            TabManager = new TabManager();
-            SpriteManager = new SpriteManager();
-            InputManager = new InputManager();
+            AddSystem(new TimeManager());
+            AddSystem(new ChatManager());
+            AddSystem(new ChunkManager());
+            AddSystem(new ClientNetworkManager());
+            AddSystem(new ClientMethods());
+            AddSystem(new ServerMethods());
+            AddSystem(new MessageParser());
+            AddSystem(new TileManager());
+            AddSystem(new WindowManager());
+            AddSystem(new TabManager());
+            AddSystem(new SpriteManager());
+            AddSystem(new InputManager());
+        }
+
+        public static void AddSystem(object system)
+        {
+            var updateable = system as IUpdateNeeded;
+            if (updateable != null)
+            {
+                Updateables.Add(updateable);
+            }
+
+            var drawable = system as IDrawNeeded;
+            if (drawable != null)
+            {
+                Drawables.Add(drawable);
+            }
+
+            var resetable = system as IResetNeeded;
+            if (resetable != null)
+            {
+                Resetables.Add(resetable);
+            }
+
+            var disposable = system as IDisposeNeeded;
+            if (disposable != null)
+            {
+                Disposables.Add(disposable);
+            }
+
+            Systems.Add(system.GetType(), system);
+        }
+
+        public static T GetSystem<T>()
+        {
+            return (T)Systems[typeof(T)];
         }
 
         // The update loop which is pumped by xna or in this case monogame.

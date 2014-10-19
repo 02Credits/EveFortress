@@ -18,8 +18,6 @@ namespace EveFortressServer
             Players = Utils.SerializationUtils.DeserializeFileOrValue("Players.bin", new Dictionary<string, Player>());
             Connections = new Dictionary<string, NetConnection>();
             ConnectionNames = new Dictionary<NetConnection, string>();
-
-            Program.Disposables.Add(this);
         }
 
         public LoginInformation LoginAttempt(LoginInformation loginInfo, NetConnection connection)

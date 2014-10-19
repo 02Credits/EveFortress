@@ -45,28 +45,28 @@ namespace EveFortressClient
                 bracketColor = Color.LightGray;
             }
 
-            Game.TileManager.DrawTile(
+            Game.GetSystem<TileManager>().DrawTile(
                 UITiles.IndicateLeft,
                 X, Y, bracketColor, Parent);
-            Game.TileManager.DrawTile(
+            Game.GetSystem<TileManager>().DrawTile(
                 UITiles.IndicateRight,
                 X + Width - 1, Y, bracketColor, Parent);
 
             if (Width >= Text.Length + 2)
             {
                 var textPosX = X + Width / 2 - Text.Length / 2;
-                Game.TileManager.DrawStringAt(textPosX, Y, Text, TextColor, Parent);
+                Game.GetSystem<TileManager>().DrawStringAt(textPosX, Y, Text, TextColor, Parent);
             }
             else
             {
                 var textToDraw = Text.Take(Text.Length - (Width - 2));
-                Game.TileManager.DrawStringAt(X + 1, Y, textToDraw, TextColor, Parent);
+                Game.GetSystem<TileManager>().DrawStringAt(X + 1, Y, textToDraw, TextColor, Parent);
             }
         }
 
         public override Task<bool> ManageInput()
         {
-            if (Game.InputManager.KeyPressed(Keys.Enter))
+            if (Game.GetSystem<InputManager>().KeyPressed(Keys.Enter))
             {
                 if (OnClicked != null)
                     OnClicked();
@@ -77,7 +77,7 @@ namespace EveFortressClient
 
         public override void ManageMouseInput()
         {
-            if (Game.InputManager.MouseLeftClicked)
+            if (Game.GetSystem<InputManager>().MouseLeftClicked)
             {
                 OnClicked();
             }

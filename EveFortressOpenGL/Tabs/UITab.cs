@@ -104,7 +104,7 @@ namespace EveFortressClient
                 }
             }
 
-            if (Game.InputManager.KeyPressed(Keys.Tab))
+            if (Game.GetSystem<InputManager>().KeyPressed(Keys.Tab))
             {
                 return TabSelect();
             }
@@ -117,7 +117,7 @@ namespace EveFortressClient
             if (ActiveElement != null)
                 index = Elements.IndexOf(ActiveElement);
 
-            var dir = Game.InputManager.KeyDown(Keys.LeftShift) || Game.InputManager.KeyDown(Keys.RightShift) ? -1 : 1;
+            var dir = Game.GetSystem<InputManager>().KeyDown(Keys.LeftShift) || Game.GetSystem<InputManager>().KeyDown(Keys.RightShift) ? -1 : 1;
 
             if (Elements.Any(e => e.Activateable && !e.Collapsed))
             {
@@ -146,7 +146,7 @@ namespace EveFortressClient
                 if (element.MouseOver && element.Activateable && !element.Collapsed)
                 {
                     element.ManageMouseInput();
-                    if (Game.InputManager.MouseLeftClicked)
+                    if (Game.GetSystem<InputManager>().MouseLeftClicked)
                     {
                         if (element != ActiveElement)
                         {

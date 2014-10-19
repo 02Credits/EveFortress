@@ -72,7 +72,7 @@ namespace EveFortressServer
 #>
         public <#=returnTypeText#> <#=method.Identifier.ToString()#>(<#=parameterText#>, NetConnection connection)
         {
-            return Program.ServerNetworkManager.SendCommand<<#=typeParameters#>>(connection, "<#=method.Identifier.ToString()#>", <#=sendParametersText#>);
+            return Program.GetSystem<ServerNetworkManager>().SendCommand<<#=typeParameters#>>(connection, "<#=method.Identifier.ToString()#>", <#=sendParametersText#>);
         }
 <#
     }

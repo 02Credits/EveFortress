@@ -75,7 +75,7 @@ namespace EveFortressClient
 #>
         public <#=returnTypeText#> <#=method.Identifier.ToString()#>(<#=parameterText#>)
         {
-            return Game.ClientNetworkManager.SendCommand<<#=typeParameters#>>("<#=method.Identifier.ToString()#>", <#=sendParametersText#>);
+            return Game.GetSystem<ClientNetworkManager>().SendCommand<<#=typeParameters#>>("<#=method.Identifier.ToString()#>", <#=sendParametersText#>);
         }
 <#
     }

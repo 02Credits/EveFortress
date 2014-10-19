@@ -72,7 +72,7 @@ foreach (var method in methods)
         typeList += method.ReturnType.ToString();
     }
 #>
-                return Game.ClientNetworkManager.ExecuteMethodFromMessage<<#= typeList #>>(msg, Game.ClientMethods.<#= method.Identifier.ToString() #>);
+                return Game.GetSystem<ClientNetworkManager>().ExecuteMethodFromMessage<<#= typeList #>>(msg, Game.GetSystem<ClientMethods>().<#= method.Identifier.ToString() #>);
             };
 <#
 } 

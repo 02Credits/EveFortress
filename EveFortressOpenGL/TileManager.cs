@@ -101,7 +101,7 @@ namespace EveFortressClient
                 var tileX = index % ((tileSheet.Texture.Width - 1) / (tileSheet.TileSize + 1));
                 var tileY = (index - tileX) / ((tileSheet.Texture.Width + 1) / (tileSheet.TileSize + 1));
                 var sourceRect = new Rectangle(1 + tileX * (tileSheet.TileSize + 1), 1 + tileY * (tileSheet.TileSize + 1), tileSheet.TileSize, tileSheet.TileSize);
-                Game.SpriteManager.AddSprite(tileSheet.Texture, destination, (float)tileSheet.Z, sourceRect, color);
+                Game.GetSystem<SpriteManager>().AddSprite(tileSheet.Texture, destination, (float)tileSheet.Z, sourceRect, color);
             }
         }
 

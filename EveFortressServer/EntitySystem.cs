@@ -1,10 +1,11 @@
-﻿using System;
+﻿using EveFortressModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EveFortressModel
+namespace EveFortressServer
 {
     public abstract class EntitySystem
     {

@@ -18,23 +18,23 @@ namespace EveFortressClient
     {
         public Task<LoginInformation> Login(LoginInformation info)
         {
-            return Game.ClientNetworkManager.SendCommand<LoginInformation, LoginInformation>("Login", info);
+            return Game.GetSystem<ClientNetworkManager>().SendCommand<LoginInformation, LoginInformation>("Login", info);
         }
         public Task<LoginInformation> RegisterUser(LoginInformation info)
         {
-            return Game.ClientNetworkManager.SendCommand<LoginInformation, LoginInformation>("RegisterUser", info);
+            return Game.GetSystem<ClientNetworkManager>().SendCommand<LoginInformation, LoginInformation>("RegisterUser", info);
         }
         public Task<object> Chat(string text)
         {
-            return Game.ClientNetworkManager.SendCommand<object, string>("Chat", text);
+            return Game.GetSystem<ClientNetworkManager>().SendCommand<object, string>("Chat", text);
         }
         public Task<Chunk> SubscribeToChunk(long x, long y)
         {
-            return Game.ClientNetworkManager.SendCommand<Chunk, long, long>("SubscribeToChunk", x, y);
+            return Game.GetSystem<ClientNetworkManager>().SendCommand<Chunk, long, long>("SubscribeToChunk", x, y);
         }
         public Task<object> UnsubscribeToChunk(long x, long y)
         {
-            return Game.ClientNetworkManager.SendCommand<object, long, long>("UnsubscribeToChunk", x, y);
+            return Game.GetSystem<ClientNetworkManager>().SendCommand<object, long, long>("UnsubscribeToChunk", x, y);
         }
     }
 }

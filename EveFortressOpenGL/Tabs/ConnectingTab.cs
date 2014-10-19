@@ -20,9 +20,9 @@ namespace EveFortressClient
 
         public override void Update()
         {
-            if (Game.ClientNetworkManager.Connected)
+            if (Game.GetSystem<ClientNetworkManager>().Connected)
             {
-                Game.TabManager.ActiveSection.ReplaceTab(new LoginTab());
+                Game.GetSystem<TabManager>().ActiveSection.ReplaceTab(new LoginTab());
             }
         }
     }

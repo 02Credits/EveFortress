@@ -35,8 +35,8 @@ namespace EveFortressClient
             get
             {
                 return new Point(
-                    MousePixelPosition.X / Game.TileManager.TileSize,
-                    MousePixelPosition.Y / Game.TileManager.TileSize);
+                    MousePixelPosition.X / Game.GetSystem<TileManager>().TileSize,
+                    MousePixelPosition.Y / Game.GetSystem<TileManager>().TileSize);
             }
         }
 
@@ -209,9 +209,8 @@ namespace EveFortressClient
 
         public InputManager()
         {
-            Game.Updateables.Add(this);
-            InputSubscriptions.Add(Game.WindowManager);
-            InputSubscriptions.Add(Game.TabManager);
+            InputSubscriptions.Add(Game.GetSystem<WindowManager>());
+            InputSubscriptions.Add(Game.GetSystem<TabManager>());
         }
 
         public async void Update()

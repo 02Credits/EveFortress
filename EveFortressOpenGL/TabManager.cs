@@ -36,18 +36,16 @@ namespace EveFortressClient
             MainSection = new TabSection(null, new LoginTab());
             MainSection.X = 1;
             MainSection.Y = 1;
-            MainSection.Width = Game.WindowManager.TileWidth - 2;
-            MainSection.Height = Game.WindowManager.TileHeight - 2;
+            MainSection.Width = Game.GetSystem<WindowManager>().TileWidth - 2;
+            MainSection.Height = Game.GetSystem<WindowManager>().TileHeight - 2;
             ActiveSection = MainSection;
             MainSection.Resize();
-            Game.Updateables.Add(this);
-            Game.Drawables.Add(this);
         }
 
         public void Resize()
         {
-            MainSection.Width = Game.WindowManager.TileWidth - 2;
-            MainSection.Height = Game.WindowManager.TileHeight - 2;
+            MainSection.Width = Game.GetSystem<WindowManager>().TileWidth - 2;
+            MainSection.Height = Game.GetSystem<WindowManager>().TileHeight - 2;
             MainSection.Resize();
         }
 
@@ -58,19 +56,19 @@ namespace EveFortressClient
 
         public void Draw()
         {
-            Game.TileManager.DrawTile(UITiles.BorderTopLeft, 0, 0);
-            Game.TileManager.DrawTile(UITiles.BorderTopRight, Game.WindowManager.TileWidth - 1, 0);
-            Game.TileManager.DrawTile(UITiles.BorderBottomRight, Game.WindowManager.TileWidth - 1, Game.WindowManager.TileHeight - 1);
-            Game.TileManager.DrawTile(UITiles.BorderBottomLeft, 0, Game.WindowManager.TileHeight - 1);
-            for (int x = 1; x < Game.WindowManager.TileWidth - 1; x++)
+            Game.GetSystem<TileManager>().DrawTile(UITiles.BorderTopLeft, 0, 0);
+            Game.GetSystem<TileManager>().DrawTile(UITiles.BorderTopRight, Game.GetSystem<WindowManager>().TileWidth - 1, 0);
+            Game.GetSystem<TileManager>().DrawTile(UITiles.BorderBottomRight, Game.GetSystem<WindowManager>().TileWidth - 1, Game.GetSystem<WindowManager>().TileHeight - 1);
+            Game.GetSystem<TileManager>().DrawTile(UITiles.BorderBottomLeft, 0, Game.GetSystem<WindowManager>().TileHeight - 1);
+            for (int x = 1; x < Game.GetSystem<WindowManager>().TileWidth - 1; x++)
             {
-                Game.TileManager.DrawTile(UITiles.BorderHorizontal, x, 0);
-                Game.TileManager.DrawTile(UITiles.BorderHorizontal, x, Game.WindowManager.TileHeight - 1);
+                Game.GetSystem<TileManager>().DrawTile(UITiles.BorderHorizontal, x, 0);
+                Game.GetSystem<TileManager>().DrawTile(UITiles.BorderHorizontal, x, Game.GetSystem<WindowManager>().TileHeight - 1);
             }
-            for (int y = 1; y < Game.WindowManager.TileHeight - 1; y++)
+            for (int y = 1; y < Game.GetSystem<WindowManager>().TileHeight - 1; y++)
             {
-                Game.TileManager.DrawTile(UITiles.BorderVertical, 0, y);
-                Game.TileManager.DrawTile(UITiles.BorderVertical, Game.WindowManager.TileWidth - 1, y);
+                Game.GetSystem<TileManager>().DrawTile(UITiles.BorderVertical, 0, y);
+                Game.GetSystem<TileManager>().DrawTile(UITiles.BorderVertical, Game.GetSystem<WindowManager>().TileWidth - 1, y);
             }
             MainSection.Render();
         }

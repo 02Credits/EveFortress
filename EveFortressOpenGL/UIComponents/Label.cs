@@ -35,7 +35,7 @@ namespace EveFortressClient
             Height = lines.Count;
             for (int y = 0; y < lines.Count; y++)
             {
-                Game.TileManager.DrawStringAt(X, Y + y, lines[y], TextColor, Parent);
+                Game.GetSystem<TileManager>().DrawStringAt(X, Y + y, lines[y], TextColor, Parent);
             }
         }
 

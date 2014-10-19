@@ -76,8 +76,8 @@ namespace EveFortressClient
                 cursorCounter = 0;
             }
 
-            Game.TileManager.DrawTile(UITiles.Right, X, Y, Parent);
-            Game.TileManager.DrawStringAt(X + 1, Y, textToDraw, Parent);
+            Game.GetSystem<TileManager>().DrawTile(UITiles.Right, X, Y, Parent);
+            Game.GetSystem<TileManager>().DrawStringAt(X + 1, Y, textToDraw, Parent);
         }
 
         public bool firstTime = true;
@@ -93,7 +93,7 @@ namespace EveFortressClient
 
         public override Task<bool> ManageInput()
         {
-            var text = Game.InputManager.GetInputString();
+            var text = Game.GetSystem<InputManager>().GetInputString();
             if (text.Length > 0)
             {
                 Text += text;
@@ -103,7 +103,7 @@ namespace EveFortressClient
             }
             else
             {
-                if (Game.InputManager.KeyTyped(Keys.Back))
+                if (Game.GetSystem<InputManager>().KeyTyped(Keys.Back))
                 {
                     if (Text.Length > 0)
                     {
@@ -116,7 +116,7 @@ namespace EveFortressClient
                 }
             }
 
-            if (Game.InputManager.KeyPressed(Keys.Enter))
+            if (Game.GetSystem<InputManager>().KeyPressed(Keys.Enter))
             {
                 if (ReturnAction != null)
                 {

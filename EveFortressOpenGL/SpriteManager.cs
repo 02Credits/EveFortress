@@ -15,11 +15,6 @@ namespace EveFortressClient
         public Vector2 BottomRightTexture;
         public Vector2 BottomLeftTexture;
 
-        public SpriteManager()
-        {
-            Game.Drawables.Add(this);
-        }
-
         public void AddSprite(Texture2D texture, Rectangle destinationRectangle, float z, Rectangle? sourceRectangle, Color color)
         {
             var destinationLeft = destinationRectangle.X;

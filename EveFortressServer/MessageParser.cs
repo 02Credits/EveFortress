@@ -31,28 +31,28 @@ namespace EveFortressServer
         {
             Parsers["Login"] = (msg) =>
             {
-                Func<LoginInformation, LoginInformation> method = (T0) => Program.ServerMethods.Login(T0, msg.SenderConnection);
-                return Program.ServerNetworkManager.ExecuteMethodFromMessage<LoginInformation, LoginInformation>(msg, method);
+                Func<LoginInformation, LoginInformation> method = (T0) => Program.GetSystem<ServerMethods>().Login(T0, msg.SenderConnection);
+                return Program.GetSystem<ServerNetworkManager>().ExecuteMethodFromMessage<LoginInformation, LoginInformation>(msg, method);
             };
             Parsers["RegisterUser"] = (msg) =>
             {
-                Func<LoginInformation, LoginInformation> method = (T0) => Program.ServerMethods.RegisterUser(T0, msg.SenderConnection);
-                return Program.ServerNetworkManager.ExecuteMethodFromMessage<LoginInformation, LoginInformation>(msg, method);
+                Func<LoginInformation, LoginInformation> method = (T0) => Program.GetSystem<ServerMethods>().RegisterUser(T0, msg.SenderConnection);
+                return Program.GetSystem<ServerNetworkManager>().ExecuteMethodFromMessage<LoginInformation, LoginInformation>(msg, method);
             };
             Parsers["Chat"] = (msg) =>
             {
-                Action<string> method = (T0) => Program.ServerMethods.Chat(T0, msg.SenderConnection);
-                return Program.ServerNetworkManager.ExecuteMethodFromMessage<string>(msg, method);
+                Action<string> method = (T0) => Program.GetSystem<ServerMethods>().Chat(T0, msg.SenderConnection);
+                return Program.GetSystem<ServerNetworkManager>().ExecuteMethodFromMessage<string>(msg, method);
             };
             Parsers["SubscribeToChunk"] = (msg) =>
             {
-                Func<long, long, Chunk> method = (T0, T1) => Program.ServerMethods.SubscribeToChunk(T0, T1, msg.SenderConnection);
-                return Program.ServerNetworkManager.ExecuteMethodFromMessage<long, long, Chunk>(msg, method);
+                Func<long, long, Chunk> method = (T0, T1) => Program.GetSystem<ServerMethods>().SubscribeToChunk(T0, T1, msg.SenderConnection);
+                return Program.GetSystem<ServerNetworkManager>().ExecuteMethodFromMessage<long, long, Chunk>(msg, method);
             };
             Parsers["UnsubscribeToChunk"] = (msg) =>
             {
-                Action<long, long> method = (T0, T1) => Program.ServerMethods.UnsubscribeToChunk(T0, T1, msg.SenderConnection);
-                return Program.ServerNetworkManager.ExecuteMethodFromMessage<long, long>(msg, method);
+                Action<long, long> method = (T0, T1) => Program.GetSystem<ServerMethods>().UnsubscribeToChunk(T0, T1, msg.SenderConnection);
+                return Program.GetSystem<ServerNetworkManager>().ExecuteMethodFromMessage<long, long>(msg, method);
             };
         }
     }

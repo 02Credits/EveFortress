@@ -46,12 +46,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Chunk.cs" />
+    <Compile Include="ChunkManager.cs" />
     <Compile Include="Component.cs" />
     <Compile Include="Components\Appearance.cs" />
     <Compile Include="Components\Mobile.cs" />
     <Compile Include="Components\Synced.cs" />
     <Compile Include="Entity.cs" />
-    <Compile Include="EntitySystem.cs" />
     <Compile Include="Interfaces\IDisposeNeeded.cs" />
     <Compile Include="Interfaces\IDrawNeeded.cs" />
     <Compile Include="Interfaces\IInputNeeded.cs" />
@@ -74,6 +74,9 @@
       <Project>{429ae3fa-574b-4225-9a00-190a484adf6d}</Project>
       <Name>Utils</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Messages\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

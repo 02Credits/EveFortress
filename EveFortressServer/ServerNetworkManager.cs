@@ -8,8 +8,6 @@ namespace EveFortressServer
     {
         public ServerNetworkManager()
         {
-            Program.Updateables.Add(this);
-            Program.Disposables.Add(this);
             var config = new NetPeerConfiguration("EveFortress");
             config.Port = 19952;
             config.AcceptIncomingConnections = true;
@@ -24,20 +22,20 @@ namespace EveFortressServer
 
         public override void ConnectionDisconnected(NetConnection connection)
         {
-            if (Program.PlayerManager.ConnectionNames.ContainsKey(connection))
+            if (Program.GetSystem<PlayerManager>().ConnectionNames.ContainsKey(connection))
             {
-                Console.WriteLine(Program.PlayerManager.ConnectionNames[connection] + " has disconnected.");
+                Console.WriteLine(Program.GetSystem<PlayerManager>().ConnectionNames[connection] + " has disconnected.");
             }
             else
             {
                 Console.WriteLine("A not yet logged in player disconnected");
             }
-            Program.PlayerManager.DisconnectPlayer(connection);
+            Program.GetSystem<PlayerManager>().DisconnectPlayer(connection);
         }
 
         public override byte[] ParseMessage(string commandName, NetIncomingMessage message)
         {
-            return Program.MessageParser.ParseMessage(commandName, message);
+            return Program.GetSystem<MessageParser>().ParseMessage(commandName, message);
         }
     }
 }

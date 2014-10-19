@@ -31,19 +31,15 @@ namespace EveFortressClient
         {
             Parsers["ChatMessage"] = (msg) =>
             {
-                return Game.ClientNetworkManager.ExecuteMethodFromMessage<string>(msg, Game.ClientMethods.ChatMessage);
+                return Game.GetSystem<ClientNetworkManager>().ExecuteMethodFromMessage<string>(msg, Game.GetSystem<ClientMethods>().ChatMessage);
             };
             Parsers["UpdateChunk"] = (msg) =>
             {
-                return Game.ClientNetworkManager.ExecuteMethodFromMessage<Point<long>, List<Patch>>(msg, Game.ClientMethods.UpdateChunk);
-            };
-            Parsers["PatchEntity"] = (msg) =>
-            {
-                return Game.ClientNetworkManager.ExecuteMethodFromMessage<EntityPatch>(msg, Game.ClientMethods.PatchEntity);
+                return Game.GetSystem<ClientNetworkManager>().ExecuteMethodFromMessage<Point<long>, List<Patch>>(msg, Game.GetSystem<ClientMethods>().UpdateChunk);
             };
             Parsers["SendNewEntity"] = (msg) =>
             {
-                return Game.ClientNetworkManager.ExecuteMethodFromMessage<Entity>(msg, Game.ClientMethods.SendNewEntity);
+                return Game.GetSystem<ClientNetworkManager>().ExecuteMethodFromMessage<Entity>(msg, Game.GetSystem<ClientMethods>().SendNewEntity);
             };
         }
     }

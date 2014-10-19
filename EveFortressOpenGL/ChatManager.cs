@@ -12,7 +12,6 @@ namespace EveFortressClient
         public ChatManager()
         {
             Messages = new List<string>();
-            Game.Resetables.Add(this);
         }
 
         // This is called by the client methods when the server sent a chat message

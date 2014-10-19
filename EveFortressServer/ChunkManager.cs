@@ -8,8 +8,6 @@ namespace EveFortressServer
 {
     public class ChunkManager : IUpdateNeeded, IDisposeNeeded
     {
-        public const float NOISE_ROUGHNESS = 1f / 200f;
-        public const byte NOISE_OCTAVES = 100;
 
         private Dictionary<Point<long>, Chunk> Chunks { get; set; }
 
@@ -17,8 +15,6 @@ namespace EveFortressServer
 
         public ChunkManager()
         {
-            Program.Updateables.Add(this);
-            Program.Disposables.Add(this);
             Chunks = new Dictionary<Point<long>, Chunk>();
             Patches = new Dictionary<Point<long>, List<Patch>>();
         }
@@ -46,7 +42,7 @@ namespace EveFortressServer
             }
             else
             {
-                chunk = LoadChunk(loc);
+                chunk = Program.GetSystem<ChunkLoader>().LoadChunk(loc);
                 Chunks[loc] = chunk;
                 return chunk;
             }
@@ -58,67 +54,28 @@ namespace EveFortressServer
             {
                 foreach (var entity in chunk.Entities.Values)
                 {
-                    Program.EntityManager.HandleEntity(entity);
+                    Program.GetSystem<EntitySystemManager>().HandleEntity(entity);
                 }
             }
 
-            foreach (var name in Program.PlayerManager.Players.Keys)
+            foreach (var name in Program.GetSystem<PlayerManager>().Players.Keys)
             {
-                var player = Program.PlayerManager.Players[name];
-                if (Program.PlayerManager.Connections.ContainsKey(name))
+                var player = Program.GetSystem<PlayerManager>().Players[name];
+                if (Program.GetSystem<PlayerManager>().Connections.ContainsKey(name))
                 {
-                    var connection = Program.PlayerManager.Connections[name];
+                    var connection = Program.GetSystem<PlayerManager>().Connections[name];
                     foreach (var subscribedChunkLocation in player.SubscribedChunks)
                     {
                         List<Patch> patch;
                         if (Patches.TryGetValue(subscribedChunkLocation, out patch))
                         {
-                            Program.ClientMethods.UpdateChunk(subscribedChunkLocation,
+                            Program.GetSystem<ClientMethods>().UpdateChunk(subscribedChunkLocation,
                                                               patch, connection);
                         }
                     }
                 }
             }
             Patches.Clear();
-        }
-
-        NoiseGen noiseGen = new NoiseGen(NOISE_ROUGHNESS, NOISE_OCTAVES);
-        public Chunk LoadChunk(Point<long> loc)
-        {
-            var chunk = new Chunk();
-            chunk.X = loc.X;
-            chunk.Y = loc.Y;
-
-            chunk.Level = new TerrainType[Chunk.DIAMETER * Chunk.DIAMETER];
-            chunk.RandomSelection = new byte[Chunk.DIAMETER * Chunk.DIAMETER];
-            chunk.Entities = new Dictionary<long, Entity>();
-
-            for (byte x = 0; x < Chunk.DIAMETER; x++)
-            {
-                for (byte y = 0; y < Chunk.DIAMETER; y++)
-                {
-                    var worldX = chunk.X * Chunk.DIAMETER + x;
-                    var worldY = chunk.Y * Chunk.DIAMETER + y;
-
-                    var noise = noiseGen.GetNoise(worldX, worldY, 0);
-                    var terrainType = TerrainUtils.LevelTypes[(byte)(noise * 255)];
-                    chunk.Level[x * Chunk.DIAMETER + y] = terrainType;
-                    chunk.RandomSelection[x * Chunk.DIAMETER + y] = (byte)Program.Random.Next(256);
-                    if (terrainType == TerrainType.Grass)
-                    {
-                        if (Program.Random.Next(100) <= 1)
-                        {
-                            var entity = Program.EntityManager.NewEntity(new Point<long>(worldX, worldY),
-                                new Appearance(new TileDisplayInformation("Tree", 0)),
-                                new Mobile(),
-                                new Synced());
-                            chunk.Entities[entity.ID] = entity;
-                        }
-                    }
-                }
-            }
-
-            return chunk;
         }
 
         public void Dispose()

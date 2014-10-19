@@ -30,7 +30,7 @@ namespace EveFortressClient
 
         public override Task<bool> ManageInput()
         {
-            var text = Game.InputManager.GetInputString();
+            var text = Game.GetSystem<InputManager>().GetInputString();
             if (text.Length > 0)
             {
                 newTabOptions.ForEach((b) => b.TextColor = Color.White);

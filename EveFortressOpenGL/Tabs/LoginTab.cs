@@ -35,7 +35,7 @@ namespace EveFortressClient
         {
             usernameError.Text = "";
             passwordError.Text = "";
-            var loginInformation = await Game.ServerMethods.Login(new LoginInformation(usernameInput.Text, passwordInput.Text));
+            var loginInformation = await Game.GetSystem<ServerMethods>().Login(new LoginInformation(usernameInput.Text, passwordInput.Text));
             HandleLoginResponse(loginInformation);
         }
 

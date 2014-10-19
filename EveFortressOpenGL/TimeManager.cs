@@ -9,18 +9,10 @@ namespace EveFortressClient
 
         public int FrameRate { get; set; }
 
-        private DateTime GameStarted;
+        private DateTime GameStarted = DateTime.Now;
         private int frameCounter;
         private long lastFrameTime;
         private long elapsedTimeSinceCounterReset;
-
-        public TimeManager()
-        {
-            GameStarted = DateTime.Now;
-            Game.Updateables.Add(this);
-            Game.Drawables.Add(this);
-            Game.Resetables.Add(this);
-        }
 
         public void Update()
         {

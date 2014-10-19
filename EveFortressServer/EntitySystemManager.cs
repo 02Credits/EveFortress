@@ -17,7 +17,6 @@ namespace EveFortressServer
 
         public EntitySystemManager()
         {
-            Program.Disposables.Add(this);
             EntitySystems = new Dictionary<Type, EntitySystem>();
             EntityIDManager = new IDManager(SerializationUtils.DeserializeFileOrValue("CurrentEntityID.dat", 0));
         }
@@ -34,9 +33,9 @@ namespace EveFortressServer
         {
             var entity = CreateEntity(position, components);
 
-            foreach (var connection in Program.PlayerManager.Connections.Values)
+            foreach (var connection in Program.GetSystem<PlayerManager>().Connections.Values)
             {
-                Program.ClientMethods.SendNewEntity(entity, connection);
+                Program.GetSystem<ClientMethods>().SendNewEntity(entity, connection);
             }
 
             return entity;
@@ -68,7 +67,7 @@ namespace EveFortressServer
             var entity = new Entity(EntityIDManager.GetNextID(), position);
             foreach (var component in components)
             {
-                entity.AddComponent(component);
+                entity.AddOrUpdateComponent(component);
             }
             return entity;
         }

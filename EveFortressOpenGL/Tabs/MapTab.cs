@@ -88,7 +88,7 @@ namespace EveFortressClient
                     var sheetName = TerrainUtils.Names[orderedGroups.First().First().Item2.Item1] + "Tiles";
                     if (orderedGroups.Count() == 1)
                     {
-                        var sheetCount = Game.TileManager.TileSheets[sheetName].Value.Count;
+                        var sheetCount = Game.GetSystem<TileManager>().TileSheets[sheetName].Value.Count;
                         if (topLeft.Item2.Item2 >= 255 - sheetCount + 1)
                         {
                             var index = topLeft.Item2.Item2 % sheetCount;
@@ -109,7 +109,7 @@ namespace EveFortressClient
                             tilesToDisplay.Add(new TileDisplayInformation(sheetName, index));
                         }
                     }
-                    Game.TileManager.DrawTile(tilesToDisplay, dx, dy, this);
+                    Game.GetSystem<TileManager>().DrawTile(tilesToDisplay, dx, dy, this);
                 }
 
                 dx++;
@@ -128,19 +128,19 @@ namespace EveFortressClient
                     var entityX = (int)(entity.Position.X - left);
                     var entityY = (int)(entity.Position.Y - top);
                     var appearance = entity.GetComponent<Appearance>();
-                    Game.TileManager.DrawTile(appearance.DisplayInfo, entityX, entityY, this);
+                    Game.GetSystem<TileManager>().DrawTile(appearance.DisplayInfo, entityX, entityY, this);
                 }
             }
 
             cachedChunks.Clear();
             cachedLocations.Clear();
 
-            var coordsTiles = Game.TileManager.GetTilesFromString("X" + x + "Y" + y);
+            var coordsTiles = Game.GetSystem<TileManager>().GetTilesFromString("X" + x + "Y" + y);
             var startPos = Width - coordsTiles.Count;
             for (int i = 0; i < coordsTiles.Count; i++)
             {
                 var tileX = i + startPos;
-                Game.TileManager.DrawTile(coordsTiles[i], tileX, 0, this);
+                Game.GetSystem<TileManager>().DrawTile(coordsTiles[i], tileX, 0, this);
             }
         }
 
@@ -180,7 +180,7 @@ namespace EveFortressClient
                 Chunk chunk;
                 if (!cachedChunks.TryGetValue(chunkCoords, out chunk))
                 {
-                    chunk = Game.ChunkManager.GetChunk(chunkCoords);
+                    chunk = Game.GetSystem<ChunkManager>().GetChunk(chunkCoords);
                     if (chunk != null)
                     {
                         cachedChunks[chunkCoords] = chunk;
@@ -208,22 +208,22 @@ namespace EveFortressClient
         public override Task<bool> ManageInput()
         {
             var inputManaged = false;
-            if (Game.InputManager.KeyDown(Keys.A))
+            if (Game.GetSystem<InputManager>().KeyDown(Keys.A))
             {
                 x -= 1;
                 inputManaged = true;
             }
-            if (Game.InputManager.KeyDown(Keys.D))
+            if (Game.GetSystem<InputManager>().KeyDown(Keys.D))
             {
                 x += 1;
                 inputManaged = true;
             }
-            if (Game.InputManager.KeyDown(Keys.W))
+            if (Game.GetSystem<InputManager>().KeyDown(Keys.W))
             {
                 y -= 1;
                 inputManaged = true;
             }
-            if (Game.InputManager.KeyDown(Keys.S))
+            if (Game.GetSystem<InputManager>().KeyDown(Keys.S))
             {
                 y += 1;
                 inputManaged = true;

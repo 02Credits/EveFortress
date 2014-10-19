@@ -27,29 +27,24 @@ namespace EveFortressServer
         public static List<IUpdateNeeded> Updateables = new List<IUpdateNeeded>();
         public static List<IDisposeNeeded> Disposables = new List<IDisposeNeeded>();
 
-        public static ChunkManager WorldManager;
-        public static ServerMethods ServerMethods;
-        public static ClientMethods ClientMethods;
-        public static MessageParser MessageParser;
-        public static PlayerManager PlayerManager;
-        public static ServerNetworkManager ServerNetworkManager;
-        public static EntitySystemManager EntityManager;
+        public static Dictionary<Type, object> Systems = new Dictionary<Type, object>();
 
         public static long Time = 0;
         public static Random Random = new Random();
 
         private static void Main(string[] args)
         {
-            WorldManager = new ChunkManager();
-            ServerMethods = new ServerMethods();
-            ClientMethods = new ClientMethods();
-            MessageParser = new MessageParser();
-            PlayerManager = new PlayerManager();
-            ServerNetworkManager = new ServerNetworkManager();
-            EntityManager = new EntitySystemManager();
+            AddSystem(new ChunkLoader());
+            AddSystem(new ChunkManager());
+            AddSystem(new ServerMethods());
+            AddSystem(new ClientMethods());
+            AddSystem(new MessageParser());
+            AddSystem(new PlayerManager());
+            AddSystem(new ServerNetworkManager());
+            var entityManager = new EntitySystemManager();
+            AddSystem(entityManager);
 
-            EntityManager.AddSystem(new SyncedEntitySystem());
-            EntityManager.AddSystem(new MobileEntitySystem());
+            entityManager.AddSystem(new MobileEntitySystem());
 
             var hr = new HandlerRoutine(OnConsoleClose);
             SetConsoleCtrlHandler(hr, true);
@@ -70,6 +65,28 @@ namespace EveFortressServer
                     Thread.Sleep(TimePerTick - updateTime);
                 }
             }
+        }
+
+        public static T GetSystem<T>()
+        {
+            return (T)Systems[typeof(T)];
+        }
+
+        public static void AddSystem(object system)
+        {
+            var updateable = system as IUpdateNeeded;
+            if (updateable != null)
+            {
+                Updateables.Add(updateable);
+            }
+
+            var disposable = system as IDisposeNeeded;
+            if (disposable != null)
+            {
+                Disposables.Add(disposable);
+            }
+
+            Systems[system.GetType()] = system;
         }
 
         private static bool OnConsoleClose(CtrlTypes ctrlType)
