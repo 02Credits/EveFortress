@@ -42,8 +42,7 @@ namespace EveFortressServer
                         {
                             var entity = Program.GetSystem<EntitySystemManager>().NewEntity(new Point<long>(worldX, worldY),
                                 new Appearance(new TileDisplayInformation("Tree", 0)),
-                                new Mobile(),
-                                new Synced());
+                                new Mobile());
                             chunk.Entities[entity.ID] = entity;
                         }
                     }

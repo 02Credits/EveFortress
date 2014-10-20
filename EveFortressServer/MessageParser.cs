@@ -44,16 +44,6 @@ namespace EveFortressServer
                 Action<string> method = (T0) => Program.GetSystem<ServerMethods>().Chat(T0, msg.SenderConnection);
                 return Program.GetSystem<ServerNetworkManager>().ExecuteMethodFromMessage<string>(msg, method);
             };
-            Parsers["SubscribeToChunk"] = (msg) =>
-            {
-                Func<long, long, Chunk> method = (T0, T1) => Program.GetSystem<ServerMethods>().SubscribeToChunk(T0, T1, msg.SenderConnection);
-                return Program.GetSystem<ServerNetworkManager>().ExecuteMethodFromMessage<long, long, Chunk>(msg, method);
-            };
-            Parsers["UnsubscribeToChunk"] = (msg) =>
-            {
-                Action<long, long> method = (T0, T1) => Program.GetSystem<ServerMethods>().UnsubscribeToChunk(T0, T1, msg.SenderConnection);
-                return Program.GetSystem<ServerNetworkManager>().ExecuteMethodFromMessage<long, long>(msg, method);
-            };
         }
     }
 }

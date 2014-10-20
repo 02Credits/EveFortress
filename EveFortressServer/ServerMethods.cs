@@ -26,21 +26,5 @@ namespace EveFortressServer
                 Program.GetSystem<ClientMethods>().ChatMessage(message, c);
             }
         }
-
-        public Chunk SubscribeToChunk(long x, long y, NetConnection connection)
-        {
-            var player = Program.GetSystem<PlayerManager>().Players[
-                            Program.GetSystem<PlayerManager>().ConnectionNames[connection]];
-            player.SubscribedChunks.Add(new Point<long>(x, y));
-            var chunk = Program.GetSystem<ChunkManager>().GetChunk(x, y);
-            return chunk;
-        }
-
-        public void UnsubscribeToChunk(long x, long y, NetConnection connection)
-        {
-            var player = Program.GetSystem<PlayerManager>().Players[
-                            Program.GetSystem<PlayerManager>().ConnectionNames[connection]];
-            player.SubscribedChunks.Remove(new Point<long>(x, y));
-        }
     }
 }
