@@ -32,7 +32,7 @@ namespace EveFortressClient
                 }
                 return false;
             }
-        }
+        } 
 
         private bool connecting;
 
