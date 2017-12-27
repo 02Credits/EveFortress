@@ -3,11 +3,20 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace EveFortressClient
 {
     public class TileManager
     {
+        public static Texture2D LoadTexture(string path)
+        {
+            using (var fileStream = new FileStream(path, FileMode.Open))
+            {
+                return Texture2D.FromStream(Game.Graphics.GraphicsDevice, fileStream);
+            }
+        }
+
         public Dictionary<string, Resource<TileSheet>> TileSheets = new Dictionary<string, Resource<TileSheet>>();
 
         public Color DefaultColor { get; set; }
@@ -17,25 +26,25 @@ namespace EveFortressClient
         public TileManager()
         {
             TileSheets["UI"] = new Resource<TileSheet>("Content/UITiles.png",
-                (s) => new TileSheet(Game.ContentManager.Load<Texture2D>(s), 16, 5f));
+                (s) => new TileSheet(LoadTexture(s), 16, 5f));
             TileSheets["WaterTransition"] = new Resource<TileSheet>("Content/WaterTransition.png",
-                (s) => new TileSheet(Game.ContentManager.Load<Texture2D>(s), 16, 1.5f));
+                (s) => new TileSheet(LoadTexture(s), 16, 1.5f));
             TileSheets["SandTransition"] = new Resource<TileSheet>("Content/SandTransition.png",
-                (s) => new TileSheet(Game.ContentManager.Load<Texture2D>(s), 16, 1.4f));
+                (s) => new TileSheet(LoadTexture(s), 16, 1.4f));
             TileSheets["GrassTransition"] = new Resource<TileSheet>("Content/GrassTransition.png",
-                (s) => new TileSheet(Game.ContentManager.Load<Texture2D>(s), 16, 1.3f));
+                (s) => new TileSheet(LoadTexture(s), 16, 1.3f));
             TileSheets["DirtTransition"] = new Resource<TileSheet>("Content/DirtTransition.png",
-                (s) => new TileSheet(Game.ContentManager.Load<Texture2D>(s), 16, 1.2f));
+                (s) => new TileSheet(LoadTexture(s), 16, 1.2f));
             TileSheets["WaterTiles"] = new Resource<TileSheet>("Content/WaterTiles.png",
-                (s) => new TileSheet(Game.ContentManager.Load<Texture2D>(s), 16, 0));
+                (s) => new TileSheet(LoadTexture(s), 16, 0));
             TileSheets["DirtTiles"] = new Resource<TileSheet>("Content/DirtTiles.png",
-                (s) => new TileSheet(Game.ContentManager.Load<Texture2D>(s), 16, 0));
+                (s) => new TileSheet(LoadTexture(s), 16, 0));
             TileSheets["GrassTiles"] = new Resource<TileSheet>("Content/GrassTiles.png",
-                (s) => new TileSheet(Game.ContentManager.Load<Texture2D>(s), 16, 0));
+                (s) => new TileSheet(LoadTexture(s), 16, 0));
             TileSheets["SandTiles"] = new Resource<TileSheet>("Content/SandTiles.png",
-                (s) => new TileSheet(Game.ContentManager.Load<Texture2D>(s), 16, 0));
+                (s) => new TileSheet(LoadTexture(s), 16, 0));
             TileSheets["Tree"] = new Resource<TileSheet>("Content/Tree.png",
-                (s) => new TileSheet(Game.ContentManager.Load<Texture2D>(s), 16, 0));
+                (s) => new TileSheet(LoadTexture(s), 16, 0));
 
             DefaultColor = Color.White;
             TileSize = 32;

@@ -10,7 +10,7 @@ using Utils;
 
 namespace EveFortressServer
 {
-    public class EntitySystemManager : IDisposeNeeded, IUpdateNeeded
+    public class EntitySystemManager : IDisposeNeeded
     {
         public IDManager EntityIDManager { get; set; }
         public Dictionary<Type, EntitySystem> EntitySystems { get; set; }

@@ -79,11 +79,12 @@ namespace EveFortressClient
             graphics.BlendState = BlendState.NonPremultiplied;
             graphics.RasterizerState = RasterizerState.CullNone;
             graphics.SamplerStates[0] = SamplerState.PointClamp;
+            graphics.DepthStencilState = DepthStencilState.Default;
             basicEffect.TextureEnabled = true;
             basicEffect.VertexColorEnabled = true;
             basicEffect.World = Matrix.Identity;
             basicEffect.View = Matrix.Identity;
-            basicEffect.Projection = Matrix.CreateOrthographicOffCenter(0, graphics.Viewport.Width, graphics.Viewport.Height, 0, 0, 5);
+            basicEffect.Projection = Matrix.CreateOrthographicOffCenter(0, graphics.Viewport.Width, graphics.Viewport.Height, 0, -500, 500);
 
             foreach (var texture in VertexManager.TextureOrder)
             {
